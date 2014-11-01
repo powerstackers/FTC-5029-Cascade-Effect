@@ -26,7 +26,7 @@
 // if you use the "drivers/HTIRS2-driver.h" line,
 // then you should comment out the following line.
 
-#include "drivers/hitechnic-irseeker-v2.h"
+#include "hitechnic-irseeker-v2.h"
 
 // main task
 task main ()

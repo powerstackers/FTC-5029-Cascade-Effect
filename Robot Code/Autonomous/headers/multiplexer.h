@@ -2,13 +2,15 @@
 #include "hitechnic-sensormux.h"
 #include "hitechnic-irseeker-v2.h"
 
-#define LEFT true
-#define RIGHT false
+// Constants
+const bool LEFT = true;
+const bool RIGHT = false;
 
-// Create variables to store the sensor addresses
-const tMUXSensor irLeft = msensor_S2_1;			// IR Sensor, NXT 2 MUX 1
+// Macros to store the sensor addresses
+#define irLeft  	msensor_S2_1;			// IR Sensor, NXT 2 MUX 1
+#define irRight  	msensor_S2_2; 		// IR Sensor, NXT 2 MUX 2
 
-// Create variables to store the sensor values
+// Variables to store the sensor values
 int irStrengthLeft;
 int irDirectionLeft;
 
@@ -39,7 +41,15 @@ int getIRStrength(tMUXSensor sensor)
 	return 	strength;
 }
 
-int getIREnhanced(tMUXSensor sensor, bool LEFT_OR_RIGHT)
+void getIREnhanced(tMUXSensor sensor, bool LEFT_OR_RIGHT)
+{
+	if(LEFT_OR_RIGHT == LEFT)
+		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
+	else if(LEFT_OR_RIGHT == RIGHT)
+		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
+}
+
+void getIREnhanced(tSensors sensor, bool LEFT_OR_RIGHT)
 {
 	if(LEFT_OR_RIGHT == LEFT)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);

@@ -15,6 +15,22 @@
 // Include a file to handle messages from the joystick
 #include "JoystickDriver.c"
 
+
+short stick_value_left;
+short stick_value_right;
+
+
+
+void get_custom_joystick_settings ()
+{
+	stick_value_right	= joystick.joy1_y2;
+	stick_value_left = joystick.joy1_y1;
+}
+
+
+
+
+
 /*
 *	stickToMotorValue
 *	Convert the -127 - 128 stick value to a -100 - 100 motor value
@@ -36,22 +52,51 @@ void initializeRobot()
 
 task main()
 {
+	// Sets robot to starting positions
 	initializeRobot();
+
+	// Wait for the start of the match
 	waitForStart();
+
+	// Clear the display
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
+	// Loop forever
 	while(true)
 	{
+		// Updates joystick settings
 		getJoystickSettings(joystick);
 
-		nxtDisplayTextLine(1, "LeftDr:%d", motor[mDriveLeft]);
-		nxtDisplayTextLine(2, "RightDr:%d", motor[mDriveRight]);
-		nxtDisplayTextLine(3, "LeftSt:%d", joystick.joy1_y1);
-		nxtDisplayTextLine(4, "RightSt:%d", joystick.joy1_y2);
+		get_custom_joystick_settings ();
 
-		motor[mDriveLeft] = (abs(joystick.joy1_y1) > 15)? stickToMotorValue(joystick.joy1_y1) : 0;
-		motor[mDriveRight] = (abs(joystick.joy1_y2) > 15)? stickToMotorValue(joystick.joy1_y2) : 0;
+		/*
+		*
+		*	Print information to the NXT screen
+		*
+		*/
+		nxtDisplayTextLine(1, "LeftDr:%d", motor[mDriveLeft]);		// Left drive motor settings
+		nxtDisplayTextLine(2, "RightDr:%d", motor[mDriveRight]);	// Right drive motor settings
+		nxtDisplayTextLine(3, "LeftSt:%d", stick_value_left);			// Left joystick
+		nxtDisplayTextLine(4, "RightSt:%d", stick_value_right);		// Right joystick
+
+		// If button 3 on joystick 1 is pressed
+		if(joy1Btn(3) == 1)
+		{
+			// Move both motors together based on left joystick position
+			motor[mDriveLeft] = (abs(stick_value_left) > 15)? stickToMotorValue(stick_value_left) : 0;
+			motor[mDriveRight] = (abs(stick_value_left) > 15)? stickToMotorValue(stick_value_left) : 0;
+		}
+		// If button 3 on joystick 1 is not pressed
+		else
+		{
+			// Move the motors independently, based on their respective joystick positions
+			motor[mDriveLeft] = (abs(stick_value_left) > 15)? stickToMotorValue(stick_value_left) : 0;
+			motor[mDriveRight] = (abs(stick_value_right) > 15)? stickToMotorValue(stick_value_right) : 0;
+		}
+
+		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
+		// If it is not pressed, set the brush motor to 0.
 		motor[mBrush] = (joy1Btn(6) == 1)? -100 : 0;
 
 	}
