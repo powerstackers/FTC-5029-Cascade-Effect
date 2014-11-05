@@ -19,12 +19,11 @@
 short stick_value_left;
 short stick_value_right;
 
-int hello = 0;
-
 void get_custom_joystick_settings ()
 {
-	stick_value_right	= joystick.joy1_y2;
+	stick_value_right = joystick.joy1_y2;
 	stick_value_left = joystick.joy1_y1;
+
 }
 
 
