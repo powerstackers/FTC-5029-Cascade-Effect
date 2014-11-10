@@ -16,32 +16,34 @@
 #include "JoystickDriver.c"
 
 
-short stick_value_left_forward;
-short stick_value_right_forward;
-short stick_value_left_backward;
-short stick_value_right_backward;
+short stickValueLeftForward;
+short stickValueRightForward;
+short stickValueLeftBackward;
+short stickValueRightBackward;
 
-bool button_straight_drive;
-bool button_backwards_drive;
+bool buttonStraightDrive;
+bool buttonBackwardsDrive;
+bool buttonBrush;
 
 void get_custom_joystick_settings ()
 {
-	stick_value_right_forward = joystick.joy1_y2;
-	stick_value_left_forward = joystick.joy1_y1;
-	stick_value_right_backward = -1 * joystick.joy1_y1;
-	stick_value_left_backward = -1 * joystick.joy1_y2;
+	stickValueRightForward = joystick.joy1_y2;			// Driver 1 right stick
+	stickValueLeftForward = joystick.joy1_y1;			// Driver 1 left stick
+	stickValueRightBackward = -1 * joystick.joy1_y1;	// Driver 1 left stick
+	stickValueLeftBackward = -1 * joystick.joy1_y2;		// Driver 1 right stick
 
-	button_straight_drive = (joy1Btn(3) == 1);
-	button_backwards_drive = (joy1Btn(5) == 1);
+	buttonStraightDrive = (joy1Btn(3) == 1);			// Driver 1 red button
+	buttonBackwardsDrive = (joy1Btn(5) == 1);			// Driver 1 left shoulder
+	buttonBrush = (joy1Btn(6) == 1);					// Driver 1 rigth shoulder
 
 }
 
 
 /*
-*	stickToMotorValue
-*	Convert the -127 - 128 stick value to a -100 - 100 motor value
+* 	stickToMotorValue
+* 	Convert the -127 - 128 stick value to a -100 - 100 motor value
 */
-short stick_to_motor_value(short stickValue)
+short stickToMotorValue(short stickValue)
 {
 	return (short) ( (float)stickValue * 0.78125);
 }
@@ -83,38 +85,38 @@ task main()
 		*/
 		nxtDisplayTextLine(1, "LeftDr:%d", motor[mDriveLeft]);		// Left drive motor settings
 		nxtDisplayTextLine(2, "RightDr:%d", motor[mDriveRight]);	// Right drive motor settings
-		nxtDisplayTextLine(3, "LeftSt:%d", stick_value_left_forward);			// Left joystick
-		nxtDisplayTextLine(4, "RightSt:%d", stick_value_right_forward);		// Right joystick
-		nxtDisplayTextLine(5, "RB:%d", stick_value_right_backward);
-		nxtDisplayTextLine(6, "LB:%d", stick_value_left_backward);
+		nxtDisplayTextLine(3, "LeftSt:%d", stickValueLeftForward);	// Left joystick
+		nxtDisplayTextLine(4, "RightSt:%d", stickValueRightForward);	// Right joystick
+		nxtDisplayTextLine(5, "RB:%d", stickValueRightBackward);
+		nxtDisplayTextLine(6, "LB:%d", stickValueLeftBackward);
 
 		// STRAIGHT DRIVE
 		// If button 3 on joystick 1 is pressed
-		if(button_straight_drive)
+		if(buttonStraightDrive)
 		{
 			// Move both motors together based on left joystick position
-			motor[mDriveLeft] = (abs(stick_value_left_forward) > 15)? stick_to_motor_value(stick_value_left_forward) : 0;
-			motor[mDriveRight] = (abs(stick_value_left_forward) > 15)? stick_to_motor_value(stick_value_left_forward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
+			motor[mDriveRight] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
 		}
 		// BACKWARDS DRIVE
 		// If button 5 is pressed
-		else if(button_backwards_drive)
+		else if(buttonBackwardsDrive)
 		{
-			motor[mDriveLeft] = (abs(stick_value_left_backward) > 15)? stick_to_motor_value(stick_value_left_backward) : 0;
-			motor[mDriveRight] = (abs(stick_value_right_backward) > 15)? stick_to_motor_value(stick_value_right_backward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftBackward) > 15)? stickToMotorValue(stickValueLeftBackward) : 0;
+			motor[mDriveRight] = (abs(stickValueRightBackward) > 15)? stickToMotorValue(stickValueRightBackward) : 0;
 		}
 		// NORMAL DRIVE
 		// If button 3 on joystick 1 is not pressed
 		else
 		{
 			// Move the motors independently, based on their respective joystick positions
-			motor[mDriveLeft] = (abs(stick_value_left_forward) > 15)? stick_to_motor_value(stick_value_left_forward) : 0;
-			motor[mDriveRight] = (abs(stick_value_right_forward) > 15)? stick_to_motor_value(stick_value_right_forward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
+			motor[mDriveRight] = (abs(stickValueRightForward) > 15)? stickToMotorValue(stickValueRightForward) : 0;
 		}
 
 		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
-		motor[mBrush] = (joy1Btn(6) == 1)? -100 : 0;
+		motor[mBrush] = (buttonBrush)? -100 : 0;
 
 	}
 }
