@@ -1,0 +1,18 @@
+Creating meaningful, easy-to-read titles is of great importance to our team. So, we have created 
+this short guide to outline our naming convention preferences. All of these conventions are 
+followed in our code, whatever the purpose of the file may be.
+------------------------------------------------------------------------------------------------
+VARIABLES
+	- camelCase (Example: blockSucker, avidCollectorOfCeramicFigurines, potatoPeel)
+
+FUNCTIONS (ROBOTC)
+	- camelCase (Example: blockSucker, avidCollectorOfCeramicFigurines, potatoPeel)
+
+FUNCTIONS (JAVA)
+	- camelCase (Example: blockSucker, avidCollectorOfCeramicFigurines, potatoPeel)
+
+CLASSES (JAVA)
+	- PascalCase (Example: CarrotCake, MenuTemplate, SuckerPlate)
+
+HEADERS (ROBOTC)
+	- PascalCase (Example: CarrotCake, MenuTemplate, SuckerPlate)
