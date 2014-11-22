@@ -14,13 +14,13 @@
 
 task main()
 {
+	writeDebugStreamLine("********************\n*\n*\tAUTONOMOUS PROGRAM\n*\n********************");
 	initializeRobot();
+	nxtDisplayCenteredBigTextLine(0, "AUTO");
+	nxtDisplayCenteredBigTextLine(2, "READY");
 	waitForStart();
-
-
-}
-
-task autonomous()
-{
+	nxtDisplayCenteredBigTextLine(2, "RUNNING");
+	turnDegrees(20.0, 34);
+	goTicks(30, 30, true);
 
 }

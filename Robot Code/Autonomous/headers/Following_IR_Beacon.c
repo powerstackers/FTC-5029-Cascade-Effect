@@ -103,8 +103,13 @@ task main ()
     // calculate left and right motor speeds.
     //motor[motorC] = 50 + 30 * val;
     //motor[motorB] = 50 - 30 * val;
+	if(maxSig > 200)
+    {
+    	motor[motorC] = 0;
+    	motor[motorB] = 0;
+    }
 
-    if (_dirAC > 5)
+    else if (_dirAC > 5)
     	{
     		motor[motorC]=30;
     		motor[motorB]=0;
@@ -115,11 +120,17 @@ task main ()
     		motor[motorB]=30;
     	}
 
-    	if (_dirAC == 5 || maxSig > 200)
-     	{
-    		motor[motorC]=0;
-    		motor[motorB]=0;
-    	}
+    else
+   	{
+   		motor[motorC]=50;
+   		motor[motorB]=50;
+   	}
+
+   	if(maxSig < 20)
+   	{
+   		motor[motorB] = 30;
+   		motor[motorC] = -30;
+   	}
 
 
     // wait a little before resuming.
