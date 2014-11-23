@@ -16,6 +16,9 @@ float ticksToInches(long ticks);
 void goTicks(long ticks, int speed, bool collisionAvoidance);
 void turnDegrees(float degrees, int speed);
 
+int findGoalOrientation();
+void dropBall(int height);
+
 
 /*
 *
@@ -161,6 +164,24 @@ void initializeRobot()
 
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 	allMotorsTo(0);
+}
+
+/*
+*	findGoalOrientation
+*	Find which way the center goal is facing
+*/
+int findGoalOrientation()
+{
+
+}
+
+/*
+*	dropBall
+*	droping the balls into the tubes
+*/
+void dropBall(int height)
+{
+
 }
 
 
