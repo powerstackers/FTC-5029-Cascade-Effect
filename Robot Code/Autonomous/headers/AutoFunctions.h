@@ -45,6 +45,7 @@ void dropBall(int height);
 // ultrasonicThreshold
 // Detecting an ultrasonic sensor value below this threshold will cause the robot to stop
 int ultrasonicThreshold = 30;
+int ticksPerRevolution = 1120;	// Each time the motors turn once, they turn 1120 ticks
 
 /*
 *	allMotorsTo
@@ -76,7 +77,7 @@ void driveMotorsTo(int i)
 */
 long inchesToTicks(float inches)
 {
-	return (long) inches * 1.0;
+	return (long) inches * (1120/(4*PI));
 }
 
 /*
@@ -85,7 +86,7 @@ long inchesToTicks(float inches)
 */
 float ticksToInches(long ticks)
 {
-	return (float) ticks * 1;
+	return (float) ticks * ((4*PI)/1120);
 }
 
 /*
@@ -166,7 +167,17 @@ void turnDegrees(float degrees, int speed)
 	}
 
 	// For as long as the current degree measure doesn't equal the target
+	while(abs(degreesSoFar) < abs(degrees))
+	{
+		wait10Msec(1);
 
+		int currentGyroReading = HYGYROreadRot(sGyro) - initialTurnReading;
+
+		degreesSoFar += currentGryoReading * 0.01;
+
+	}
+
+	driveMotorsTo(0);
 
 
 
