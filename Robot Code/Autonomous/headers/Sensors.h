@@ -1,6 +1,19 @@
+/*
+*	Sensors.h
+*	Code to handle all the sensors during the autonomous period.
+*
+*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
+*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION.
+*
+*	FTC Team #5029, The Powerstackers
+*	powerstackersftc.weebly.com
+*	github.com/powerstackers
+*/
+
 // Include files to handle the multiplexer and all the different sensors
 #include "hitechnic-sensormux.h"
 #include "hitechnic-irseeker-v2.h"
+#include "hitechnic-accelerometer.h"
 #include "lego-ultrasound.h"
 
 // Constants
@@ -8,6 +21,7 @@ const bool LEFT = true;
 const bool RIGHT = false;
 
 // Macros to store the sensor addresses
+// Sensor addresses may change throughout the season
 #define irLeft  	msensor_S2_1		// IR Sensor, NXT 2 MUX 1
 #define irRight  	msensor_S2_2 		// IR Sensor, NXT 2 MUX 2
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
@@ -22,6 +36,10 @@ int irDirectionRight;
 
 int ultraStrengthBack;
 int ultraStrengthFront;
+
+int accelX = 0;
+int accelY = 0;
+int accelZ = 0;
 
 
 // Flag to turn on or off the IR seekers
@@ -78,6 +96,24 @@ void getIREnhanced(tSensors sensor, bool LEFT_OR_RIGHT)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
 	else if(LEFT_OR_RIGHT == RIGHT)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
+}
+
+/*
+*	getAccelOrientation
+*	Get the accelerometer orientation on all axes
+*/
+void getAccelOrientation(tMUXSensor sensor)
+{
+	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
+}
+
+/*
+*	getAccelOrientation
+*	Get the accelerometer orientation on all axes
+*/
+void getAccelOrientation(tSensors sensor)
+{
+	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
 }
 
 /*

@@ -1,4 +1,21 @@
-#include "Multiplexer.h"
+#pragma config(StandardModel, "PS CASCADE EFFECT")
+
+/*
+*	AutoFunctions.h
+*	Functions and subroutines for use during the autonomous period.
+*
+*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
+*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION.
+*
+*	FTC Team #5029, The Powerstackers
+*	powerstackersftc.weebly.com
+*	github.com/powerstackers
+*/
+
+
+
+#include "Sensors.h"
+#include "JoystickDriver.c"
 
 /*
 *
@@ -130,6 +147,29 @@ void turnDegrees(float degrees, int speed)
 	writeDebugStreamLine("-- TURNING --\n\tTurning %d degrees at %d speed",
 		degrees, speed);
 
+	// Store the number of degrees turned so far
+	float degreesSoFar = 0;
+
+	// Take an initial reading of the accelerometer sensor
+	const int initialTurnReading = accelX;
+
+	// Decide whether to turn clockwise or counterclockwise
+	if(degrees > 0)
+	{
+		motor[mDriveLeft] = -1 * speed;
+		motor[mDriveRight] = speed;
+	}
+	else
+	{
+		motor[mDriveLeft] = speed;
+		motor[mDriveRight] = -1 * speed;
+	}
+
+	// For as long as the current degree measure doesn't equal the target
+
+
+
+
 	writeDebugStreamLine("\tTurning done");
 
 }
@@ -161,6 +201,9 @@ void initializeRobot()
 	}
 	else
 		nxtDisplayTextLine(5, "NXT BATT GOOD");
+
+	// Start getting information from the multiplexer(s)
+	StartTask(getSmux);
 
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 	allMotorsTo(0);

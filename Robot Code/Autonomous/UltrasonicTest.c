@@ -1,3 +1,15 @@
+/*
+*	UltrasonicTest.c
+*	Program to test the ultrasonic sensors, and use them for collision avoidance.
+*
+*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
+*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION
+*
+*	FTC Team #5029, The Powerstackers
+*	powerstackersftc.weebly.com
+*	github.com/powerstackers
+*/
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  none,     none)
 #pragma config(Sensor, S2,     SMUX1,          sensorI2CCustom)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
