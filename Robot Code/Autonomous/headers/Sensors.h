@@ -14,11 +14,8 @@
 #include "hitechnic-sensormux.h"
 #include "hitechnic-irseeker-v2.h"
 #include "hitechnic-accelerometer.h"
+#include "hitechnic-gyro.h"
 #include "lego-ultrasound.h"
-
-// Constants
-const bool LEFT = true;
-const bool RIGHT = false;
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
@@ -26,6 +23,8 @@ const bool RIGHT = false;
 #define irRight  	msensor_S2_2 		// IR Sensor, NXT 2 MUX 2
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
 #define ultraFront	msensor_S2_4		// Ultrasonic, NXT 2 MUX 4
+
+#define sGyro		S3					// Gyroscope, NXT 3
 
 // Variables to store the sensor values
 int irStrengthLeft;
@@ -44,7 +43,7 @@ int accelZ = 0;
 
 // Flag to turn on or off the IR seekers
 bool gettingIr = false;
-int dummy;
+bool gettingSmux = false;
 
 /*
 *	getIRDirection
@@ -78,11 +77,11 @@ int getIRStrength(tMUXSensor sensor)
 *	getIREnhanced
 *	Get both the direction and the strength of the chosen IR seeker
 */
-void getIREnhanced(tMUXSensor sensor, bool LEFT_OR_RIGHT)
+void getIREnhanced(tMUXSensor sensor)
 {
-	if(LEFT_OR_RIGHT == LEFT)
+	if(sensor == irLeft)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(LEFT_OR_RIGHT == RIGHT)
+	else if(sensor == irRight)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
 }
 
@@ -90,11 +89,11 @@ void getIREnhanced(tMUXSensor sensor, bool LEFT_OR_RIGHT)
 *	getIREnhanced
 *	Get both the direction and the strength of the chosen IR seeker
 */
-void getIREnhanced(tSensors sensor, bool LEFT_OR_RIGHT)
+void getIREnhanced(tSensors sensor)
 {
-	if(LEFT_OR_RIGHT == LEFT)
+	if(sensor == irLeft)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(LEFT_OR_RIGHT == RIGHT)
+	else if(sensor == irRight)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
 }
 
@@ -116,24 +115,28 @@ void getAccelOrientation(tSensors sensor)
 	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
 }
 
+
+float currentGryoReading()
+{
+	return HTGYROreadRot(sGyro);
+}
 /*
 *	getSmux
 *	Update all the sensors attached to a multiplexer
 */
 task getSmux()
 {
+	gettingSmux = true;
 	// Print a ready message
-	writeDebugStreamLine("Multiplexer setup ready");
+	writeDebugStreamLine("-- MULTIPLEXER SETUP READY --");
 
 	// Loop forever
 	while (true){
 		// Only update the IR seeker variables when the IR seekers are turned on
 		// This keeps the debug stream clear
 		if(gettingIr){
-			if(!HTIRS2readEnhanced(irLeft, dummy, irStrengthLeft)){
-				writeDebugStreamLine("Something's wrong with the IR");
-			}
-
+			getIREnhanced(irLeft);
+			getIREnhanced(irRight);
 		}
 
 		// Store the values of the ultrasonic sensors

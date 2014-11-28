@@ -33,7 +33,7 @@ float ticksToInches(long ticks);
 void goTicks(long ticks, int speed, bool collisionAvoidance);
 void turnDegrees(float degrees, int speed);
 
-int findGoalOrientation();
+char findGoalOrientation();
 void dropBall(int height);
 
 
@@ -152,7 +152,7 @@ void turnDegrees(float degrees, int speed)
 	float degreesSoFar = 0;
 
 	// Take an initial reading of the accelerometer sensor
-	const int initialTurnReading = accelX;
+	const float initialTurnReading = currentGryoReading();
 
 	// Decide whether to turn clockwise or counterclockwise
 	if(degrees > 0)
@@ -171,9 +171,9 @@ void turnDegrees(float degrees, int speed)
 	{
 		wait10Msec(1);
 
-		int currentGyroReading = HYGYROreadRot(sGyro) - initialTurnReading;
+		float reading = currentGryoReading() - initialTurnReading;
 
-		degreesSoFar += currentGryoReading * 0.01;
+		degreesSoFar += reading * 0.01;
 
 	}
 
@@ -196,7 +196,7 @@ void initializeRobot()
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("extBatt lvl: %2.2f volts\nNXT Batt lvl: %2.2f", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
+	writeDebugStreamLine("extBatt lvl: %2.2f volts\nNXT Batt lvl: %2.2f volts", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f", externalBatteryAvg / 1000.0);
@@ -220,13 +220,42 @@ void initializeRobot()
 	allMotorsTo(0);
 }
 
+// Macros for the different positions of the center goal
+// The number indicates the average reading for the IR sensors when the goal is at that position
+#define positionA 80
+#define positionB 95
+#define positionC 70
+
 /*
 *	findGoalOrientation
 *	Find which way the center goal is facing
 */
-int findGoalOrientation()
+char findGoalOrientation()
 {
+	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
+	if(!gettingSmux)
+		StartTask(getSmux);
+	gettingIr = true;
+	wait10Msec(35);
 
+	int avg = ((irStrengthLeft + irStrengthRight) / 2);
+	int diffA = abs(avg - positionA);
+	int diffB = abs(avg - positionB);
+	int diffC = abs(avg - positionC);
+	char facing;
+
+	if(diffA < diffB && diffA < diffC)
+		facing = 'a';
+	else if(diffB < diffA && diffB < diffC)
+		facing = 'b';
+	else
+		facing = 'c';
+	writeDebugStreamLine("\tLeft:\t\t%d", irStrengthLeft);
+	writeDebugStreamLine("\tRight:\t\t%d", irStrengthRight);
+	writeDebugStreamLine("\tAverage:\t%d", avg);
+	writeDebugStreamLine("\tThe thing is in position %c", facing);
+
+	return facing;
 }
 
 /*

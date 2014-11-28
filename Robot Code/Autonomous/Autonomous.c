@@ -24,9 +24,10 @@ task main()
 	initializeRobot();
 	nxtDisplayCenteredBigTextLine(0, "AUTO");
 	nxtDisplayCenteredBigTextLine(2, "READY");
-	waitForStart();
+	//waitForStart();
 	nxtDisplayCenteredBigTextLine(2, "RUNNING");
-	turnDegrees(20.0, 34);
-	goTicks(30, 30, true);
+	//turnDegrees(20.0, 34);
+	//goTicks(30, 30, true);
+	findGoalOrientation();
 
 }
