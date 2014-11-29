@@ -18,10 +18,36 @@ short stickValueRightBackward;
 bool buttonStraightDrive;
 bool buttonBackwardsDrive;
 bool buttonBrush;
+
 bool buttonLiftUp;
 bool buttonLiftDown;
 bool buttonLiftOut;
 bool buttonLiftIn;
+bool buttonGrabUp;
+bool buttonGrabDown;
+
+
+#define liftTargetBase 1
+#define liftTargetLow 2
+#define liftTargetMed 3
+#define liftTargetHigh 4
+#define liftTargetCent 5
+
+#define horizTargetBase 1
+#define horizTargetClose 2
+#define horizTargetMed 3
+#define horizTargetFar 4
+
+#define grabTargetBase 1
+#define grabTargetLow 2
+#define grabTargetMed 3
+#define grabTargetHigh 4
+
+// Encoder target for the vertical lift and horizontal lift
+long liftEncoderTarget = 0;
+long horizEncoderTarget = 0;
+long grabEncoderTarget = 0;
+
 
 /*
 *	getCustomJoystickSettings
@@ -41,6 +67,8 @@ void getCustomJoystickSettings ()
 	buttonLiftDown = (joy2Btn(8) == 1);					// Driver 2 right trigger
 	buttonLiftOut = (joy2Btn(5) == 1);					// Driver 2 left shoulder
 	buttonLiftIn = (joy2Btn(7) == 1);					// Driver 2 left trigger
+	buttonGrabUp = (joystick.joy2_TopHat == 0);			// Driver 2 top hat up
+	buttonGrabDown = (joystick.joy2_TopHat == 4);		// Driver 2 top hat down
 
 }
 
@@ -51,14 +79,13 @@ void getCustomJoystickSettings ()
 void printInfoToScreen()
 {
 
-		nxtDisplayTextLine(1, "LeftDr:%d", motor[mDriveLeft]);		// Left drive motor settings
-		nxtDisplayTextLine(2, "RightDr:%d", motor[mDriveRight]);	// Right drive motor settings
-		nxtDisplayTextLine(3, "LeftSt:%d", stickValueLeftForward);	// Left joystick
-		nxtDisplayTextLine(4, "RightSt:%d", stickValueRightForward);	// Right joystick
-		nxtDisplayTextLine(5, "RB:%d", stickValueRightBackward);
-		nxtDisplayTextLine(6, "LB:%d", stickValueLeftBackward);
+	nxtDisplayTextLine(1, "LeftDr:%d", motor[mDriveLeft]);		// Left drive motor settings
+	nxtDisplayTextLine(2, "RightDr:%d", motor[mDriveRight]);	// Right drive motor settings
+	nxtDisplayTextLine(3, "LeftSt:%d", stickValueLeftForward);	// Left joystick
+	nxtDisplayTextLine(4, "RightSt:%d", stickValueRightForward);	// Right joystick
+	nxtDisplayTextLine(5, "p2TopHat:%d", joystick.joy2_TopHat);
+	nxtDisplayTextLine(6, "LB:%d", stickValueLeftBackward);
 }
-
 
 /*
 * 	stickToMotorValue
@@ -107,24 +134,92 @@ void initializeRobot()
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }
 
-#define liftTargetBase 1
-#define liftTargetLow 2
-#define liftTargerMed 3
-#define liftTargetHigh 4
-#define liftTargetCent 5
 
-#define horizTargetBase 1
-#define horizTargetClose 2
-#define horizTargetMed 3
-#define horizTargetFar 4
 
-// Encoder target for the vertical lift and horizontal lift
-long liftEncoderTarget = 0;
-long horizEncoderTarget = 0;
+void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDown = 'u')
+{
 
-// Store the desired positions for the horizontal and vertical lifts
-char liftPosition = 'b';
-char horizPosition = 'b';
+	switch(*currentPosition)
+	{
+		case 'c':
+			if(upOrDown != 'u')
+			{
+				*currentPosition = 'h';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh : ((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
+				writeDebugStreamLine("Switched encoder target to HIGH");
+			}
+			else
+			{
+				writeDebugStreamLine("Encoder target cannot be set any higher");
+			}
+			break;
+		case 'h':
+			if(upOrDown == 'u')
+			{
+				if(encoderTarget == &liftEncoderTarget)
+				{
+					*currentPosition = 'c';
+					*encoderTarget = liftTargetCent;
+					writeDebugStreamLine("Encoder target set to CENTER");
+				}
+				else
+					writeDebugStreamLine("Encoder target cannot be set any higher");
+			}
+			else if(upOrDown == 'd')
+			{
+				*currentPosition = 'm';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed : ((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
+				writeDebugStreamLine("Encoder target set to MED");
+			}
+			break;
+		case 'm':
+			if(upOrDown == 'u')
+			{
+				*currentPosition = 'h';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh : ((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
+				writeDebugStreamLine("Encoder target set to HIGH");
+			}
+			else if(upOrDown == 'd')
+			{
+				*currentPosition = 'l';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow : ((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
+				writeDebugStreamLine("Encoder target set to LOW");
+			}
+			break;
+		case 'l' :
+			if(upOrDown == 'u')
+			{
+				*currentPosition = 'm';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed : ((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
+				writeDebugStreamLine("Encoder target set to MED");
+			}
+			else if(upOrDown == 'd')
+			{
+				*currentPosition = 'b';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetBase : ((encoderTarget == &horizEncoderTarget)?horizTargetBase : grabTargetBase);
+				writeDebugStreamLine("Encoder target set to BASE");
+			}
+			break;
+		case 'b' :
+			if(upOrDown == 'u')
+			{
+				*currentPosition = 'l';
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow : ((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
+				writeDebugStreamLine("Encoder target set to LOW");
+			}
+			else if(upOrDown == 'd')
+			{
+				writeDebugStreamLine("Encoder target cannot be set any lower");
+			}
+			break;
+		default:
+			break;
+	}
+	wait10Msec(25);
+}
+
+
+
 
 /*
 *
@@ -132,128 +227,46 @@ char horizPosition = 'b';
 */
 task checkButtons()
 {
+	// Store the desired positions for the horizontal and vertical lifts
+	char liftPosition = 'b';
+	char horizPosition = 'b';
+	char grabPosition = 'b';
+
 	while(true)
 	{
 
 		if(buttonLiftUp)
 		{
-			switch(liftPosition)
-			{
-				case 'b':
-					liftPosition = 'l';
-					liftEncoderTarget = liftTargetLow;
-					writeDebugStreamLine("Switched lift target to LOW");
-					break;
-				case 'l':
-					liftPosition = 'm';
-					liftEncoderTarget = liftTargerMed;
-					writeDebugStreamLine("Switched lift target to MED");
-					break;
-				case 'm':
-					liftPosition = 'h';
-					liftEncoderTarget = liftTargetHigh;
-					writeDebugStreamLine("Switched lift target to HIGH");
-					break;
-				case 'h':
-					liftPosition = 'c';
-					liftEncoderTarget = liftTargetCent;
-					writeDebugStreamLine("Switched lift target to CENT");
-					break;
-				case 'c':
-					writeDebugStreamLine("Lift target cannot go any higher");
-					break;
-				default:
-					break;
-			}
-			wait10Msec(25);
+			writeDebugStreamLine("Switching vertical lift encoder target");
+			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'u');
 		}
 		else if(buttonLiftDown)
 		{
-			switch(liftPosition)
-			{
-				case 'c':
-					liftPosition = 'h';
-					liftEncoderTarget = liftTargetHigh;
-					writeDebugStreamLine("Switched lift target to HIGH");
-					break;
-				case 'h':
-					liftPosition = 'm';
-					liftEncoderTarget = liftTargerMed;
-					writeDebugStreamLine("Switched lift target to MED");
-					break;
-				case 'm':
-					liftPosition = 'l';
-					liftEncoderTarget = liftTargetLow;
-					writeDebugStreamLine("Switched lift target to LOW");
-					break;
-				case 'l' :
-					liftPosition = 'b';
-					liftEncoderTarget = liftTargetBase;
-					writeDebugStreamLine("Switched lift target to BASE");
-					break;
-				case 'b' :
-					writeDebugStreamLine("Lift target cannot go any lower");
-					break;
-				default:
-					break;
-			}
-			wait10Msec(25);
+			writeDebugStreamLine("Switching vertical lift encoder target");
+			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'd');
 		}
 
 
 		if(buttonLiftOut)
 		{
-			switch(horizPosition)
-			{
-				case 'b':
-					horizPosition = 'c';
-					horizEncoderTarget = horizTargetClose;
-					writeDebugStreamLine("Switched horiz target to CLOSE");
-					break;
-				case 'c':
-					horizPosition = 'm';
-					horizEncoderTarget = horizTargetMed;
-					writeDebugStreamLine("Switched horiz target to MED");
-					break;
-				case 'm':
-					horizPosition = 'f';
-					horizEncoderTarget = horizTargetFar;
-					writeDebugStreamLine("Switched horiz target to FAR");
-					break;
-				case 'f':
-					writeDebugStreamLine("Horiz target cannot go any farther");
-					break;
-				default:
-					break;
-			}
-			wait10Msec(25);
+			writeDebugStreamLine("Switching horizontal lift encoder target");
+			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'u');
 		}
 		else if(buttonLiftIn)
 		{
-			switch(horizPosition)
-			{
-				case 'f':
-					horizPosition = 'm';
-					horizEncoderTarget = horizTargetMed;
-					writeDebugStreamLine("Switched horiz target to MED");
-					break;
-				case 'm':
-					horizPosition = 'c';
-					horizEncoderTarget = horizTargetClose;
-					writeDebugStreamLine("Switched horiz target to CLOSE");
-					break;
-				case 'c' :
-					horizPosition = 'b';
-					horizEncoderTarget = horizTargetBase;
-					writeDebugStreamLine("Switched horiz target to BASE");
-					break;
-				case 'b' :
-					writeDebugStreamLine("Horiz target cannot go any nearer");
-					break;
-				default:
-					break;
-			}
-			wait10Msec(25);
+			writeDebugStreamLine("Switching horizontal lift encoder target");
+			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'd');
+		}
+
+		if(buttonGrabUp)
+		{
+			writeDebugStreamLine("Switching grabber encoder target");
+			switchEncoderTarget(&grabEncoderTarget, &grabPosition, 'u');
+		}
+		else if(buttonGrabDown)
+		{
+			writeDebugStreamLine("Switching grabber encoder target");
+			switchEncoderTarget(&grabEncoderTarget, &grabPosition, 'd');
 		}
 	}
 }
