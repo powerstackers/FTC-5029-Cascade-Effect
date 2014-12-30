@@ -40,3 +40,4 @@ it will take a few extra steps to be able to edit those files.
 7.	Back in RobotC, go back to the Motors and Sensors Setup window, and go to the
 	Standard Models tab, and select your standard model from the list. Click Apply,
 	and you standard model will be applied.
+
