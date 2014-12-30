@@ -17,15 +17,21 @@
 */
 
 #include "headers/AutoFunctions.h"
+#include "headers/Menu.h"
 
 task main()
 {
 	writeDebugStreamLine("********************\n*\n*\tAUTONOMOUS PROGRAM\n*\n********************");
 	initializeRobot();
+	writeDebugStreamLine("Getting autonomous settings...");
+	runMenu();
+	writeDebugStreamLine("Waiting for start of match...");
 	nxtDisplayCenteredBigTextLine(0, "AUTO");
 	nxtDisplayCenteredBigTextLine(2, "READY");
-	//waitForStart();
+	PlaySound(soundFastUpwardTones);
+	waitForStart();
 	nxtDisplayCenteredBigTextLine(2, "RUNNING");
+	PlaySound(soundUpwardTones);
 	//turnDegrees(20.0, 34);
 	//goTicks(30, 30, true);
 	findGoalOrientation();

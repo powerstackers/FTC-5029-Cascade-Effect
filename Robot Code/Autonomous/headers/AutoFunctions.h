@@ -77,7 +77,7 @@ void driveMotorsTo(int i)
 */
 long inchesToTicks(float inches)
 {
-	return (long) inches * (1120/(4*PI));
+	return (long) inches * (ticksPerRevolution/(4*PI));
 }
 
 /*
@@ -86,7 +86,7 @@ long inchesToTicks(float inches)
 */
 float ticksToInches(long ticks)
 {
-	return (float) ticks * ((4*PI)/1120);
+	return (float) ticks * ((4*PI)/ticksPerRevolution);
 }
 
 /*
@@ -196,10 +196,12 @@ void initializeRobot()
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("extBatt lvl: %2.2f volts\nNXT Batt lvl: %2.2f volts", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
+	writeDebugStreamLine("--BATTERY LEVELS--\n\textBatt lvl: %2.2f volts\n\tNXT Batt lvl: %2.2f volts", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f", externalBatteryAvg / 1000.0);
+		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", externalBatteryAvg / 1000.0);
+		if(externalBatteryAvg/1000.0 < 0.0)
+			writeDebugStreamLine("\tCheck that main battery is connected.");
 		nxtDisplayTextLine(4, "MAIN BATT LOW");
 	}
 	else
