@@ -100,7 +100,7 @@ task main()
 		// HORIZONTAL LIFT
 		// If the motor encoder value is less than the target, move the horizontal lift out
 		// If the motor encoder vlaue us greater than the target, move the horizontal lift in
-		if(nMotorEncoder[mHoriz] < horizEncoderTarget)
+		/*if(nMotorEncoder[mHoriz] < horizEncoderTarget)
 		{
 			motor[mHoriz] = liftMotorSpeed;
 		}
@@ -111,7 +111,7 @@ task main()
 		else
 		{
 			motor[mHoriz] = 0;
-		}
+		}*/
 
 	}
 }
