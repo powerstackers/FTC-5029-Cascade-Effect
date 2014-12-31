@@ -130,7 +130,7 @@ task getSmux()
 {
 	gettingSmux = true;
 	// Print a ready message
-	writeDebugStreamLine("-- MULTIPLEXER SETUP READY --");
+	writeDebugStreamLine("--MULTIPLEXER ACTIVATED--");
 
 	// Loop until the switch is pulled
 	while (gettingSmux){
@@ -145,4 +145,6 @@ task getSmux()
 		ultraStrengthBack = USreadDist(ultraBack);
 		ultraStrengthFront = USreadDist(ultraFront);
 	}
+	
+	writeDebugStreamLine("--MULTIPLEXER DEACTIVATED--");
 }
