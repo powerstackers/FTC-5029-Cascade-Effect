@@ -12,9 +12,8 @@
 *	github.com/powerstackers
 */
 
-
-
 #include "Sensors.h"
+#include "CollisionAvoidance.h"
 #include "JoystickDriver.c"
 
 /*
@@ -25,7 +24,6 @@
 void initializeRobot();
 
 // Utility functions
-task avoidCollision();
 void allMotorsTo(int i);
 void driveMotorsTo(int i);
 long inchesToTicks(float inches);
@@ -33,6 +31,7 @@ float ticksToInches(long ticks);
 void goTicks(long ticks, int speed, bool collisionAvoidance);
 void turnDegrees(float degrees, int speed);
 
+// Game functions
 char findGoalOrientation();
 void dropBall(int height);
 
@@ -169,20 +168,19 @@ void turnDegrees(float degrees, int speed)
 	// For as long as the current degree measure doesn't equal the target
 	while(abs(degreesSoFar) < abs(degrees))
 	{
+		// 10 millisecond interval
 		wait10Msec(1);
 
 		float reading = currentGryoReading() - initialTurnReading;
 
+		// Gyro sensor returns an angular speed. Distance=rate*time
 		degreesSoFar += reading * 0.01;
 
 	}
 
 	driveMotorsTo(0);
 
-
-
 	writeDebugStreamLine("\tTurning done");
-
 }
 
 /*
@@ -196,10 +194,16 @@ void initializeRobot()
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\textBatt lvl: %2.2f volts\n\tNXT Batt lvl: %2.2f volts", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
+	writeDebugStreamLine("--BATTERY LEVELS--\n\textBatt lvl: %2.2f volts\n\tNXT Batt lvl: %2.2f volts", 
+		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
+	
+	// If battery levels are low, notify the operators
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", externalBatteryAvg / 1000.0);
+		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
+			externalBatteryAvg / 1000.0);
+		
+		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
 		nxtDisplayTextLine(4, "MAIN BATT LOW");
@@ -209,7 +213,8 @@ void initializeRobot()
 
 	if(nAvgBatteryLevel < 7500){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", nAvgBatteryLevel / 1000.0);
+		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
+			nAvgBatteryLevel / 1000.0);
 		nxtDisplayTextLine(5, "NXT BATT LOW");
 	}
 	else
@@ -218,8 +223,10 @@ void initializeRobot()
 	// Start getting information from the multiplexer(s)
 	StartTask(getSmux);
 
-	writeDebugStreamLine("-- ROBOT INITIALIZED --");
+	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
+	
+	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }
 
 // Macros for the different positions of the center goal
@@ -228,6 +235,11 @@ void initializeRobot()
 #define positionB 95
 #define positionC 70
 
+// Macros to store the different position names
+#define CENTGOAL_POSITION_A 'a'
+#define CENTGOAL_POSITION_B 'b'
+#define CENTGOAL_POSITION_C 'c'
+
 /*
 *	findGoalOrientation
 *	Find which way the center goal is facing
@@ -235,23 +247,31 @@ void initializeRobot()
 char findGoalOrientation()
 {
 	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
+	
+	// Make sure the multiplexer is turned on
 	if(!gettingSmux)
 		StartTask(getSmux);
+	// Turn on IR capabilities, and give the sensors time to start up
 	gettingIr = true;
 	wait10Msec(35);
 
 	int avg = ((irStrengthLeft + irStrengthRight) / 2);
+	
+	// Find the difference between the average IR signal and the known values for each position
 	int diffA = abs(avg - positionA);
 	int diffB = abs(avg - positionB);
 	int diffC = abs(avg - positionC);
 	char facing;
 
+	// The lowest difference is the position the center goal is facing
 	if(diffA < diffB && diffA < diffC)
-		facing = 'a';
+		facing = CENTGOAL_POSITION_A;
 	else if(diffB < diffA && diffB < diffC)
-		facing = 'b';
+		facing = CENTGOAL_POSITION_B;
 	else
-		facing = 'c';
+		facing = CENTGOAL_POSITION_C;
+		
+	// Print this information to the debug stream
 	writeDebugStreamLine("\tLeft:\t\t%d", irStrengthLeft);
 	writeDebugStreamLine("\tRight:\t\t%d", irStrengthRight);
 	writeDebugStreamLine("\tAverage:\t%d", avg);
@@ -262,7 +282,7 @@ char findGoalOrientation()
 
 /*
 *	dropBall
-*	droping the balls into the tubes
+*	Droping the balls into the tubes
 */
 void dropBall(int height)
 {
@@ -270,39 +290,4 @@ void dropBall(int height)
 }
 
 
-/*
-*	avoidCollision
-*	Actively watch the ultrasonic sensors to prevent a collision
-*/
-task avoidCollision()
-{
-	// Loop forever
-	while(true)
-	{
-		// If the ultrasonic sensors detect an obstruction
-		if(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold)
-		{
-			// Stop all motors
-			allMotorsTo(0);
-			// Stop all processes except this one (temporarily stops all other functions)
-			hogCPU();
 
-			// Print a STOP message to the NXT screen and debug stream
-			writeDebugStreamLine("--!! OBSTRUCTION DETECTED !!--");
-			nxtDisplayCenteredBigTextLine(2, "SUSPENDED");
-			nxtDisplayCenteredTextLine(6, "--!!COLLISION!!--");
-			nxtDisplayCenteredTextLine(7, "--!!DETECTED!!--");
-
-			// Wait until the ultrasonic sensors are clear
-			while(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold){}
-			// Start up all other processes again
-			releaseCPU();
-
-			// Write messages to the nxt and the debug stream
-			writeDebugStreamLine("--!! OBSTRUCTION CLEARED !!--");
-			nxtDisplayCenteredBigTextLine(2, "RUNNING");
-			nxtDisplayCenteredTextLine(6, "--OBSTRUCTION--");
-			nxtDisplayCenteredTextLine(7, "--CLEARED--");
-		}
-	}
-}

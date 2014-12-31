@@ -10,6 +10,8 @@
 *	github.com/powerstackers
 */
 
+#pragma once
+
 // Include files to handle the multiplexer and all the different sensors
 #include "hitechnic-sensormux.h"
 #include "hitechnic-irseeker-v2.h"
