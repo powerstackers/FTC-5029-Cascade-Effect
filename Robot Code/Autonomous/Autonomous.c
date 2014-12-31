@@ -14,6 +14,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
+*	December 31 2014
+*	Version 0.1
 */
 
 #include "headers/AutoFunctions.h"

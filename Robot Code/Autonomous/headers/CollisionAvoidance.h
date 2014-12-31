@@ -9,7 +9,9 @@
 *
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
-*	github.com/powerstackers
+*	github.com/powerstackersftc
+*	December 31 2014
+*	Version 0.1
 */
 
 #include "Sensors.h"
