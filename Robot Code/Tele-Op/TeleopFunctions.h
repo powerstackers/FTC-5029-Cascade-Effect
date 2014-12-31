@@ -21,13 +21,13 @@ void initializeRobot();
 // Utility functions
 void printInfoToScreen();
 short stickToMotorValue(short stickValue);
-void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDown = 'u');
+void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown);
 task checkButtons();
 
 /*
 *	JOYSTICK ASSIGNMENTS
 *	Each function in our program that is user-controlled is hinged on a variable or set of variables.
-*	For example, the vertical lift has a button for up and a button for down. Instead of looking at 
+*	For example, the vertical lift has a button for up and a button for down. Instead of looking at
 *	the button variable from JoystickDriver.c, the main program has its own unique variable that it
 *	uses in place of the button. This allows us to change which button is assigned to which operation
 *	without having to rewrite the whole program every time.
@@ -54,7 +54,7 @@ bool buttonGrabDown;
 /*
 *	ENCODER TARGETS
 *	The vertical lift, horizontal lift, and the tipping mechanism all have specific positions to which
-*	they are set. The main program will monitor their position, and try to keep it as close to their 
+*	they are set. The main program will monitor their position, and try to keep it as close to their
 *	target as possible. The targets are switched in functions below, based on button input.
 *	The different motors all have a starting position, and then a low, medium, and high positions.
 *	The vertical lift also has a fifth position for the center goal tube.
@@ -139,18 +139,18 @@ void initializeRobot()
 	// Clear the nxt screen
 	bDisplayDiagnostics = false;
 	eraseDisplay();
-	
+
 	// Measure and print the battery levels
-	writeDebugStreamLine("\tChecking battery levels...\n\textBatt lvl: %2.2f volts\n\tNXT Batt level: %2.2f volts", 
+	writeDebugStreamLine("\tChecking battery levels...\n\textBatt lvl: %2.2f volts\n\tNXT Batt level: %2.2f volts",
 		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
-	
+
 	// If the battery level is low, notify the drivers
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f volts", 
+		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f volts",
 			externalBatteryAvg / 1000.0);
 		nxtDisplayTextLine(4, "MAIN BATT LOW");
-		
+
 		// If the battery level reads negative, the battery could be disconnected.
 		if(externalBatteryAvg<0.0)
 			writeDebugStreamLine("\tCheck that batter is connected.");
@@ -160,7 +160,7 @@ void initializeRobot()
 
 	if(nAvgBatteryLevel < 7500){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
+		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
 		nxtDisplayTextLine(5, "NXT BATT LOW");
 	}
@@ -181,7 +181,7 @@ void initializeRobot()
 *	switchEncoderTarget
 *	Move an encoder target up or down one position
 */
-void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDown = 'u')
+void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown)
 {
 	// Check the current position, and move it one up or one down in the list.
 	switch(*currentPosition)
@@ -191,7 +191,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'h';
 				// Determine which encoder target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
 					((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
 				writeDebugStreamLine("Switched encoder target to HIGH");
 			}
@@ -217,7 +217,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'm';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
 					((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
 				writeDebugStreamLine("Encoder target set to MED");
 			}
@@ -227,7 +227,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'h';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
 					((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
 				writeDebugStreamLine("Encoder target set to HIGH");
 			}
@@ -235,7 +235,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'l';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
 					((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
 				writeDebugStreamLine("Encoder target set to LOW");
 			}
@@ -245,7 +245,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'm';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
 					((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
 				writeDebugStreamLine("Encoder target set to MED");
 			}
@@ -253,7 +253,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'b';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetBase : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetBase :
 					((encoderTarget == &horizEncoderTarget)?horizTargetBase : grabTargetBase);
 				writeDebugStreamLine("Encoder target set to BASE");
 			}
@@ -263,7 +263,7 @@ void switchEncoderTarget(long* encoderTarget, char* currentPosition, char upOrDo
 			{
 				*currentPosition = 'l';
 				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow : 
+				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
 					((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
 				writeDebugStreamLine("Encoder target set to LOW");
 			}
@@ -292,11 +292,11 @@ task checkButtons()
 	char grabPosition 	= 'b';
 
 	writeDebugStreamLine("Button checker activated");
-	
+
 	while(checkingButtons)
 	{
 		// When a button is pressed, switch the variable attached to that function.
-		
+
 		if(buttonLiftUp)
 		{
 			writeDebugStreamLine("Switching vertical lift encoder target");
@@ -330,6 +330,6 @@ task checkButtons()
 			switchEncoderTarget(&grabEncoderTarget, &grabPosition, 'd');
 		}
 	}
-	
+
 	writeDebugStreamLine("Button checker deactivated");
 }

@@ -25,7 +25,7 @@ task main()
 {
 	writeDebugStreamLine("*\n*\tTELE-OP\n*");
 	writeDebugStreamLine("Initializing robot...");
-	
+
 	// Sets robot to starting positions
 	initializeRobot();
 
@@ -37,7 +37,7 @@ task main()
 	nxtDisplayBigTextLine(3, "READY");
 
 	// Wait for the start of the match
-	writeDebugStreamLine("\nWaiting for match start...\n")
+	writeDebugStreamLine("\nWaiting for match start...\n");
 	waitForStart();
 
 	// Print a teleop running message
@@ -57,12 +57,12 @@ task main()
 		getCustomJoystickSettings ();
 
 		printInfoToScreen();
-		
+
 		/*
 		*	DRIVE TRAIN
 		*	Our drive train consists of two sets of two motors, one on the left, and one on the right.
 		*	Pressing the "Straight Drive" button will cause both sets of motors to move together, useful
-		*	for driving in straight lines. Pressing a second "backwards" trigger will cause all of the 
+		*	for driving in straight lines. Pressing a second "backwards" trigger will cause all of the
 		*	motors to reverse, and the controls to switch sides, essentially switchin the "back" and "front"
 		*	of the robot.
 		*/
@@ -91,7 +91,7 @@ task main()
 			motor[mDriveRight] = (abs(stickValueRightForward) > 15)? stickToMotorValue(stickValueRightForward) : 0;
 		}
 
-		
+
 		/*
 		*	MANIPULATORS
 		*	There are currently five manipulators on our robot: a brush to collect balls, a lift to
@@ -100,7 +100,7 @@ task main()
 		*	lift, and the tipping portion of the grabber all have different positions they can toggle
 		*	between. Those are controlled in the checkButtons task.
 		*/
-		
+
 		// BRUSH
 		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
