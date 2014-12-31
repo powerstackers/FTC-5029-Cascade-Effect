@@ -21,6 +21,9 @@
 
 task main()
 {
+	writeDebugStreamLine("*\n*\tTELE-OP\n*");
+	writeDebugStreamLine("Initializing robot...");
+	
 	// Sets robot to starting positions
 	initializeRobot();
 
@@ -32,7 +35,8 @@ task main()
 	nxtDisplayBigTextLine(3, "READY");
 
 	// Wait for the start of the match
-	//waitForStart();
+	writeDebugStreamLine("\nWaiting for match start...\n")
+	waitForStart();
 
 	// Print a teleop running message
 	nxtDisplayBigTextLine(3, "RUNNING");
@@ -51,6 +55,15 @@ task main()
 		getCustomJoystickSettings ();
 
 		printInfoToScreen();
+		
+		/*
+		*	DRIVE TRAIN
+		*	Our drive train consists of two sets of two motors, one on the left, and one on the right.
+		*	Pressing the "Straight Drive" button will cause both sets of motors to move together, useful
+		*	for driving in straight lines. Pressing a second "backwards" trigger will cause all of the 
+		*	motors to reverse, and the controls to switch sides, essentially switchin the "back" and "front"
+		*	of the robot.
+		*/
 
 		// STRAIGHT DRIVE
 		// If button 3 on joystick 1 is pressed
@@ -76,12 +89,24 @@ task main()
 			motor[mDriveRight] = (abs(stickValueRightForward) > 15)? stickToMotorValue(stickValueRightForward) : 0;
 		}
 
+		
+		/*
+		*	MANIPULATORS
+		*	There are currently five manipulators on our robot: a brush to collect balls, a lift to
+		*	raise them up to the higher goals, a grabber to attach to the rolling goals, and a horizontal
+		*	slide to extend the rolling goals out so they can be tipped over. The vertical lift, horizontal
+		*	lift, and the tipping portion of the grabber all have different positions they can toggle
+		*	between. Those are controlled in the checkButtons task.
+		*/
+		
 		// BRUSH
 		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
 		motor[mBrush] = (buttonBrush)? 100 : 0;
 
 		// LIFT
+		// The lift control is handled by checkButtons. This block of code only keeps the motors moving
+		// towards their target.
 		// If the motor encoder value is less than the target, move the lift up
 		// If the motor encoder vlaue us greater than the target, move the lift down
 		if(nMotorEncoder[mLift] < liftEncoderTarget)

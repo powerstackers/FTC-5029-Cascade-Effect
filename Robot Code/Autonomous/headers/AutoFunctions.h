@@ -16,6 +16,7 @@
 #include "CollisionAvoidance.h"
 #include "JoystickDriver.c"
 
+
 /*
 *
 *	FUNCTION PROTOTYPES
@@ -34,17 +35,15 @@ void turnDegrees(float degrees, int speed);
 // Game functions
 char findGoalOrientation();
 void dropBall(int height);
+void kickstand();
 
 
 /*
-*
-*	GLOBAL VARIABLES
-*
+*	GLOBAL CONSTANTS
 */
-// ultrasonicThreshold
-// Detecting an ultrasonic sensor value below this threshold will cause the robot to stop
-int ultrasonicThreshold = 30;
-int ticksPerRevolution = 1120;	// Each time the motors turn once, they turn 1120 ticks
+// Each time the motors turn once, they turn 1120 ticks
+#define ticksPerRevolution 1120
+
 
 /*
 *	allMotorsTo
@@ -103,11 +102,8 @@ void goTicks(long ticks, int speed, bool collisionAvoidance)
 		ticks, ((ticks>0)?"forward":"backward"), speed);
 
 	// Turn on collision avoidance, if it's asked for
-	if(collisionAvoidance)
-	{
+	if(collisionAvoidance&&!avoidanceActive)
 		StartTask(avoidCollision);
-		writeDebugStreamLine("\t-- COLLISION AVOIDANCE ACTIVATED --");
-	}
 
 	// If we are going forwards or backwards
 	if(ticks > 0)
@@ -131,11 +127,8 @@ void goTicks(long ticks, int speed, bool collisionAvoidance)
 	writeDebugStreamLine("\tMoving done");
 
 	// Turn off the collision avoidance system
-	if(collisionAvoidance)
-	{
-		StopTask(avoidCollision);
-		writeDebugStreamLine("\t-- COLLISION AVOIDANCE DEACTIVATED --");
-	}
+	if(collisionAvoidance&&avoidanceActive)
+		avoidanceActive = false;
 }
 
 /*
@@ -150,7 +143,7 @@ void turnDegrees(float degrees, int speed)
 	// Store the number of degrees turned so far
 	float degreesSoFar = 0;
 
-	// Take an initial reading of the accelerometer sensor
+	// Take an initial reading of the gyro sensor
 	const float initialTurnReading = currentGryoReading();
 
 	// Decide whether to turn clockwise or counterclockwise
@@ -178,6 +171,7 @@ void turnDegrees(float degrees, int speed)
 
 	}
 
+	// Stop all drive motors
 	driveMotorsTo(0);
 
 	writeDebugStreamLine("\tTurning done");
@@ -189,24 +183,24 @@ void turnDegrees(float degrees, int speed)
 */
 void initializeRobot()
 {
-	// Clear the nxt screen
+	// Clear the NXT screen
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\textBatt lvl: %2.2f volts\n\tNXT Batt lvl: %2.2f volts", 
+	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts\n\tNXT Battery level: %2.2f volts", 
 		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
 	
 	// If battery levels are low, notify the operators
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
+		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f", 
 			externalBatteryAvg / 1000.0);
 		
 		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
-		nxtDisplayTextLine(4, "MAIN BATT LOW");
+		nxtDisplayCenteredTextLine(4, "MAIN BATT LOW");
 	}
 	else
 		nxtDisplayTextLine(4, "MAIN BATT GOOD");
@@ -215,7 +209,7 @@ void initializeRobot()
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
 			nAvgBatteryLevel / 1000.0);
-		nxtDisplayTextLine(5, "NXT BATT LOW");
+		nxtDisplayCenteredTextLine(5, "NXT BATT LOW");
 	}
 	else
 		nxtDisplayTextLine(5, "NXT BATT GOOD");
@@ -255,6 +249,8 @@ char findGoalOrientation()
 	gettingIr = true;
 	wait10Msec(35);
 
+	// Read the average of the two IR seekers.
+	// We may remove one sensor in the future.
 	int avg = ((irStrengthLeft + irStrengthRight) / 2);
 	
 	// Find the difference between the average IR signal and the known values for each position
@@ -282,10 +278,18 @@ char findGoalOrientation()
 
 /*
 *	dropBall
-*	Droping the balls into the tubes
+*	Dropping the balls into the tubes
 */
 void dropBall(int height)
 {
+
+}
+
+/*
+*	kickstand
+*	Knock over the kickstand
+*/
+void kickstand(){
 
 }
 

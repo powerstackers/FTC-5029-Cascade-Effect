@@ -1,7 +1,7 @@
 /*
 *	Menu.h
 *	Displays a dynamic menu to choose different options and settings
-*	during the autonomous period. All settings are saved to a struct
+*	during the autonomous period. All settings are saved to variables
 *	which can be accessed from another program.
 *
 *	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
@@ -18,15 +18,30 @@
 #include "JoystickDriver.c"
 
 // Constants store the button values
+// Left and right arrow buttons are used to switch a value, the orange button is used to move to 
+// the next option in the list.
 #define NEXT_BUTTON kRightButton
 #define PREV_BUTTON kLeftButton
 #define DOWN_BUTTON kEnterButton
 
 // Constants to store settings values
-#define OFFENSIVE_MODE 	'o'
-#define DEFENSIVE_MODE 	'd'
-#define STARTING_RAMP 	'r'
-#define STARTING_FLOOR 	'f'
+#define OFFENSIVE_MODE 	true
+#define DEFENSIVE_MODE 	false
+#define STARTING_RAMP 	true
+#define STARTING_FLOOR 	false
+
+/*
+*	SETTINGS OPTIONS
+*	These options are edited using this menu program. The options control different tasks and functions
+*	during the autonomous position, such as starting position on the field, which strategy we want to use,
+*	etc. The options and settings are used by the main autonomous program to make decisions.
+*/
+bool 	startingPosition 	= STARTING_RAMP;
+bool 	offenseOrDefense 	= OFFENSIVE_MODE;
+float 	waitTime			= 0.0;
+
+// Maximum allowable wait time
+float 	maxDelay = 15.0;
 
 /*
 *	switchBool
@@ -59,14 +74,15 @@ void switchFloat(float* in, TButtons activeButton, float incrementValue){
 		*in = *in - incrementValue;
 }
 
-// Settings options
-bool 	startingPosition;
-bool 	offenseOrDefense;
-float 	waitTime;
-float 	maxDelay = 15.0;
 
+/*
+*	printSettings
+*	Print the chosen settings to the debug stream for review.
+*/
 void printSettings(){
-
+	writeDebugStreamLine("\tStarting position: %s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
+	writeDebugStreamLine("\tGame mode: %s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
+	writeDebugStreamLine("\tWait time: %2.2f", waitTime);
 }
 
 void runMenu(){
@@ -76,13 +92,8 @@ void runMenu(){
 
 	// Declare variables to store the currently selected variable,
 	// And the data type of the currently selected variable
-	unsigned void* currVar;
-	char currType;
-
-	// Initialize the current variable to startNear,
-	// And initialize the data type to "boolean"
-	currVar = &startingPosition;
-	currType = 'b';
+	unsigned void* currVar 	= &startingPosition;
+	char currType 			= 'b';
 
 	// Run this code until the ready button is pressed
 	bool ready = false;

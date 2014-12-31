@@ -14,7 +14,17 @@
 
 #include "Sensors.h"
 
+/*
+*	GLOBAL CONSTANTS
+*/
+// Detecting an ultrasonic sensor value below this threshold will cause the robot to stop
+#define ultrasonicThreshold 30
+
+/*
+*	FUNCTION PROTOTYPES
+*/
 task avoidCollision();
+void detour();
 
 /*
 *	detour
@@ -28,10 +38,13 @@ void detour(){
 *	avoidCollision
 *	Actively watch the ultrasonic sensors to prevent a collision
 */
+bool avoidanceActive = false;
 task avoidCollision()
 {
-	// Loop forever
-	while(true)
+	avoidanceActive = true;
+	writeDebugStreamLine("--COLLISION AVOIDANCE ACTIVATED--")
+	// Loop until the switch is thrown
+	while(avoidanceActive)
 	{
 		// If the ultrasonic sensors detect an obstruction
 		if(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold)
@@ -63,4 +76,6 @@ task avoidCollision()
 			nxtDisplayCenteredTextLine(7, "--CLEARED--");
 		}
 	}
+	
+	writeDebugStreamLine("--COLLISION AVOIDANCE DEACTIVATED--");
 }

@@ -44,8 +44,8 @@ int accelZ = 0;
 
 
 // Flag to turn on or off the IR seekers
-bool gettingIr = false;
-bool gettingSmux = false;
+bool gettingIr 		= false;
+bool gettingSmux 	= false;
 
 /*
 *	getIRDirection
@@ -132,8 +132,8 @@ task getSmux()
 	// Print a ready message
 	writeDebugStreamLine("-- MULTIPLEXER SETUP READY --");
 
-	// Loop forever
-	while (true){
+	// Loop until the switch is pulled
+	while (gettingSmux){
 		// Only update the IR seeker variables when the IR seekers are turned on
 		// This keeps the debug stream clear
 		if(gettingIr){
