@@ -19,6 +19,7 @@
 */
 
 #include "headers/AutoFunctions.h"
+#include "headers/CascadeEffect.h"
 #include "headers/Menu.h"
 
 task main()
