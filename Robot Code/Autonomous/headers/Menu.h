@@ -11,7 +11,7 @@
 *	https://github.com/hprobotics/ftcresources/tree/master/AutonomousChooser
 *
 *	FTC Team #5029, The Powerstackers
-*	powerstackersftc.weebly.com
+*	powerstackersftc.com
 *	github.com/powerstackers
 */
 

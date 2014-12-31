@@ -6,7 +6,7 @@
 *	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION
 *
 *	FTC Team #5029, The Powerstackers
-*	powerstackersftc.weebly.com
+*	powerstackersftc.com
 *	github.com/powerstackers
 */
 
