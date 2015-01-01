@@ -14,12 +14,12 @@ This repository contains code for the 2014-15 F.I.R.S.T. Tech Challenge season. 
  - Terence Chu
  - David Lowe
 
-#Standard Model
+#Notable Features
 ---
+###Standard Model
 This season, we made the decision to use a custom standard model to control the physical setup of our robot. A standard model is a pre-defined motor and sensor setup, that can be used and reused over more than one robot. Our standard model can be found in /Robot Code/Autonomous/custom standard model. That folder also contains instructions for using the standard model.
 
-#Autonomous Menu
----
+###Autonomous Menu
 Before the autonomous period, we use a custom-designed user interface to choose options and settings for what we would like to do during the autonomous period. The menu uses the NXT screen and buttons to get various choices and commands from the user, before the robot is left on the field. This system is modified from the one created by FTC team 3785, the Beastie Bots, found [here](https://github.com/hprobotics/ftcresources/tree/master/AutonomousChooser).
 
 #Contact Us
