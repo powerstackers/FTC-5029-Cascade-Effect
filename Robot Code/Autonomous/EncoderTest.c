@@ -15,7 +15,7 @@
 *	Version 0.1
 */
 
-short motorUsing = mLift;
+short motorUsing = mDriveLeft;
 
 task main()
 {
