@@ -35,19 +35,68 @@
 
 task main()
 {
+
+	/*
+	*	INITIALIZATION AND SETUP
+	*	This first section gets the robot ready to start the match. It sets all the motor and servo
+	*	starting positions, and prints some diagnostic information to the NXT and the debug stream.
+	*/
+
 	writeDebugStreamLine("********************\n*\n*\tAUTONOMOUS PROGRAM\n*\n********************");
-	initializeRobot();
+	initializeRobot();	// Set the robot to its starting positions
+	
 	writeDebugStreamLine("Getting autonomous settings...");
-	runMenu();
+	runMenu();			// Get gameplay decisions from the operators
+	
 	writeDebugStreamLine("Waiting for start of match...");
 	nxtDisplayCenteredBigTextLine(0, "AUTO");
 	nxtDisplayCenteredBigTextLine(2, "READY");
 	PlaySound(soundFastUpwardTones);
-	waitForStart();
+	waitForStart();		// Wait for the "starting gun" from the field control system
+	
 	nxtDisplayCenteredBigTextLine(2, "RUNNING");
 	PlaySound(soundUpwardTones);
-	//turnDegrees(20.0, 34);
-	//goTicks(30, 30, true);
-	findGoalOrientation();
+	
+	/*
+	*	GAMEPLAY
+	*	From this point on, the program is split into different sections based on the options chosen in
+	*	menu earlier. The two main options are the starting position and the game mode (offense or defense).
+	*/
+	
+	if(startingPosition==STARTING_RAMP){
+		/*
+		*	RAMP POSITION
+		*	Starting from this position means that you can only access the rolling goals and the kickstand.
+		*	In this position, offensive is mostly the only available game mode.
+		*/
+		if(offenseOrDefense==OFFENSIVE_MODE){
+			// Go straight down the ramp
+			StartTask(avoidCollsision);
+			goTicks(100);
+			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
+			
+			// Do stuff
+			
+		}else if(offenseOrDefense==DEFENSIVE_MODE){
+		
+		}
+	
+	
+	
+	}else if(startingPosition==STARTING_FLOOR){
+		/*
+		*	FLOOR POSITION
+		*	In this position, you are available to block the other team, or to score in the high goal. You
+		*	also have easy access to the kickstand. It is easiest to determine the orientation of the
+		*	center tower from this position.
+		*/
+		
+		if(offenseOrDefense==OFFENSIVE_MODE){
+			char goalFacing = findGoalOrientation();
+		}else if(offenseOrDefense==DEFENSIVE_MODE){
+			
+		}
+	
+	}
 
 }

@@ -37,12 +37,12 @@
 */
 
 // Utility functions
-void allMotorsTo(int i);
-void driveMotorsTo(int i);
-long inchesToTicks(float inches);
-float ticksToInches(long ticks);
-void goTicks(long ticks, int speed/*, bool collisionAvoidance*/);
-void turnDegrees(float degrees, int speed);
+void 	allMotorsTo(int i);
+void 	driveMotorsTo(int i);
+long 	inchesToTicks(float inches);
+float 	ticksToInches(long ticks);
+void	goTicks(long ticks, int speed/*, bool collisionAvoidance*/);
+void 	turnDegrees(float degrees, int speed);
 
 
 /*
