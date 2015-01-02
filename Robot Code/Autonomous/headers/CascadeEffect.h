@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 2 2015
+*	Version 0.2
 */
 
 #include "AutoFunctions.h"
@@ -107,7 +107,8 @@ char findGoalOrientation()
 
 	// Read the average of the two IR seekers.
 	// We may remove one sensor in the future.
-	int avg = ((irStrengthLeft + irStrengthRight) / 2);
+	//int avg = ((irStrengthLeft + irStrengthRight) / 2);
+	int avg = getIRStrength();
 	
 	// Find the difference between the average IR signal and the known values for each position
 	int diffA = abs(avg - positionA);

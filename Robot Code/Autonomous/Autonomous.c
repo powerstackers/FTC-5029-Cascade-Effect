@@ -25,8 +25,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 2 2015
+*	Version 0.2
 */
 
 #include "headers/AutoFunctions.h"
@@ -42,7 +42,7 @@ task main()
 	*	starting positions, and prints some diagnostic information to the NXT and the debug stream.
 	*/
 
-	writeDebugStreamLine("********************\n*\n*\tAUTONOMOUS PROGRAM\n*\n********************");
+	writeDebugStreamLine("*\n*\tAUTONOMOUS PROGRAM\n*");
 	initializeRobot();	// Set the robot to its starting positions
 	
 	writeDebugStreamLine("Getting autonomous settings...");

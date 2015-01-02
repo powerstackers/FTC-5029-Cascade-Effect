@@ -113,7 +113,7 @@ bool avoidanceActive = false;
 task avoidCollision()
 {
 	avoidanceActive = true;
-	writeDebugStreamLine("--COLLISION AVOIDANCE ACTIVATED--");
+	writeDebugStreamLine("-- COLLISION AVOIDANCE ACTIVATED --");
 	// Loop until the switch is thrown
 	while(avoidanceActive)
 	{
@@ -148,5 +148,5 @@ task avoidCollision()
 		}
 	}
 
-	writeDebugStreamLine("--COLLISION AVOIDANCE DEACTIVATED--");
+	writeDebugStreamLine("-- COLLISION AVOIDANCE DEACTIVATED --");
 }

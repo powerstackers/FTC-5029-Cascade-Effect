@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 2 2015
+*	Version 0.2
 */
 
 #pragma once
@@ -36,20 +36,27 @@
 // Sensor addresses may change throughout the season
 #define irLeft  	msensor_S2_1		// IR Sensor, NXT 2 MUX 1
 #define irRight  	msensor_S2_2 		// IR Sensor, NXT 2 MUX 2
+
+#define infraRed	msensor_S2_1		// Lone IR sensor, NXT 2 MUX 1
+
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
 #define ultraFront	msensor_S2_4		// Ultrasonic, NXT 2 MUX 4
+#define ultraTube	msensor_S2_2		// Ultrasonic, NXT 2 MUX 2
 
 #define sGyro		S3					// Gyroscope, NXT 3
 
 // Variables to store the sensor values
 int irStrengthLeft;
 int irDirectionLeft;
-
 int irStrengthRight;
 int irDirectionRight;
 
+int irStrength;
+int irDirection;
+
 int ultraStrengthBack;
 int ultraStrengthFront;
+int ultraStrengthTube;
 
 int accelX = 0;
 int accelY = 0;
@@ -112,6 +119,19 @@ void getIREnhanced(tSensors sensor)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
 }
 
+
+/*
+*	IR detection functions for the lone IR seeker. No arguments.
+*
+*/
+int getIRDirection(){
+	return HTIRS2readACDir(infraRed);
+}
+
+int getIRStrength(){
+	getIRStrength(infraRed);
+}
+
 /*
 *	getAccelOrientation
 *	Get the accelerometer orientation on all axes
@@ -130,7 +150,10 @@ void getAccelOrientation(tSensors sensor)
 	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
 }
 
-
+/*
+*	currentGryoReading
+*	Return the current angular velocity as measure by the gyroscope
+*/
 float currentGryoReading()
 {
 	return HTGYROreadRot(sGyro);
@@ -143,7 +166,7 @@ task getSmux()
 {
 	gettingSmux = true;
 	// Print a ready message
-	writeDebugStreamLine("--MULTIPLEXER ACTIVATED--");
+	writeDebugStreamLine("-- MULTIPLEXER ACTIVATED --");
 
 	// Loop until the switch is pulled
 	while (gettingSmux){
@@ -155,9 +178,10 @@ task getSmux()
 		}
 
 		// Store the values of the ultrasonic sensors
-		ultraStrengthBack = USreadDist(ultraBack);
-		ultraStrengthFront = USreadDist(ultraFront);
+		ultraStrengthBack 	= USreadDist(ultraBack);
+		ultraStrengthFront 	= USreadDist(ultraFront);
+		ultraStrengthTube 	= USreadDist(ultraTube);
 	}
 	
-	writeDebugStreamLine("--MULTIPLEXER DEACTIVATED--");
+	writeDebugStreamLine("-- MULTIPLEXER DEACTIVATED --");
 }

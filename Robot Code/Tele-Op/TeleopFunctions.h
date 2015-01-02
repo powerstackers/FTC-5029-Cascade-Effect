@@ -302,7 +302,7 @@ task checkButtons()
 	char horizPosition 	= 'b';
 	char grabPosition 	= 'b';
 
-	writeDebugStreamLine("Button checker activated");
+	writeDebugStreamLine("-- BUTTON CHECKER ACTIVATED --");
 
 	while(checkingButtons)
 	{
@@ -342,5 +342,5 @@ task checkButtons()
 		}
 	}
 
-	writeDebugStreamLine("Button checker deactivated");
+	writeDebugStreamLine("-- BUTTON CHECKER DEACTIVATED --");
 }
