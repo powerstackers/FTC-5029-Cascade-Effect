@@ -15,15 +15,20 @@
 *	Version 0.1
 */
 
+short motorUsing = mLift;
+
 task main()
 {
-	nMotorEncoder[mDriveLeft] = 0;
-	motor[mDriveLeft] = -100;
+	nMotorEncoder[motorUsing] = 0;
+	motor[motorUsing] = 100;
 
-	while(nMotorEncoder[mDriveLeft] < 1120) // While encoder ticks less than 1120 (full rotation)
+	while(abs(nMotorEncoder[motorUsing]) < 1120) // While encoder ticks less than 1120 (full rotation)
 	{
-		nxtDisplayTextLine(0, "%d", nMotorEncoder[mDriveLeft]);
+		nxtDisplayTextLine(0, "%d", nMotorEncoder[motorUsing]);
 	}
 
-	motor[mDriveLeft] = 0;
+	motor[motorUsing] = 0;
+	writeDebugStreamLine("ENCODER: %d", nMotorEncoder[motorUsing]);
+	PlaySound(soundBeepBeep);
+	wait10Msec(300);
 }
