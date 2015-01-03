@@ -22,15 +22,26 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 3 2015
+*	Version 0.2
 */
 
 // Include a file to handle messages from the joystick
 #include "JoystickDriver.c"
 #include "TeleopFunctions.h"
 
-#define liftMotorSpeed 50
+#define liftMotorSpeed 	50
+#define tipMotorSpeed 	25
+
+#define grabberOpenPosition		0
+#define grabberClosedPosition	0
+#define flapLeftOpenPosition	0
+#define flapLeftClosedPosition	0
+#define flapRightOpenPosition	0
+#define flapRightClosedPosition	0
+#define trapDoorOpenPosition	0
+#define trapDoorClosedPosition	0
+
 
 task main()
 {
@@ -58,6 +69,11 @@ task main()
 	PlaySound(soundUpwardTones);
 
 	StartTask(checkButtons);
+
+	bool buttonGrabJustPushed 		= false;
+	bool buttonTrapDoorJustPushed 	= false;
+	bool buttonFlapJustPushed 		= false;
+
 
 	// Loop forever
 	while(true)
@@ -121,7 +137,7 @@ task main()
 		// The lift control is handled by checkButtons. This block of code only keeps the motors moving
 		// towards their target.
 		// If the motor encoder value is less than the target, move the lift up
-		// If the motor encoder vlaue us greater than the target, move the lift down
+		// If the motor encoder value us greater than the target, move the lift down
 		if(nMotorEncoder[mLift] < liftEncoderTarget)
 		{
 			motor[mLift] = 	liftMotorSpeed;
@@ -137,8 +153,8 @@ task main()
 
 		// HORIZONTAL LIFT
 		// If the motor encoder value is less than the target, move the horizontal lift out
-		// If the motor encoder vlaue us greater than the target, move the horizontal lift in
-		/*if(nMotorEncoder[mHoriz] < horizEncoderTarget)
+		// If the motor encoder value us greater than the target, move the horizontal lift in
+		if(nMotorEncoder[mHoriz] < horizEncoderTarget)
 		{
 			motor[mHoriz] = liftMotorSpeed;
 		}
@@ -149,7 +165,57 @@ task main()
 		else
 		{
 			motor[mHoriz] = 0;
-		}*/
+		}
+
+		// TIPPER
+		// If the motor encoder value is less than the target, tip the motor up
+		// If the motor encoder value is greater than the target, tip the motor down
+		if(nMotorEncoder[mTip] < tipEncoderTarget)
+		{
+			motor[mTip] = tipMotorSpeed;
+		}
+		else if(nMotorEncoder[mTip] > tipEncoderTarget)
+		{
+			motor[mTip] = -1 * tipMotorSpeed;
+		}
+		else
+		{
+			motor[mTip] = 0;
+		}
+
+		/*
+		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable
+		*	that stores whether the button for it is currently pushed. We also have one that stores whether
+		*	that button has been /recently/ pushed. If the button gets pushed, and has not been recently pushed,
+		*	the servo will switch to the opposite position. If it is pushed and it /has/ been recently pushed,
+		*	then nothing will happen. When the button is released, then the "recently pushed" indicator is
+		*	turned off. Using this system, the servo will only change position once per button press.
+		*/
+		// GRABBER
+		if(buttonGrabToggle && !buttonGrabJustPushed){
+			servo[rGrabber] = (servo[rGrabber]==grabberOpenPosition)?grabberClosedPosition:grabberOpenPosition;
+			buttonGrabJustPushed = true;
+		}
+		if(!buttonGrabToggle)
+			buttonGrabJustPushed = false;
+
+		// FLAPS
+		if(buttonFlaps && !buttonFlapJustPushed){
+			servo[rFlapLeft] 	= (servo[rFlapLeft]==flapLeftOpenPosition)	?flapLeftClosedPosition:flapLeftOpenPosition;
+			servo[rFlapRight] 	= (servo[rFlapRight]==flapRightOpenPosition)?flapRightClosedPosition:flapRightOpenPosition;
+			buttonFlapJustPushed = true;
+		}
+		if(!buttonFlaps)
+			buttonFlapJustPushed = false;
+
+
+		// TRAPDOOR
+		if(buttonTrapDoor && !buttonTrapDoorJustPushed){
+			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
+			buttonTrapDoorJustPushed = true;
+		}
+		if(!buttonTrapDoor)
+			buttonTrapDoorJustPushed = false;
 
 	}
 }

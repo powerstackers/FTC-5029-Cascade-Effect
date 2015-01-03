@@ -46,21 +46,27 @@ task checkButtons();
 *	represented by a boolean representing "pressed" or "not pressed."
 */
 
-short stickValueLeftForward;
-short stickValueRightForward;
-short stickValueLeftBackward;
-short stickValueRightBackward;
+short 	stickValueLeftForward;
+short 	stickValueRightForward;
+short 	stickValueLeftBackward;
+short 	stickValueRightBackward;
 
-bool buttonStraightDrive;
-bool buttonBackwardsDrive;
-bool buttonBrush;
+bool 	buttonStraightDrive;
+bool 	buttonBackwardsDrive;
+bool 	buttonBrush;
 
-bool buttonLiftUp;
-bool buttonLiftDown;
-bool buttonLiftOut;
-bool buttonLiftIn;
-bool buttonGrabUp;
-bool buttonGrabDown;
+bool 	buttonLiftUp;
+bool 	buttonLiftDown;
+bool 	buttonLiftOut;
+bool 	buttonLiftIn;
+
+bool 	buttonGrabToggle;
+bool 	buttonTipUp;
+bool 	buttonTipDown;
+
+bool	buttonTrapDoor;
+bool	buttonFlaps;
+bool	buttonDeflectorToggle;
 
 /*
 *	ENCODER TARGETS
@@ -83,15 +89,15 @@ bool buttonGrabDown;
 #define horizTargetMed 		3
 #define horizTargetFar 		4
 
-#define grabTargetBase 		1
-#define grabTargetLow 		2
-#define grabTargetMed 		3
-#define grabTargetHigh 		4
+#define tipTargetBase 		1
+#define tipTargetLow 		2
+#define tipTargetMed 		3
+#define tipTargetHigh 		4
 
 // Long integers store the current target
 long liftEncoderTarget 	= 0;
 long horizEncoderTarget = 0;
-long grabEncoderTarget 	= 0;
+long tipEncoderTarget 	= 0;
 
 
 /*
@@ -100,6 +106,7 @@ long grabEncoderTarget 	= 0;
 */
 void getCustomJoystickSettings ()
 {
+	// Player 1
 	stickValueRightForward 	= joystick.joy1_y2;				// Driver 1 right stick
 	stickValueLeftForward 	= joystick.joy1_y1;				// Driver 1 left stick
 	stickValueRightBackward = -1 * joystick.joy1_y1;		// Driver 1 left stick
@@ -108,12 +115,18 @@ void getCustomJoystickSettings ()
 	buttonStraightDrive 	= (joy1Btn(3) == 1);			// Driver 1 red button
 	buttonBackwardsDrive 	= (joy1Btn(5) == 1);			// Driver 1 left shoulder
 	buttonBrush 			= (joy1Btn(6) == 1);			// Driver 1 rigth shoulder
+
+	// Player 2
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
 	buttonLiftDown 			= (joy2Btn(8) == 1);			// Driver 2 right trigger
 	buttonLiftOut 			= (joy2Btn(5) == 1);			// Driver 2 left shoulder
 	buttonLiftIn 			= (joy2Btn(7) == 1);			// Driver 2 left trigger
-	buttonGrabUp 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
-	buttonGrabDown 			= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
+	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
+	buttonTipUp				= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
+	buttonTipDown 			= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
+	buttonTrapDoor			= (joy2Btn(2) == 1);			// Driver 2 green button
+	buttonFlaps				= (joy2Btn(4) == 1);			// Driver 2 yellow button
+	buttonDeflectorToggle	= (joy2Btn(3) == 1);			// Driver 2 red button
 
 }
 
@@ -203,7 +216,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'h';
 				// Determine which encoder target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
-					((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
+					((encoderTarget == &horizEncoderTarget)?horizTargetFar : tipTargetHigh);
 				writeDebugStreamLine("Switched encoder target to HIGH");
 			}
 			else
@@ -229,7 +242,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'm';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
-					((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
+					((encoderTarget == &horizEncoderTarget)?horizTargetMed : tipTargetMed);
 				writeDebugStreamLine("Encoder target set to MED");
 			}
 			break;
@@ -239,7 +252,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'h';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
-					((encoderTarget == &horizEncoderTarget)?horizTargetFar : grabTargetHigh);
+					((encoderTarget == &horizEncoderTarget)?horizTargetFar : tipTargetHigh);
 				writeDebugStreamLine("Encoder target set to HIGH");
 			}
 			else if(upOrDown == 'd')
@@ -247,7 +260,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'l';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
-					((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
+					((encoderTarget == &horizEncoderTarget)?horizTargetClose : tipTargetLow);
 				writeDebugStreamLine("Encoder target set to LOW");
 			}
 			break;
@@ -257,7 +270,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'm';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
-					((encoderTarget == &horizEncoderTarget)?horizTargetMed : grabTargetMed);
+					((encoderTarget == &horizEncoderTarget)?horizTargetMed : tipTargetMed);
 				writeDebugStreamLine("Encoder target set to MED");
 			}
 			else if(upOrDown == 'd')
@@ -265,7 +278,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'b';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetBase :
-					((encoderTarget == &horizEncoderTarget)?horizTargetBase : grabTargetBase);
+					((encoderTarget == &horizEncoderTarget)?horizTargetBase : tipTargetBase);
 				writeDebugStreamLine("Encoder target set to BASE");
 			}
 			break;
@@ -275,7 +288,7 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 				*currentPosition = 'l';
 				// Determine which target we are switching, and change the appropriate variable
 				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
-					((encoderTarget == &horizEncoderTarget)?horizTargetClose : grabTargetLow);
+					((encoderTarget == &horizEncoderTarget)?horizTargetClose : tipTargetLow);
 				writeDebugStreamLine("Encoder target set to LOW");
 			}
 			else if(upOrDown == 'd')
@@ -300,7 +313,7 @@ task checkButtons()
 	// Initialize them to their starting positions
 	char liftPosition 	= 'b';
 	char horizPosition 	= 'b';
-	char grabPosition 	= 'b';
+	char tipPosition 	= 'b';
 
 	writeDebugStreamLine("-- BUTTON CHECKER ACTIVATED --");
 
@@ -330,15 +343,15 @@ task checkButtons()
 			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'd');
 		}
 
-		if(buttonGrabUp)
+		if(buttonTipUp)
 		{
-			writeDebugStreamLine("Switching grabber encoder target");
-			switchEncoderTarget(&grabEncoderTarget, &grabPosition, 'u');
+			writeDebugStreamLine("Switching tip encoder target");
+			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'u');
 		}
-		else if(buttonGrabDown)
+		else if(buttonTipDown)
 		{
-			writeDebugStreamLine("Switching grabber encoder target");
-			switchEncoderTarget(&grabEncoderTarget, &grabPosition, 'd');
+			writeDebugStreamLine("Switching tip encoder target");
+			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'd');
 		}
 	}
 
