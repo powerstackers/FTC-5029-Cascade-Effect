@@ -1,7 +1,7 @@
 /*
 *	CascadeEffect.h
 *	Game-specific functions and routines for the 2014-15 FTC game.
-*	Copyright (C) 2015 Jonathan Thomas
+*	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by

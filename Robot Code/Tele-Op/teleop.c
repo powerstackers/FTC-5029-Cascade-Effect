@@ -4,7 +4,7 @@
 /*
 *	Teleop.c
 *	Code to run our robot during the telop period.
-*	Copyright (C) 2015 Jonathan Thomas
+*	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 
 task main()
 {
-	writeDebugStreamLine("*\n*\tTELE-OP\n*");
+	writeDebugStreamLine("Tele-op  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
 	writeDebugStreamLine("Initializing robot...");
 
 	// Sets robot to starting positions

@@ -7,7 +7,7 @@
 *	The program will run a menu used to determine the different settings that the users want.
 *	It will then make decisions based on those settings.
 *	Options include defensive or offensive, starting position, wait times, etc.
-*	Copyright (C) 2015 Jonathan Thomas
+*	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ task main()
 	*	starting positions, and prints some diagnostic information to the NXT and the debug stream.
 	*/
 
-	writeDebugStreamLine("*\n*\tAUTONOMOUS PROGRAM\n*");
+	writeDebugStreamLine("Autonomous  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
 	initializeRobot();	// Set the robot to its starting positions
 	
 	writeDebugStreamLine("Getting autonomous settings...");

@@ -3,7 +3,7 @@
 *	Displays a dynamic menu to choose different options and settings
 *	during the autonomous period. All settings are saved to variables
 *	which can be accessed from another program.
-*	Copyright (C) 2015 Jonathan Thomas
+*	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
