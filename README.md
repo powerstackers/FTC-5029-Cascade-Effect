@@ -5,8 +5,9 @@ This repository contains code for the 2014-15 F.I.R.S.T. Tech Challenge season. 
 #Contributors
 ---
 ###Students
-  - Josh Schuh
-  - Cate Thomas
+  - Joshua Schuh
+  - Catherine Thomas
+  - Caroline Thomas
   - Pedro Campos
  
 ###Mentors
@@ -24,7 +25,7 @@ Before the autonomous period, we use a custom-designed user interface to choose 
 
 #Contact Us
 ---
-You can get in touch with the PowerStackers on our website, [powerstackersftc.com](powerstackersftc.com), or at our email, powerstackers@gmail.com. We are always available to help out and answer questions!
+You can get in touch with the PowerStackers on our website, [powerstackersftc.com](powerstackersftc.com), or at our email, powerstackers@gmail.com. You could also find us on social media; we are on (Facebook)[https://www.facebook.com/PowerStackersFTC], (YouTube)[https://www.youtube.com/user/fllpowerstackers], (Instagram)[https://instagr.in/u/powerstackers5029], and (Twitter)[https://twitter.com/powerstackers]. We are always available to help out and answer questions!
 
 #License
 ---
