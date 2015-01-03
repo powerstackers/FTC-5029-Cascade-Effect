@@ -30,21 +30,28 @@
 #include "JoystickDriver.c"
 #include "TeleopFunctions.h"
 
-#define liftMotorSpeed 	50
-#define tipMotorSpeed 	25
+/*
+*	MACROS
+*	Macros to store motor speeds, encoder targets, and other values that do not change.
+*/
+#define liftMotorSpeed 	50			// Speed of the vertical lift motor
+#define horizMotorSpeed	50			// Speed of the horizontal slide motor
+#define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
+#define brushMotorSpeed	50			// Speed of the brush motor
 
-#define grabberOpenPosition		0
-#define grabberClosedPosition	0
-#define flapLeftOpenPosition	0
-#define flapLeftClosedPosition	0
-#define flapRightOpenPosition	0
-#define flapRightClosedPosition	0
-#define trapDoorOpenPosition	0
-#define trapDoorClosedPosition	0
+#define grabberOpenPosition		0	// Rolling goal grabber open servo position
+#define grabberClosedPosition	0	// Rolling goal grabber closed servo position
+#define flapLeftOpenPosition	0	// Left side flap open servo position
+#define flapLeftClosedPosition	0	// Left side flap closed servo position
+#define flapRightOpenPosition	0	// Right side flap open servo position
+#define flapRightClosedPosition	0	// Right side flap closed servo position
+#define trapDoorOpenPosition	0	// Trap door open servo position
+#define trapDoorClosedPosition	0	// Trap door closed servo position
 
 
 task main()
 {
+	// Write a copyright and welcome message to the debug stream
 	writeDebugStreamLine("Tele-op  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
 	writeDebugStreamLine("Initializing robot...");
 
@@ -54,7 +61,7 @@ task main()
 	// Play a ready sound
 	PlaySound(soundFastUpwardTones);
 
-	// Print a teleop ready message
+	// Print a teleop ready message to the NXT LCD screen
 	nxtDisplayBigTextLine(1, "TELEOP");
 	nxtDisplayBigTextLine(3, "READY");
 
@@ -68,22 +75,28 @@ task main()
 	// Play a starting sound
 	PlaySound(soundUpwardTones);
 
+	// Watch the buttons on joystick 2 and update motor encoder targets based on button input
 	StartTask(checkButtons);
 
+	// Store whether buttons have been recently pushed (at the start, no buttons have been recently pushed)
 	bool buttonGrabJustPushed 		= false;
 	bool buttonTrapDoorJustPushed 	= false;
 	bool buttonFlapJustPushed 		= false;
 
 
-	// Loop forever
+	/*
+	*	MAIN LOOP
+	*	Watch the joysticks, and update motors and servos accordingly
+	*/
+	// Loop until the Field Control System kills the process
 	while(true)
 	{
 		// Updates joystick settings
 		getJoystickSettings(joystick);
-
 		getCustomJoystickSettings ();
 
-		printInfoToScreen();
+		// Print diagnostic information to the NXT LCD screen
+		//printInfoToScreen();
 
 		/*
 		*	DRIVE TRAIN
@@ -95,7 +108,7 @@ task main()
 		*/
 
 		// STRAIGHT DRIVE
-		// If button 3 on joystick 1 is pressed
+		// If button 3  (red button) on joystick 1 is pressed
 		if(buttonStraightDrive)
 		{
 			// Move both motors together based on left joystick position
@@ -103,15 +116,16 @@ task main()
 			motor[mDriveRight] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
 		}
 		// BACKWARDS DRIVE
-		// If button 5 is pressed
+		// If button 5 (left shoulder) on joystick 1 is pressed
 		else if(buttonBackwardsDrive)
 		{
+			// Switch and reverse the drive motors, effectively flipping the front and back of the robot
 			motor[mDriveLeft] = (abs(stickValueLeftBackward) > 15)? stickToMotorValue(stickValueLeftBackward) : 0;
 			motor[mDriveRight] = (abs(stickValueRightBackward) > 15)? stickToMotorValue(stickValueRightBackward) : 0;
 		}
 		// NORMAL DRIVE
-		// If button 3 on joystick 1 is not pressed
-		else
+		// If button 3 (red button) on joystick 1 is not pressed AND button 5 (left shoulder) on joystick 1 is not pressed
+		else if(!buttonStraightDrive && !buttonBackwardsDrive)
 		{
 			// Move the motors independently, based on their respective joystick positions
 			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
@@ -129,13 +143,15 @@ task main()
 		*/
 
 		// BRUSH
-		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
+		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
-		motor[mBrush] = (buttonBrush)? 100 : 0;
+		// The brush can only spin in one direction.
+		motor[mBrush] = (buttonBrush)? brushMotorSpeed : 0;
+
+		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
+		// This block of code keeps the motors moving towards their target.
 
 		// LIFT
-		// The lift control is handled by checkButtons. This block of code only keeps the motors moving
-		// towards their target.
 		// If the motor encoder value is less than the target, move the lift up
 		// If the motor encoder value us greater than the target, move the lift down
 		if(nMotorEncoder[mLift] < liftEncoderTarget)
@@ -189,7 +205,8 @@ task main()
 		*	that button has been /recently/ pushed. If the button gets pushed, and has not been recently pushed,
 		*	the servo will switch to the opposite position. If it is pushed and it /has/ been recently pushed,
 		*	then nothing will happen. When the button is released, then the "recently pushed" indicator is
-		*	turned off. Using this system, the servo will only change position once per button press.
+		*	turned off.
+		*	Using this system, the servo will only change position once per button press.
 		*/
 		// GRABBER
 		if(buttonGrabToggle && !buttonGrabJustPushed){
@@ -218,4 +235,5 @@ task main()
 			buttonTrapDoorJustPushed = false;
 
 	}
-}
+	// END MAIN LOOP
+}	// END TASK MAIN
