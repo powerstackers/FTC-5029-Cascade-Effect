@@ -20,7 +20,7 @@
 *	powerstackersftc.com
 *	github.com/powerstackers
 *	January 2 2015
-*	Version 0.2
+*	Version 0.3
 */
 
 #include "AutoFunctions.h"
@@ -71,7 +71,7 @@ void initializeRobot()
 		nxtDisplayTextLine(5, "NXT BATT GOOD");
 
 	// Start getting information from the multiplexer(s)
-	StartTask(getSmux);
+	//StartTask(getSmux);
 
 	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
@@ -99,11 +99,11 @@ char findGoalOrientation()
 	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
 	
 	// Make sure the multiplexer is turned on
-	if(!gettingSmux)
-		StartTask(getSmux);
+	//if(!gettingSmux)
+		//StartTask(getSmux);
 	// Turn on IR capabilities, and give the sensors time to start up
-	gettingIr = true;
-	wait10Msec(35);
+	//gettingIr = true;
+	//wait10Msec(35);
 
 	// Read the average of the two IR seekers.
 	// We may remove one sensor in the future.

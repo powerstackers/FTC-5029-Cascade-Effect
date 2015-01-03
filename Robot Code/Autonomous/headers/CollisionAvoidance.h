@@ -21,8 +21,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 2 2015
+*	Version 0.2
 */
 
 #include "Sensors.h"
@@ -70,7 +70,7 @@ void detour(){
 	long encoderBeforeTurn1 = nMotorEncoder[mDriveLeft];
 
 	// While the back sensor detects an obstruction, keep moving
-	while(ultraStrengthBack<ultrasonicThreshold)
+	while(getUltraStrength(ultraBack)<ultrasonicThreshold)
 		driveMotorsTo(25);
 	driveMotorsTo(0);
 
@@ -83,7 +83,7 @@ void detour(){
 	long encoderBeforeParallel = nMotorEncoder[mDriveLeft];
 
 	// Moving past the obstruction. While the sensor detects an object, keep going.
-	while(ultraStrengthBack<ultrasonicThreshold)
+	while(getUltraStrength(ultraBack)<ultrasonicThreshold)
 		driveMotorsTo(25);
 	driveMotorsTo(0);
 
@@ -118,7 +118,7 @@ task avoidCollision()
 	while(avoidanceActive)
 	{
 		// If the ultrasonic sensors detect an obstruction
-		if(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold)
+		if(getUltraStrength(ultraFront))
 		{
 			// Stop all motors
 			allMotorsTo(0);

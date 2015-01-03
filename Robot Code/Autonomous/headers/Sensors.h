@@ -40,13 +40,15 @@
 #define infraRed	msensor_S2_1		// Lone IR sensor, NXT 2 MUX 1
 
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
-#define ultraFront	msensor_S2_4		// Ultrasonic, NXT 2 MUX 4
-#define ultraTube	msensor_S2_2		// Ultrasonic, NXT 2 MUX 2
+#define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
+#define ultraTube	msensor_S2_4		// Ultrasonic, NXT 2 MUX 2
 
 #define sGyro		S3					// Gyroscope, NXT 3
 
 // Variables to store the sensor values
-int irStrengthLeft;
+
+// I'm experimenting with using functions to return these values
+/*int irStrengthLeft;
 int irDirectionLeft;
 int irStrengthRight;
 int irDirectionRight;
@@ -57,7 +59,7 @@ int irDirection;
 int ultraStrengthBack;
 int ultraStrengthFront;
 int ultraStrengthTube;
-
+*/
 int accelX = 0;
 int accelY = 0;
 int accelZ = 0;
@@ -99,26 +101,32 @@ int getIRStrength(tMUXSensor sensor)
 *	getIREnhanced
 *	Get both the direction and the strength of the chosen IR seeker
 */
+/*
 void getIREnhanced(tMUXSensor sensor)
 {
 	if(sensor == irLeft)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
 	else if(sensor == irRight)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
+	else if(sensor == infraRed)
+		HTIRS2readEnhanced(sensor, irDirection, irStrength);
 }
+*/
 
 /*
 *	getIREnhanced
 *	Get both the direction and the strength of the chosen IR seeker
 */
-void getIREnhanced(tSensors sensor)
+/*void getIREnhanced(tSensors sensor)
 {
 	if(sensor == irLeft)
 		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
 	else if(sensor == irRight)
 		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
+	else if(sensor == infraRed)
+		HTIRS2readEnhanced(sensor, irDirection, irStrength);
 }
-
+*/
 
 /*
 *	IR detection functions for the lone IR seeker. No arguments.
@@ -129,7 +137,7 @@ int getIRDirection(){
 }
 
 int getIRStrength(){
-	getIRStrength(infraRed);
+	return getIRStrength(infraRed);
 }
 
 /*
@@ -158,11 +166,20 @@ float currentGryoReading()
 {
 	return HTGYROreadRot(sGyro);
 }
+
+/*
+*	getUltraStrength
+*	Return the strength of the given ultrasonic sensor
+*/
+int getUltraStrength(tMUXSensor sensor){
+	return USreadDist(sensor);
+}
+
 /*
 *	getSmux
 *	Update all the sensors attached to a multiplexer
 */
-task getSmux()
+/*task getSmux()
 {
 	gettingSmux = true;
 	// Print a ready message
@@ -170,18 +187,16 @@ task getSmux()
 
 	// Loop until the switch is pulled
 	while (gettingSmux){
-		// Only update the IR seeker variables when the IR seekers are turned on
-		// This keeps the debug stream clear
-		if(gettingIr){
-			getIREnhanced(irLeft);
-			getIREnhanced(irRight);
-		}
+		// Read from all infrared sensors
+		//getIREnhanced(irLeft);
+		//getIREnhanced(irRight);
+		getIREnhanced(infraRed);
 
 		// Store the values of the ultrasonic sensors
 		ultraStrengthBack 	= USreadDist(ultraBack);
 		ultraStrengthFront 	= USreadDist(ultraFront);
 		ultraStrengthTube 	= USreadDist(ultraTube);
 	}
-	
+
 	writeDebugStreamLine("-- MULTIPLEXER DEACTIVATED --");
-}
+}*/
