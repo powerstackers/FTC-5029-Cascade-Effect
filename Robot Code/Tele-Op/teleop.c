@@ -79,7 +79,7 @@ task main()
 		// BRUSH
 		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
-		motor[mBrush] = (buttonBrush)? 100 : 0;
+		motor[mBrush] = (buttonBrush)? -100 : 0;
 
 		// LIFT
 		// If the motor encoder value is less than the target, move the lift up
