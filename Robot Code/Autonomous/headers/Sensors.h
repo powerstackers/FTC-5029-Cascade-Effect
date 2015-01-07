@@ -19,24 +19,22 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 2 2015
-*	Version 0.2
+*	January 6 2015
+*	Version 0.3
 */
 
+// Include guard. This file can only be included one time.
 #pragma once
 
 // Include files to handle the multiplexer and all the different sensors
-#include "hitechnic-sensormux.h"
-#include "hitechnic-irseeker-v2.h"
-#include "hitechnic-accelerometer.h"
-#include "hitechnic-gyro.h"
-#include "lego-ultrasound.h"
+#include "../drivers/hitechnic-sensormux.h"
+#include "../drivers/hitechnic-irseeker-v2.h"
+#include "../drivers/hitechnic-accelerometer.h"
+#include "../drivers/hitechnic-gyro.h"
+#include "../drivers/lego-ultrasound.h"
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
-#define irLeft  	msensor_S2_1		// IR Sensor, NXT 2 MUX 1
-#define irRight  	msensor_S2_2 		// IR Sensor, NXT 2 MUX 2
-
 #define infraRed	msensor_S2_1		// Lone IR sensor, NXT 2 MUX 1
 
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
@@ -44,30 +42,6 @@
 #define ultraTube	msensor_S2_4		// Ultrasonic, NXT 2 MUX 2
 
 #define sGyro		S3					// Gyroscope, NXT 3
-
-// Variables to store the sensor values
-
-// I'm experimenting with using functions to return these values
-/*int irStrengthLeft;
-int irDirectionLeft;
-int irStrengthRight;
-int irDirectionRight;
-
-int irStrength;
-int irDirection;
-
-int ultraStrengthBack;
-int ultraStrengthFront;
-int ultraStrengthTube;
-*/
-int accelX = 0;
-int accelY = 0;
-int accelZ = 0;
-
-
-// Flag to turn on or off the IR seekers
-bool gettingIr 		= false;
-bool gettingSmux 	= false;
 
 /*
 *	getIRDirection
@@ -98,37 +72,6 @@ int getIRStrength(tMUXSensor sensor)
 }
 
 /*
-*	getIREnhanced
-*	Get both the direction and the strength of the chosen IR seeker
-*/
-/*
-void getIREnhanced(tMUXSensor sensor)
-{
-	if(sensor == irLeft)
-		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(sensor == irRight)
-		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
-	else if(sensor == infraRed)
-		HTIRS2readEnhanced(sensor, irDirection, irStrength);
-}
-*/
-
-/*
-*	getIREnhanced
-*	Get both the direction and the strength of the chosen IR seeker
-*/
-/*void getIREnhanced(tSensors sensor)
-{
-	if(sensor == irLeft)
-		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(sensor == irRight)
-		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
-	else if(sensor == infraRed)
-		HTIRS2readEnhanced(sensor, irDirection, irStrength);
-}
-*/
-
-/*
 *	IR detection functions for the lone IR seeker. No arguments.
 *
 */
@@ -138,24 +81,6 @@ int getIRDirection(){
 
 int getIRStrength(){
 	return getIRStrength(infraRed);
-}
-
-/*
-*	getAccelOrientation
-*	Get the accelerometer orientation on all axes
-*/
-void getAccelOrientation(tMUXSensor sensor)
-{
-	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
-}
-
-/*
-*	getAccelOrientation
-*	Get the accelerometer orientation on all axes
-*/
-void getAccelOrientation(tSensors sensor)
-{
-	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
 }
 
 /*
@@ -174,29 +99,3 @@ float currentGryoReading()
 int getUltraStrength(tMUXSensor sensor){
 	return USreadDist(sensor);
 }
-
-/*
-*	getSmux
-*	Update all the sensors attached to a multiplexer
-*/
-/*task getSmux()
-{
-	gettingSmux = true;
-	// Print a ready message
-	writeDebugStreamLine("-- MULTIPLEXER ACTIVATED --");
-
-	// Loop until the switch is pulled
-	while (gettingSmux){
-		// Read from all infrared sensors
-		//getIREnhanced(irLeft);
-		//getIREnhanced(irRight);
-		getIREnhanced(infraRed);
-
-		// Store the values of the ultrasonic sensors
-		ultraStrengthBack 	= USreadDist(ultraBack);
-		ultraStrengthFront 	= USreadDist(ultraFront);
-		ultraStrengthTube 	= USreadDist(ultraTube);
-	}
-
-	writeDebugStreamLine("-- MULTIPLEXER DEACTIVATED --");
-}*/

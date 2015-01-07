@@ -27,14 +27,14 @@
 *	FUNCTION PROTOTYPES
 */
 
-void initializeRobot();
-void getCustomJoystickSettings ();
+void initializeRobot();				// Put the robot into its starting positions
+void getCustomJoystickSettings ();	// Fetch all the custom joystick configurations
 
 // Utility functions
-void printInfoToScreen();
-short stickToMotorValue(short stickValue);
-void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown);
-task checkButtons();
+void printInfoToScreen();			// Print diagnostic informaiton to the NXT LCD screen
+short stickToMotorValue(short stickValue);	// Convert a stick value to a motor power level
+void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown);	// Change an encoder target
+task checkButtons();				// Loop through and update encoder targets
 
 /*
 *	JOYSTICK ASSIGNMENTS
@@ -79,6 +79,7 @@ bool	buttonFlaps;			// Flaps button
 */
 
 // Macros to store the different available positions
+// I'll put the actual numbers in later
 #define liftTargetBase 		1	// Vertical lift targets
 #define liftTargetLow 		2
 #define liftTargetMed 		3
@@ -96,9 +97,9 @@ bool	buttonFlaps;			// Flaps button
 #define tipTargetHigh 		4
 
 // Long integers store the current target
-long liftEncoderTarget 	= 0;
-long horizEncoderTarget = 0;
-long tipEncoderTarget 	= 0;
+long liftEncoderTarget 	= 0;	// Vertical lift
+long horizEncoderTarget = 0;	// Horizontal lift
+long tipEncoderTarget 	= 0;	// Tipper
 
 /*
 *	getCustomJoystickSettings

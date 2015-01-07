@@ -28,11 +28,11 @@
 *	Version 0.1
 */
 
+// Include file to handle messages from the joysticks
 #include "JoystickDriver.c"
 
 // Constants store the button values
-// Left and right arrow buttons are used to switch a value, the orange button is used to move to 
-// the next option in the list.
+// Left and right arrow buttons are used to switch a value, the orange button is used to move to the next option in the list.
 #define NEXT_BUTTON kRightButton
 #define PREV_BUTTON kLeftButton
 #define DOWN_BUTTON kEnterButton
@@ -49,9 +49,9 @@
 *	during the autonomous position, such as starting position on the field, which strategy we want to use,
 *	etc. The options and settings are used by the main autonomous program to make decisions.
 */
-bool 	startingPosition 	= STARTING_RAMP;
-bool 	offenseOrDefense 	= OFFENSIVE_MODE;
-float 	waitTime			= 0.0;
+bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
+bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
+float 	waitTime			= 0.0;				// Delay time
 
 // Maximum allowable wait time
 float 	maxDelay = 15.0;
