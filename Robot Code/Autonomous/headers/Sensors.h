@@ -58,16 +58,20 @@ int getIRDirection(tMUXSensor sensor)
 */
 int getIRStrength(tMUXSensor sensor)
 {
+	// Declare variables to store the overall strength and the strengths of each individual detector
 	int strength;
 	int acS1, acS2, acS3, acS4, acS5 = 0;
 
+	// Read the strength of all the detectors
 	HTIRS2readAllACStrength(sensor, acS1, acS2, acS3, acS4, acS5 );
 
+	// Figure out which detector had the highest reading, and set that to the overall strength
 	strength = (acS1 > acS2) ? acS1 : acS2;
 	strength = (strength > acS3) ? strength : acS3;
 	strength = (strength > acS4) ? strength : acS4;
 	strength = (strength > acS5) ? strength : acS5;
 
+	// Return the overall strength
 	return 	strength;
 }
 

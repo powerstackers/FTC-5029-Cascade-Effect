@@ -41,7 +41,7 @@ void 	allMotorsTo(int i);
 void 	driveMotorsTo(int i);
 long 	inchesToTicks(float inches);
 float 	ticksToInches(long ticks);
-void	goTicks(long ticks, int speed/*, bool collisionAvoidance*/);
+void	goTicks(long ticks, int speed);
 void 	turnDegrees(float degrees, int speed);
 
 
@@ -80,8 +80,14 @@ void driveMotorsTo(int i)
 *	inchesToTicks
 *	Convert a distance in inches to a number of ticks
 */
+/*
+*	NEEDS
+*	MODIFIED
+*/
 long inchesToTicks(float inches)
 {
+	// Return the number of inches, multiplied by the number of ticks per 
+	//revolution divided by the circumference of the wheel
 	return (long) inches * (ticksPerRevolution/(4*PI));
 }
 
@@ -108,12 +114,9 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks %s at %d speed",
 		ticks, ((ticks>0)?"forward":"backward"), speed);
 
-	// Turn on collision avoidance, if it's asked for
-	/*if(collisionAvoidance&&!avoidanceActive)
-		StartTask(avoidCollision);
-		*/
-
 	// If we are going forwards or backwards
+	// A positive number of ticks to travel indicates we are moving fowards.
+	// A negative value indicates we are moving backwards.
 	if(ticks > 0)
 	{
 		// Set the drive motors to the given speed
@@ -132,12 +135,9 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Turn off the drive motors here
 		driveMotorsTo(0);
 	}
+	
+	// Write to the debug stream that we are done
 	writeDebugStreamLine("\tMoving done");
-
-	// Turn off the collision avoidance system
-	/*if(collisionAvoidance&&avoidanceActive)
-		avoidanceActive = false;
-		*/
 }
 
 /*
@@ -146,16 +146,19 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 */
 void turnDegrees(float degrees, int speed)
 {
+	// Notify the drivers of what we are about to do
 	writeDebugStreamLine("-- TURNING --\n\tTurning %d degrees at %d speed",
 		degrees, speed);
 
-	// Store the number of degrees turned so far
+	// Store the number of degrees turned so far, i.e., the difference of
+	// the current position and the starting position.
 	float degreesSoFar = 0;
 
-	// Take an initial reading of the gyro sensor
+	// Take an initial reading of the gyro sensor. This compensates for any initial spin the gyro may have.
 	const float initialTurnReading = currentGryoReading();
 
-	// Decide whether to turn clockwise or counterclockwise
+	// Decide whether to turn clockwise or counterclockwise.
+	// A positive degree target inmplies turning counterclockwise. A negative target implies clockwise.
 	if(degrees > 0)
 	{
 		motor[mDriveLeft] = -1 * speed;
@@ -167,15 +170,18 @@ void turnDegrees(float degrees, int speed)
 		motor[mDriveRight] = -1 * speed;
 	}
 
-	// For as long as the current degree measure doesn't equal the target
+	// For as long as the current degree measure doesn't equal the target. This will work in the clockwise and
+	// counterclockwise directions, since we are comparing the absolute values.
 	while(abs(degreesSoFar) < abs(degrees))
 	{
 		// 10 millisecond interval
 		wait10Msec(1);
 
+		// Calculate the gyro's angular velocity reading.
+		// The reading is given as the current sensor value, minus any initial spin that the gyro may have had.
 		float reading = currentGryoReading() - initialTurnReading;
 
-		// Gyro sensor returns an angular speed. Distance=rate*time
+		// Gyro sensor returns an angular speed. To calculate the distance, we multiply the rate by the time interval (.01 seconds).
 		degreesSoFar += reading * 0.01;
 
 	}
@@ -183,5 +189,6 @@ void turnDegrees(float degrees, int speed)
 	// Stop all drive motors
 	driveMotorsTo(0);
 
+	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done");
 }

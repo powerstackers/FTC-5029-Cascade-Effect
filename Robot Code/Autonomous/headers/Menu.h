@@ -104,16 +104,15 @@ void runMenu(){
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
-	// Declare variables to store the currently selected variable,
-	// And the data type of the currently selected variable
-	unsigned void* currVar 	= &startingPosition;
+	// Declare variables to store the currently selected variable, and the data type of the currently selected variable
+	unsigned void* currVar 	= &startingPosition;	// A void pointer can store any type of variable address
 	char currType 			= 'b';
 
-	// Run this code until the ready button is pressed
+	// Run this code until the ENTER button is pressed
 	bool ready = false;
 	while (!ready){
 
-		// If the delay is below zero, set it to zero
+		// If the delay is below zero, set it to zero (you can't wait negative 1 second)
 		if(waitTime < 0.0)
 			waitTime = 0.0;
 
@@ -127,23 +126,14 @@ void runMenu(){
 		nxtDisplayString(6, "Delay:      %2.1f", waitTime);
 
 		// Print a selection icon next to the active variable name
-		// Icon is 8 pixels high
+		// Icon is 7 pixels high
 		if(currVar == &startingPosition){
 			nxtDisplayStringAt(94, 63, "<");
 			nxtDisplayString(7,"     ENTER "); // The ready variable option has brackets around it
 		}else if(currVar == &offenseOrDefense){
 			nxtDisplayStringAt(94, 63, " ");
 			nxtDisplayStringAt(94, 55, "<");
-		}/*else if(currVar == &rampOtherSide){
-			nxtDisplayStringAt(94, 47, " ");
-			nxtDisplayStringAt(94, 39, "<");
-		}else if(currVar == &delay){
-			nxtDisplayStringAt(94, 39, " ");
-			nxtDisplayStringAt(94, 31, "<");
-		}else if(currVar == &forwardMotorRatio){
-			nxtDisplayStringAt(94, 31, " ");
-			nxtDisplayStringAt(94, 24, "<");
-		}*/else if(currVar == &waitTime){
+		}else if(currVar == &waitTime){
 			nxtDisplayStringAt(94, 55, " ");
 			nxtDisplayStringAt(94, 15, "<");
 		}else if(currVar == &ready){
@@ -151,8 +141,7 @@ void runMenu(){
 			nxtDisplayString(7, "    [ENTER]"); // The ready vairable option has brackets around it
 		}
 
-		// If the right or left arrow button is pressed on the NXT,
-		// Perform the appropriate action for the data type of the selected variable
+		// If the right or left arrow button is pressed on the NXT, perform the appropriate action for the data type of the selected variable
 		// Switching the ready variable will end the program
 		if(nNxtButtonPressed == NEXT_BUTTON ||
 			nNxtButtonPressed == PREV_BUTTON){
@@ -169,11 +158,10 @@ void runMenu(){
 			// Clear the timer. While the timer reads less than four seconds
 			// And any button is pressed, do nothing
 			ClearTimer(T1);
-			while(nNxtButtonPressed != kNoButton && time1[T1] <= 400){}
+			while(nNxtButtonPressed != kNoButton || time1[T1] <= 400){}
 		}
 
-		// If the orange button is pressed on the NXT,
-		// Switch the active variable to the next variable in the list
+		// If the orange button is pressed on the NXT, switch the active variable to the next variable in the list
 		if(nNxtButtonPressed == DOWN_BUTTON){
 			if(currVar == &startingPosition){
 				currVar = &offenseOrDefense;
@@ -187,24 +175,14 @@ void runMenu(){
 			}else if(currVar == &ready){
 				currVar = &startingPosition;
 				currType = 'b';
-			}/*else if(currVar == &delay){
-				currVar = &forwardMotorRatio;
-				currType = 'l';
-			}else if(currVar == &forwardMotorRatio){
-				currVar = &backwardMotorRatio;
-				currType = 'l';
-			}else if(currVar == &backwardMotorRatio){
-				currVar = &startNear;
-				currType = 'b';
-			}*/
+			}
 
 			// Play a short sound
 			PlaySound(soundBlip);
 
-			// Clear the timer. While the timer reads less than four seconds
-			// And any button is pressed, do nothing
+			// Clear the timer. Wait until no buttons are pressed or at least 400 milliseconds have passed
 			ClearTimer(T1);
-			while(nNxtButtonPressed != kNoButton && time1[T1] <= 400){}
+			while(nNxtButtonPressed != kNoButton || time1[T1] <= 400){}
 		}
 	}
 	// Clear the screen, and print all the settings decisions

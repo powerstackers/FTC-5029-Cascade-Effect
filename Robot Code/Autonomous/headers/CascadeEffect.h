@@ -39,7 +39,7 @@ void initializeRobot();
 */
 void initializeRobot()
 {
-	// Clear the NXT screen
+	// Turn of the diagnostic display from JoystickDriver.c, and clear the NXT screen
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
@@ -48,6 +48,7 @@ void initializeRobot()
 		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
 	
 	// If battery levels are low, notify the operators
+	// A battery level below 13 volts is considered low.
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f", 
@@ -59,8 +60,10 @@ void initializeRobot()
 		nxtDisplayCenteredTextLine(4, "MAIN BATT LOW");
 	}
 	else
+		// If the battery level is acceptable, print a Battery Good message
 		nxtDisplayTextLine(4, "MAIN BATT GOOD");
 
+	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
 	if(nAvgBatteryLevel < 7500){
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
@@ -68,14 +71,13 @@ void initializeRobot()
 		nxtDisplayCenteredTextLine(5, "NXT BATT LOW");
 	}
 	else
+		// If the battery level is acceptable, print a Battery Good message
 		nxtDisplayTextLine(5, "NXT BATT GOOD");
-
-	// Start getting information from the multiplexer(s)
-	//StartTask(getSmux);
 
 	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
 	
+	// When initialization is done, notify the drivers
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }
 
@@ -97,39 +99,32 @@ void initializeRobot()
 char findGoalOrientation()
 {
 	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
-	
-	// Make sure the multiplexer is turned on
-	//if(!gettingSmux)
-		//StartTask(getSmux);
-	// Turn on IR capabilities, and give the sensors time to start up
-	//gettingIr = true;
-	//wait10Msec(35);
 
-	// Read the average of the two IR seekers.
-	// We may remove one sensor in the future.
-	//int avg = ((irStrengthLeft + irStrengthRight) / 2);
+	// Read the average of the IR seeker
 	int avg = getIRStrength();
 	
 	// Find the difference between the average IR signal and the known values for each position
 	int diffA = abs(avg - positionA);
 	int diffB = abs(avg - positionB);
 	int diffC = abs(avg - positionC);
-	char facing;
 
 	// The lowest difference is the position the center goal is facing
-	if(diffA < diffB && diffA < diffC)
+	char facing;	// Create a variable to store the decision
+	if(diffA < diffB && diffA < diffC)		// If the difference in position a is lowest, the tower must be in position a
 		facing = CENTGOAL_POSITION_A;
-	else if(diffB < diffA && diffB < diffC)
+	else if(diffB < diffA && diffB < diffC)	// If the difference in position b is lowest, the tower must be in position b
 		facing = CENTGOAL_POSITION_B;
-	else
+	else									// If the tower isn't in position a or b, default to position c
 		facing = CENTGOAL_POSITION_C;
 		
-	// Print this information to the debug stream
-	writeDebugStreamLine("\tLeft:\t\t%d", irStrengthLeft);
-	writeDebugStreamLine("\tRight:\t\t%d", irStrengthRight);
-	writeDebugStreamLine("\tAverage:\t%d", avg);
+	// Print the IR reading, the differences, and the answer to the debug stream
+	writeDebugStreamLine("\tIR:\t%d", avg);
+	writeDebugStreamLine("\tdiifA:", diffA);
+	writeDebugStreamLine("\tdiffB:", diffB);
+	writeDebugStreamLine("\tdiffC:", diffC);
 	writeDebugStreamLine("\tThe thing is in position %c", facing);
 
+	// Return the direction that the center goal is facing
 	return facing;
 }
 

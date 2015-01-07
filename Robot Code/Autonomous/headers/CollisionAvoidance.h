@@ -25,6 +25,7 @@
 *	Version 0.2
 */
 
+// Include files to handle the sensors, and for basic utility functions
 #include "Sensors.h"
 #include "AutoFunctions.h"
 
@@ -66,7 +67,10 @@ void detour(){
 	// Turn 90 degrees counter-clockwise, now driving perpendicular to original path
 	turnDegrees(90.0, 30);
 
-	// Store the encoder value before moving clear of the obstruction
+	/*
+	*	FIRST MOTION
+	*/
+	// Store the encoder value before moving perpendicular clear of the obstruction
 	long encoderBeforeTurn1 = nMotorEncoder[mDriveLeft];
 
 	// While the back sensor detects an obstruction, keep moving
@@ -80,6 +84,11 @@ void detour(){
 	// Turn 90 degrees, now parallel to the original path, but moved over past the obstruction
 	turnDegrees(-90.0, 30);
 
+	/*
+	*	SECOND MOTION
+	*/
+	// Store the encoder value before moving parallel to the obstacle. This value will be added to the starting value
+	// to get the robot's navigation back on track.
 	long encoderBeforeParallel = nMotorEncoder[mDriveLeft];
 
 	// Moving past the obstruction. While the sensor detects an object, keep going.
@@ -87,10 +96,15 @@ void detour(){
 		driveMotorsTo(25);
 	driveMotorsTo(0);
 
+	// Calculate the number of encoder ticks it took to move parallel past the obstacle
 	long ticksParallel = nMotorEncoder[mDriveLeft] - encoderBeforeParallel;
 
+	// Turn back 90 degrees, now facing the wall and the obstruction
 	turnDegrees(-90.0, 30);
 
+	/*
+	*	THIRD MOTION
+	*/
 	// Moving perpendicular to the original path, back to the original heading
 	long encoderBeforeTurn2 = nMotorEncoder[mDriveLeft];
 	while(nMotorEncoder[mDriveLeft]<encoderBeforeTurn2+ticksTraveledPerpendicular)
@@ -109,11 +123,15 @@ void detour(){
 *	avoidCollision
 *	Actively watch the ultrasonic sensors to prevent a collision
 */
-bool avoidanceActive = false;
+bool avoidanceActive = false;	// Simple on/off switch for the task
 task avoidCollision()
 {
+	// Set the switch to the ON position
 	avoidanceActive = true;
+	
+	// Tell the drivers that the collision avoidance system is activated
 	writeDebugStreamLine("-- COLLISION AVOIDANCE ACTIVATED --");
+	
 	// Loop until the switch is thrown
 	while(avoidanceActive)
 	{
@@ -131,9 +149,6 @@ task avoidCollision()
 			nxtDisplayCenteredTextLine(6, "--!!COLLISION!!--");
 			nxtDisplayCenteredTextLine(7, "--!!DETECTED!!--");
 
-			// Wait until the ultrasonic sensors are clear
-			//while(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold){}
-
 			// Go around the obstruction
 			detour();
 
@@ -148,5 +163,6 @@ task avoidCollision()
 		}
 	}
 
+	// Notify the drivers when the collision avoiance system is deactivated
 	writeDebugStreamLine("-- COLLISION AVOIDANCE DEACTIVATED --");
 }
