@@ -7,33 +7,110 @@
 *	The program will run a menu used to determine the different settings that the users want.
 *	It will then make decisions based on those settings.
 *	Options include defensive or offensive, starting position, wait times, etc.
+*	Copyright (C) 2015 Powerstackers
 *
-*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
-*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
+*	January 2 2015
+*	Version 0.2
 */
 
 #include "headers/AutoFunctions.h"
+#include "headers/CascadeEffect.h"
 #include "headers/Menu.h"
 
 task main()
 {
-	writeDebugStreamLine("********************\n*\n*\tAUTONOMOUS PROGRAM\n*\n********************");
-	initializeRobot();
+
+	/*
+	*	INITIALIZATION AND SETUP
+	*	This first section gets the robot ready to start the match. It sets all the motor and servo
+	*	starting positions, and prints some diagnostic information to the NXT and the debug stream.
+	*/
+
+	// Print a copyright notice to the debug stream
+	writeDebugStreamLine("Autonomous  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
+	initializeRobot();	// Set the robot to its starting positions
+	
 	writeDebugStreamLine("Getting autonomous settings...");
-	runMenu();
+	runMenu();			// Get gameplay decisions from the operators
+	
+	// Notify the users that the program is ready and running
 	writeDebugStreamLine("Waiting for start of match...");
 	nxtDisplayCenteredBigTextLine(0, "AUTO");
 	nxtDisplayCenteredBigTextLine(2, "READY");
 	PlaySound(soundFastUpwardTones);
+	
+	// Wait for the "starting gun" from the field control system
 	waitForStart();
+	
+	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(2, "RUNNING");
 	PlaySound(soundUpwardTones);
-	//turnDegrees(20.0, 34);
-	//goTicks(30, 30, true);
-	findGoalOrientation();
+	
+	/*
+	*	GAMEPLAY
+	*	From this point on, the program is split into different sections based on the options chosen in
+	*	menu earlier. The two main options are the starting position and the game mode (offense or defense).
+	*/
+	
+	if(startingPosition==STARTING_RAMP){
+		/*
+		*	RAMP POSITION
+		*	Starting from this position means that you can only access the rolling goals and the kickstand.
+		*	In this position, offensive is mostly the only available game mode.
+		*/
+		
+		// OFFENSIVE MODE
+		if(offenseOrDefense==OFFENSIVE_MODE){
+			// Go straight down the ramp
+			StartTask(avoidCollsision);
+			goTicks(100);
+			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
+			
+			// Do stuff
+			
+		}
+		
+		// DEFENSIVE MODE
+		else if(offenseOrDefense==DEFENSIVE_MODE){
+		
+		}
+	
+	
+	
+	}else if(startingPosition==STARTING_FLOOR){
+		/*
+		*	FLOOR POSITION
+		*	In this position, you are available to block the other team, or to score in the high goal. You
+		*	also have easy access to the kickstand. It is easiest to determine the orientation of the
+		*	center tower from this position.
+		*/
+		
+		// OFFENSIVE MODE
+		if(offenseOrDefense==OFFENSIVE_MODE){
+			char goalFacing = findGoalOrientation();
+		}
+		
+		// DEFENSIVE MODE
+		else if(offenseOrDefense==DEFENSIVE_MODE){
+			
+		}
+	
+	}
 
 }

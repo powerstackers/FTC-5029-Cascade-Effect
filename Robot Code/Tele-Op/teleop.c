@@ -4,35 +4,70 @@
 /*
 *	Teleop.c
 *	Code to run our robot during the telop period.
+*	Copyright (C) 2015 Powerstackers
 *
-*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
-*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION.
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
+*	January 3 2015
+*	Version 0.2
 */
 
 // Include a file to handle messages from the joystick
 #include "JoystickDriver.c"
 #include "TeleopFunctions.h"
 
-#define liftMotorSpeed 50
+/*
+*	MACROS
+*	Macros to store motor speeds, encoder targets, and other values that do not change.
+*/
+#define liftMotorSpeed 	50			// Speed of the vertical lift motor
+#define horizMotorSpeed	50			// Speed of the horizontal slide motor
+#define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
+#define brushMotorSpeed	50			// Speed of the brush motor
+
+#define grabberOpenPosition		0	// Rolling goal grabber open servo position
+#define grabberClosedPosition	0	// Rolling goal grabber closed servo position
+#define flapLeftOpenPosition	0	// Left side flap open servo position
+#define flapLeftClosedPosition	0	// Left side flap closed servo position
+#define flapRightOpenPosition	0	// Right side flap open servo position
+#define flapRightClosedPosition	0	// Right side flap closed servo position
+#define trapDoorOpenPosition	0	// Trap door open servo position
+#define trapDoorClosedPosition	0	// Trap door closed servo position
+
 
 task main()
 {
+	// Write a copyright and welcome message to the debug stream
+	writeDebugStreamLine("Tele-op  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
+	writeDebugStreamLine("Initializing robot...");
+
 	// Sets robot to starting positions
 	initializeRobot();
 
 	// Play a ready sound
 	PlaySound(soundFastUpwardTones);
 
-	// Print a teleop ready message
+	// Print a teleop ready message to the NXT LCD screen
 	nxtDisplayBigTextLine(1, "TELEOP");
 	nxtDisplayBigTextLine(3, "READY");
 
 	// Wait for the start of the match
-	//waitForStart();
+	writeDebugStreamLine("\nWaiting for match start...\n");
+	waitForStart();
 
 	// Print a teleop running message
 	nxtDisplayBigTextLine(3, "RUNNING");
@@ -40,20 +75,40 @@ task main()
 	// Play a starting sound
 	PlaySound(soundUpwardTones);
 
+	// Watch the buttons on joystick 2 and update motor encoder targets based on button input
 	StartTask(checkButtons);
 
-	// Loop forever
+	// Store whether buttons have been recently pushed (at the start, no buttons have been recently pushed)
+	bool buttonGrabJustPushed 		= false;
+	bool buttonTrapDoorJustPushed 	= false;
+	bool buttonFlapJustPushed 		= false;
+
+
+	/*
+	*	MAIN LOOP
+	*	Watch the joysticks, and update motors and servos accordingly
+	*/
+	// Loop until the Field Control System kills the process
 	while(true)
 	{
 		// Updates joystick settings
 		getJoystickSettings(joystick);
-
 		getCustomJoystickSettings ();
 
-		printInfoToScreen();
+		// Print diagnostic information to the NXT LCD screen
+		//printInfoToScreen();
+
+		/*
+		*	DRIVE TRAIN
+		*	Our drive train consists of two sets of two motors, one on the left, and one on the right.
+		*	Pressing the "Straight Drive" button will cause both sets of motors to move together, useful
+		*	for driving in straight lines. Pressing a second "backwards" trigger will cause all of the
+		*	motors to reverse, and the controls to switch sides, essentially switchin the "back" and "front"
+		*	of the robot.
+		*/
 
 		// STRAIGHT DRIVE
-		// If button 3 on joystick 1 is pressed
+		// If button 3  (red button) on joystick 1 is pressed
 		if(buttonStraightDrive)
 		{
 			// Move both motors together based on left joystick position
@@ -61,29 +116,48 @@ task main()
 			motor[mDriveRight] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
 		}
 		// BACKWARDS DRIVE
-		// If button 5 is pressed
+		// If button 5 (left shoulder) on joystick 1 is pressed
 		else if(buttonBackwardsDrive)
 		{
+			// Switch and reverse the drive motors, effectively flipping the front and back of the robot
 			motor[mDriveLeft] = (abs(stickValueLeftBackward) > 15)? stickToMotorValue(stickValueLeftBackward) : 0;
 			motor[mDriveRight] = (abs(stickValueRightBackward) > 15)? stickToMotorValue(stickValueRightBackward) : 0;
 		}
 		// NORMAL DRIVE
-		// If button 3 on joystick 1 is not pressed
-		else
+		// If button 3 (red button) on joystick 1 is not pressed AND button 5 (left shoulder) on joystick 1 is not pressed
+		else if(!buttonStraightDrive && !buttonBackwardsDrive)
 		{
 			// Move the motors independently, based on their respective joystick positions
 			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
 			motor[mDriveRight] = (abs(stickValueRightForward) > 15)? stickToMotorValue(stickValueRightForward) : 0;
 		}
 
+
+		/*
+		*	MANIPULATORS
+		*	There are currently five manipulators on our robot: a brush to collect balls, a lift to
+		*	raise them up to the higher goals, a grabber to attach to the rolling goals, and a horizontal
+		*	slide to extend the rolling goals out so they can be tipped over. The vertical lift, horizontal
+		*	lift, and the tipping portion of the grabber all have different positions they can toggle
+		*	between. Those are controlled in the checkButtons task.
+		*/
+
 		// BRUSH
-		// If button 6 on joystick 1 is pressed, set the brush motor to full power.
+		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
 		// If it is not pressed, set the brush motor to 0.
+<<<<<<< HEAD
 		motor[mBrush] = (buttonBrush)? -100 : 0;
+=======
+		// The brush can only spin in one direction.
+		motor[mBrush] = (buttonBrush)? brushMotorSpeed : 0;
+
+		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
+		// This block of code keeps the motors moving towards their target.
+>>>>>>> origin/master
 
 		// LIFT
 		// If the motor encoder value is less than the target, move the lift up
-		// If the motor encoder vlaue us greater than the target, move the lift down
+		// If the motor encoder value us greater than the target, move the lift down
 		if(nMotorEncoder[mLift] < liftEncoderTarget)
 		{
 			motor[mLift] = 	liftMotorSpeed;
@@ -99,8 +173,8 @@ task main()
 
 		// HORIZONTAL LIFT
 		// If the motor encoder value is less than the target, move the horizontal lift out
-		// If the motor encoder vlaue us greater than the target, move the horizontal lift in
-		/*if(nMotorEncoder[mHoriz] < horizEncoderTarget)
+		// If the motor encoder value us greater than the target, move the horizontal lift in
+		if(nMotorEncoder[mHoriz] < horizEncoderTarget)
 		{
 			motor[mHoriz] = liftMotorSpeed;
 		}
@@ -111,7 +185,59 @@ task main()
 		else
 		{
 			motor[mHoriz] = 0;
-		}*/
+		}
+
+		// TIPPER
+		// If the motor encoder value is less than the target, tip the motor up
+		// If the motor encoder value is greater than the target, tip the motor down
+		if(nMotorEncoder[mTip] < tipEncoderTarget)
+		{
+			motor[mTip] = tipMotorSpeed;
+		}
+		else if(nMotorEncoder[mTip] > tipEncoderTarget)
+		{
+			motor[mTip] = -1 * tipMotorSpeed;
+		}
+		else
+		{
+			motor[mTip] = 0;
+		}
+
+		/*
+		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable
+		*	that stores whether the button for it is currently pushed. We also have one that stores whether
+		*	that button has been /recently/ pushed. If the button gets pushed, and has not been recently pushed,
+		*	the servo will switch to the opposite position. If it is pushed and it /has/ been recently pushed,
+		*	then nothing will happen. When the button is released, then the "recently pushed" indicator is
+		*	turned off.
+		*	Using this system, the servo will only change position once per button press.
+		*/
+		// GRABBER
+		if(buttonGrabToggle && !buttonGrabJustPushed){
+			servo[rGrabber] = (servo[rGrabber]==grabberOpenPosition)?grabberClosedPosition:grabberOpenPosition;
+			buttonGrabJustPushed = true;
+		}
+		if(!buttonGrabToggle)
+			buttonGrabJustPushed = false;
+
+		// FLAPS
+		if(buttonFlaps && !buttonFlapJustPushed){
+			servo[rFlapLeft] 	= (servo[rFlapLeft]==flapLeftOpenPosition)	?flapLeftClosedPosition:flapLeftOpenPosition;
+			servo[rFlapRight] 	= (servo[rFlapRight]==flapRightOpenPosition)?flapRightClosedPosition:flapRightOpenPosition;
+			buttonFlapJustPushed = true;
+		}
+		if(!buttonFlaps)
+			buttonFlapJustPushed = false;
+
+
+		// TRAPDOOR
+		if(buttonTrapDoor && !buttonTrapDoorJustPushed){
+			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
+			buttonTrapDoorJustPushed = true;
+		}
+		if(!buttonTrapDoor)
+			buttonTrapDoorJustPushed = false;
 
 	}
-}
+	// END MAIN LOOP
+}	// END TASK MAIN

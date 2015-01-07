@@ -1,49 +1,47 @@
 /*
 *	Sensors.h
 *	Code to handle all the sensors during the autonomous period.
+*	Copyright (C) 2015 Powerstackers
 *
-*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
-*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION.
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
+*	January 6 2015
+*	Version 0.3
 */
 
+// Include guard. This file can only be included one time.
+#pragma once
+
 // Include files to handle the multiplexer and all the different sensors
-#include "hitechnic-sensormux.h"
-#include "hitechnic-irseeker-v2.h"
-#include "hitechnic-accelerometer.h"
-#include "hitechnic-gyro.h"
-#include "lego-ultrasound.h"
+#include "../drivers/hitechnic-sensormux.h"
+#include "../drivers/hitechnic-irseeker-v2.h"
+#include "../drivers/hitechnic-accelerometer.h"
+#include "../drivers/hitechnic-gyro.h"
+#include "../drivers/lego-ultrasound.h"
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
-#define irLeft  	msensor_S2_1		// IR Sensor, NXT 2 MUX 1
-#define irRight  	msensor_S2_2 		// IR Sensor, NXT 2 MUX 2
+#define infraRed	msensor_S2_1		// Lone IR sensor, NXT 2 MUX 1
+
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
-#define ultraFront	msensor_S2_4		// Ultrasonic, NXT 2 MUX 4
+#define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
+#define ultraTube	msensor_S2_4		// Ultrasonic, NXT 2 MUX 2
 
 #define sGyro		S3					// Gyroscope, NXT 3
-
-// Variables to store the sensor values
-int irStrengthLeft;
-int irDirectionLeft;
-
-int irStrengthRight;
-int irDirectionRight;
-
-int ultraStrengthBack;
-int ultraStrengthFront;
-
-int accelX = 0;
-int accelY = 0;
-int accelZ = 0;
-
-
-// Flag to turn on or off the IR seekers
-bool gettingIr = false;
-bool gettingSmux = false;
 
 /*
 *	getIRDirection
@@ -60,87 +58,48 @@ int getIRDirection(tMUXSensor sensor)
 */
 int getIRStrength(tMUXSensor sensor)
 {
+	// Declare variables to store the overall strength and the strengths of each individual detector
 	int strength;
 	int acS1, acS2, acS3, acS4, acS5 = 0;
 
+	// Read the strength of all the detectors
 	HTIRS2readAllACStrength(sensor, acS1, acS2, acS3, acS4, acS5 );
 
+	// Figure out which detector had the highest reading, and set that to the overall strength
 	strength = (acS1 > acS2) ? acS1 : acS2;
 	strength = (strength > acS3) ? strength : acS3;
 	strength = (strength > acS4) ? strength : acS4;
 	strength = (strength > acS5) ? strength : acS5;
 
+	// Return the overall strength
 	return 	strength;
 }
 
 /*
-*	getIREnhanced
-*	Get both the direction and the strength of the chosen IR seeker
+*	IR detection functions for the lone IR seeker. No arguments.
+*
 */
-void getIREnhanced(tMUXSensor sensor)
-{
-	if(sensor == irLeft)
-		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(sensor == irRight)
-		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
+int getIRDirection(){
+	return HTIRS2readACDir(infraRed);
+}
+
+int getIRStrength(){
+	return getIRStrength(infraRed);
 }
 
 /*
-*	getIREnhanced
-*	Get both the direction and the strength of the chosen IR seeker
+*	currentGryoReading
+*	Return the current angular velocity as measure by the gyroscope
 */
-void getIREnhanced(tSensors sensor)
-{
-	if(sensor == irLeft)
-		HTIRS2readEnhanced(sensor, irDirectionLeft, irStrengthLeft);
-	else if(sensor == irRight)
-		HTIRS2readEnhanced(sensor, irDirectionRight, irStrengthRight);
-}
-
-/*
-*	getAccelOrientation
-*	Get the accelerometer orientation on all axes
-*/
-void getAccelOrientation(tMUXSensor sensor)
-{
-	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
-}
-
-/*
-*	getAccelOrientation
-*	Get the accelerometer orientation on all axes
-*/
-void getAccelOrientation(tSensors sensor)
-{
-	HTACreadAllAxes(sensor, accelX, accelY, accelZ);
-}
-
-
 float currentGryoReading()
 {
 	return HTGYROreadRot(sGyro);
 }
+
 /*
-*	getSmux
-*	Update all the sensors attached to a multiplexer
+*	getUltraStrength
+*	Return the strength of the given ultrasonic sensor
 */
-task getSmux()
-{
-	gettingSmux = true;
-	// Print a ready message
-	writeDebugStreamLine("-- MULTIPLEXER SETUP READY --");
-
-	// Loop forever
-	while (true){
-		// Only update the IR seeker variables when the IR seekers are turned on
-		// This keeps the debug stream clear
-		if(gettingIr){
-			getIREnhanced(irLeft);
-			getIREnhanced(irRight);
-		}
-
-		// Store the values of the ultrasonic sensors
-		ultraStrengthBack = USreadDist(ultraBack);
-		ultraStrengthFront = USreadDist(ultraFront);
-	}
+int getUltraStrength(tMUXSensor sensor){
+	return USreadDist(sensor);
 }

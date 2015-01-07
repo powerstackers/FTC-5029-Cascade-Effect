@@ -1,51 +1,56 @@
 #pragma config(StandardModel, "PS CASCADE EFFECT")
+#pragma once
 
 /*
 *	AutoFunctions.h
 *	Functions and subroutines for use during the autonomous period.
+*	Copyright (C) 2015 Powerstackers
 *
-*	THIS CODE IS PROVIDED AS-IS AND WITHOUT WARRANTY.
-*	THIS CODE IS OPEN FOR DISTRIBUTION AND MODIFICATION.
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
+*	December 31 2014
+*	Version 0.1
 */
 
-
-
 #include "Sensors.h"
-#include "JoystickDriver.c"
+#include "../drivers/JoystickDriver.c"
+
 
 /*
 *
 *	FUNCTION PROTOTYPES
 *
 */
-void initializeRobot();
 
 // Utility functions
-task avoidCollision();
-void allMotorsTo(int i);
-void driveMotorsTo(int i);
-long inchesToTicks(float inches);
-float ticksToInches(long ticks);
-void goTicks(long ticks, int speed, bool collisionAvoidance);
-void turnDegrees(float degrees, int speed);
-
-char findGoalOrientation();
-void dropBall(int height);
+void 	allMotorsTo(int i);
+void 	driveMotorsTo(int i);
+long 	inchesToTicks(float inches);
+float 	ticksToInches(long ticks);
+void	goTicks(long ticks, int speed);
+void 	turnDegrees(float degrees, int speed);
 
 
 /*
-*
-*	GLOBAL VARIABLES
-*
+*	GLOBAL CONSTANTS
 */
-// ultrasonicThreshold
-// Detecting an ultrasonic sensor value below this threshold will cause the robot to stop
-int ultrasonicThreshold = 30;
-int ticksPerRevolution = 1120;	// Each time the motors turn once, they turn 1120 ticks
+// Each time the motors turn once, they turn 1120 ticks
+#define ticksPerRevolution 1120
+
 
 /*
 *	allMotorsTo
@@ -75,8 +80,14 @@ void driveMotorsTo(int i)
 *	inchesToTicks
 *	Convert a distance in inches to a number of ticks
 */
+/*
+*	NEEDS
+*	MODIFIED
+*/
 long inchesToTicks(float inches)
 {
+	// Return the number of inches, multiplied by the number of ticks per 
+	//revolution divided by the circumference of the wheel
 	return (long) inches * (ticksPerRevolution/(4*PI));
 }
 
@@ -93,7 +104,7 @@ float ticksToInches(long ticks)
 *	goTicks
 *	Move the robot a discance in ticks
 */
-void goTicks(long ticks, int speed, bool collisionAvoidance)
+void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 {
 	// Target encoder values for the left and right motors
 	long targetRight = nMotorEncoder[mDriveRight] + ticks;
@@ -103,14 +114,9 @@ void goTicks(long ticks, int speed, bool collisionAvoidance)
 	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks %s at %d speed",
 		ticks, ((ticks>0)?"forward":"backward"), speed);
 
-	// Turn on collision avoidance, if it's asked for
-	if(collisionAvoidance)
-	{
-		StartTask(avoidCollision);
-		writeDebugStreamLine("\t-- COLLISION AVOIDANCE ACTIVATED --");
-	}
-
 	// If we are going forwards or backwards
+	// A positive number of ticks to travel indicates we are moving fowards.
+	// A negative value indicates we are moving backwards.
 	if(ticks > 0)
 	{
 		// Set the drive motors to the given speed
@@ -129,14 +135,9 @@ void goTicks(long ticks, int speed, bool collisionAvoidance)
 		// Turn off the drive motors here
 		driveMotorsTo(0);
 	}
+	
+	// Write to the debug stream that we are done
 	writeDebugStreamLine("\tMoving done");
-
-	// Turn off the collision avoidance system
-	if(collisionAvoidance)
-	{
-		StopTask(avoidCollision);
-		writeDebugStreamLine("\t-- COLLISION AVOIDANCE DEACTIVATED --");
-	}
 }
 
 /*
@@ -145,16 +146,19 @@ void goTicks(long ticks, int speed, bool collisionAvoidance)
 */
 void turnDegrees(float degrees, int speed)
 {
+	// Notify the drivers of what we are about to do
 	writeDebugStreamLine("-- TURNING --\n\tTurning %d degrees at %d speed",
 		degrees, speed);
 
-	// Store the number of degrees turned so far
+	// Store the number of degrees turned so far, i.e., the difference of
+	// the current position and the starting position.
 	float degreesSoFar = 0;
 
-	// Take an initial reading of the accelerometer sensor
+	// Take an initial reading of the gyro sensor. This compensates for any initial spin the gyro may have.
 	const float initialTurnReading = currentGryoReading();
 
-	// Decide whether to turn clockwise or counterclockwise
+	// Decide whether to turn clockwise or counterclockwise.
+	// A positive degree target inmplies turning counterclockwise. A negative target implies clockwise.
 	if(degrees > 0)
 	{
 		motor[mDriveLeft] = -1 * speed;
@@ -166,143 +170,25 @@ void turnDegrees(float degrees, int speed)
 		motor[mDriveRight] = -1 * speed;
 	}
 
-	// For as long as the current degree measure doesn't equal the target
+	// For as long as the current degree measure doesn't equal the target. This will work in the clockwise and
+	// counterclockwise directions, since we are comparing the absolute values.
 	while(abs(degreesSoFar) < abs(degrees))
 	{
+		// 10 millisecond interval
 		wait10Msec(1);
 
+		// Calculate the gyro's angular velocity reading.
+		// The reading is given as the current sensor value, minus any initial spin that the gyro may have had.
 		float reading = currentGryoReading() - initialTurnReading;
 
+		// Gyro sensor returns an angular speed. To calculate the distance, we multiply the rate by the time interval (.01 seconds).
 		degreesSoFar += reading * 0.01;
 
 	}
 
+	// Stop all drive motors
 	driveMotorsTo(0);
 
-
-
+	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done");
-
-}
-
-/*
-*	initializeRobot
-*	Move all motors and servos to their starting positions
-*/
-void initializeRobot()
-{
-	// Clear the nxt screen
-	bDisplayDiagnostics = false;
-	eraseDisplay();
-
-	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\textBatt lvl: %2.2f volts\n\tNXT Batt lvl: %2.2f volts", externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
-	if(externalBatteryAvg < 13000){
-		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", externalBatteryAvg / 1000.0);
-		if(externalBatteryAvg/1000.0 < 0.0)
-			writeDebugStreamLine("\tCheck that main battery is connected.");
-		nxtDisplayTextLine(4, "MAIN BATT LOW");
-	}
-	else
-		nxtDisplayTextLine(4, "MAIN BATT GOOD");
-
-	if(nAvgBatteryLevel < 7500){
-		PlaySound(soundException);
-		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", nAvgBatteryLevel / 1000.0);
-		nxtDisplayTextLine(5, "NXT BATT LOW");
-	}
-	else
-		nxtDisplayTextLine(5, "NXT BATT GOOD");
-
-	// Start getting information from the multiplexer(s)
-	StartTask(getSmux);
-
-	writeDebugStreamLine("-- ROBOT INITIALIZED --");
-	allMotorsTo(0);
-}
-
-// Macros for the different positions of the center goal
-// The number indicates the average reading for the IR sensors when the goal is at that position
-#define positionA 80
-#define positionB 95
-#define positionC 70
-
-/*
-*	findGoalOrientation
-*	Find which way the center goal is facing
-*/
-char findGoalOrientation()
-{
-	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
-	if(!gettingSmux)
-		StartTask(getSmux);
-	gettingIr = true;
-	wait10Msec(35);
-
-	int avg = ((irStrengthLeft + irStrengthRight) / 2);
-	int diffA = abs(avg - positionA);
-	int diffB = abs(avg - positionB);
-	int diffC = abs(avg - positionC);
-	char facing;
-
-	if(diffA < diffB && diffA < diffC)
-		facing = 'a';
-	else if(diffB < diffA && diffB < diffC)
-		facing = 'b';
-	else
-		facing = 'c';
-	writeDebugStreamLine("\tLeft:\t\t%d", irStrengthLeft);
-	writeDebugStreamLine("\tRight:\t\t%d", irStrengthRight);
-	writeDebugStreamLine("\tAverage:\t%d", avg);
-	writeDebugStreamLine("\tThe thing is in position %c", facing);
-
-	return facing;
-}
-
-/*
-*	dropBall
-*	droping the balls into the tubes
-*/
-void dropBall(int height)
-{
-
-}
-
-
-/*
-*	avoidCollision
-*	Actively watch the ultrasonic sensors to prevent a collision
-*/
-task avoidCollision()
-{
-	// Loop forever
-	while(true)
-	{
-		// If the ultrasonic sensors detect an obstruction
-		if(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold)
-		{
-			// Stop all motors
-			allMotorsTo(0);
-			// Stop all processes except this one (temporarily stops all other functions)
-			hogCPU();
-
-			// Print a STOP message to the NXT screen and debug stream
-			writeDebugStreamLine("--!! OBSTRUCTION DETECTED !!--");
-			nxtDisplayCenteredBigTextLine(2, "SUSPENDED");
-			nxtDisplayCenteredTextLine(6, "--!!COLLISION!!--");
-			nxtDisplayCenteredTextLine(7, "--!!DETECTED!!--");
-
-			// Wait until the ultrasonic sensors are clear
-			while(ultraStrengthBack < ultrasonicThreshold || ultraStrengthFront < ultrasonicThreshold){}
-			// Start up all other processes again
-			releaseCPU();
-
-			// Write messages to the nxt and the debug stream
-			writeDebugStreamLine("--!! OBSTRUCTION CLEARED !!--");
-			nxtDisplayCenteredBigTextLine(2, "RUNNING");
-			nxtDisplayCenteredTextLine(6, "--OBSTRUCTION--");
-			nxtDisplayCenteredTextLine(7, "--CLEARED--");
-		}
-	}
 }

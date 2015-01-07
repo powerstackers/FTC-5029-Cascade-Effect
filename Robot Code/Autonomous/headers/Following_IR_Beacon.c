@@ -9,6 +9,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.weebly.com
 *	github.com/powerstackers
+*	December 31 2014
+*	Version 0.1
 */
 
 #pragma config(Hubs,  S1, HTMotor,  none,     none,     none)
