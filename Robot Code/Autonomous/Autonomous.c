@@ -33,6 +33,9 @@
 #include "headers/CascadeEffect.h"
 #include "headers/Menu.h"
 
+// Version number
+#define programVersion 0.2
+
 task main()
 {
 
@@ -43,56 +46,60 @@ task main()
 	*/
 
 	// Print a copyright notice to the debug stream
-	writeDebugStreamLine("Autonomous  Copyright (C) 2015  Powerstackers\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.");
-	initializeRobot();	// Set the robot to its starting positions
-	
+	writeDebugStreamLine("Autonomous v%1.1f", programVersion);
+	writeDebugStreamLine("Copyright (C) 2015  Powerstackers");
+	writeDebugStreamLine("This program comes with ABSOLUTELY NO WARRANTY.");
+	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.\n");
+
 	writeDebugStreamLine("Getting autonomous settings...");
 	runMenu();			// Get gameplay decisions from the operators
-	
+
+	initializeRobot();	// Set the robot to its starting positions
+
 	// Notify the users that the program is ready and running
 	writeDebugStreamLine("Waiting for start of match...");
 	nxtDisplayCenteredBigTextLine(0, "AUTO");
 	nxtDisplayCenteredBigTextLine(2, "READY");
 	PlaySound(soundFastUpwardTones);
-	
+
 	// Wait for the "starting gun" from the field control system
 	waitForStart();
-	
+
 	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(2, "RUNNING");
 	PlaySound(soundUpwardTones);
-	
+
 	/*
 	*	GAMEPLAY
 	*	From this point on, the program is split into different sections based on the options chosen in
 	*	menu earlier. The two main options are the starting position and the game mode (offense or defense).
 	*/
-	
+
 	if(startingPosition==STARTING_RAMP){
 		/*
 		*	RAMP POSITION
 		*	Starting from this position means that you can only access the rolling goals and the kickstand.
 		*	In this position, offensive is mostly the only available game mode.
 		*/
-		
+
 		// OFFENSIVE MODE
 		if(offenseOrDefense==OFFENSIVE_MODE){
 			// Go straight down the ramp
-			StartTask(avoidCollsision);
-			goTicks(100);
+			StartTask(avoidCollision);
+			goTicks(100, 75);
 			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
-			
+
 			// Do stuff
-			
+
 		}
-		
+
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE){
-		
+
 		}
-	
-	
-	
+
+
+
 	}else if(startingPosition==STARTING_FLOOR){
 		/*
 		*	FLOOR POSITION
@@ -100,17 +107,18 @@ task main()
 		*	also have easy access to the kickstand. It is easiest to determine the orientation of the
 		*	center tower from this position.
 		*/
-		
+
 		// OFFENSIVE MODE
 		if(offenseOrDefense==OFFENSIVE_MODE){
+			// Place balls in the center goal
 			char goalFacing = findGoalOrientation();
 		}
-		
+
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE){
-			
+			// Move from the starting position to block the opponent's rolling goals
 		}
-	
+
 	}
 
 }

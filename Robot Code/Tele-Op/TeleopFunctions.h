@@ -47,27 +47,27 @@ task checkButtons();				// Loop through and update encoder targets
 *	represented by a boolean representing "pressed" or "not pressed."
 */
 
-short 	stickValueLeftForward;	// Left drive control stick (forward)
-short 	stickValueRightForward;	// Right drive control stick (forward)
-short 	stickValueLeftBackward;	// Left drive control (backwards)
-short 	stickValueRightBackward;// Right drive control (backwards)
+short 	stickValueLeftForward 	= 0;	// Left drive control stick (forward)
+short 	stickValueRightForward 	= 0;	// Right drive control stick (forward)
+short 	stickValueLeftBackward 	= 0;	// Left drive control (backwards)
+short 	stickValueRightBackward = 0;	// Right drive control (backwards)
 
-bool 	buttonStraightDrive;	// Straight drive mode button
-bool 	buttonBackwardsDrive;	// Backwards drive mode button
+bool 	buttonStraightDrive 	= false;// Straight drive mode button
+bool 	buttonBackwardsDrive 	= false;// Backwards drive mode button
 
-bool 	buttonBrush;			// Ball collection brush button
-bool 	buttonLiftUp;			// Vertical lift UP button
-bool 	buttonLiftDown;			// Vertical lift DOWN button
-bool	buttonTrapDoor;			// Ball bucket door toggle
-bool	buttonDeflectorToggle;	// Ball deflector toggle
+bool 	buttonBrush 			= false;// Ball collection brush button
+bool 	buttonLiftUp 			= false;// Vertical lift UP button
+bool 	buttonLiftDown 			= false;// Vertical lift DOWN button
+bool	buttonTrapDoor 			= false;// Ball bucket door toggle
+bool	buttonDeflectorToggle 	= false;// Ball deflector toggle
 
-bool 	buttonLiftOut;			// Horizontal lift OUT button
-bool 	buttonLiftIn;			// Horizontal lift IN button
-bool 	buttonGrabToggle;		// Rolling goal grabber toggle button
-bool 	buttonTipUp;			// Goal tipper UP button
-bool 	buttonTipDown;			// Goal tipper DOWN button
+bool 	buttonLiftOut 			= false;// Horizontal lift OUT button
+bool 	buttonLiftIn 			= false;// Horizontal lift IN button
+bool 	buttonGrabToggle 		= false;// Rolling goal grabber toggle button
+bool 	buttonTipUp 			= false;// Goal tipper UP button
+bool 	buttonTipDown 			= false;// Goal tipper DOWN button
 
-bool	buttonFlaps;			// Flaps button
+bool	buttonFlaps 			= false;// Flaps button
 
 /*
 *	ENCODER TARGETS
@@ -177,7 +177,7 @@ void initializeRobot()
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f volts",
 			externalBatteryAvg / 1000.0);
-		nxtDisplayTextLine(4, "MAIN BATT LOW");
+		nxtDisplayTextLine(5, "MAIN BATT LOW");
 
 		// If the battery level reads negative, the battery could be disconnected.
 		if(externalBatteryAvg<0.0){
@@ -186,7 +186,7 @@ void initializeRobot()
 	}
 	else{
 		// If the battery level is acceptable, print to the NXT LCD screen
-		nxtDisplayTextLine(4, "MAIN BATT GOOD");
+		nxtDisplayTextLine(5, "MAIN BATT GOOD");
 	}
 
 	// NXT Low Battery message
@@ -195,11 +195,11 @@ void initializeRobot()
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
-		nxtDisplayTextLine(5, "NXT BATT LOW");
+		nxtDisplayTextLine(6, "NXT BATT LOW");
 	}
 	else{
 		// If the battery level is acceptable, print to the NXT LCD screen
-		nxtDisplayTextLine(5, "NXT BATT GOOD");
+		nxtDisplayTextLine(6, "NXT BATT GOOD");
 	}
 
 	// Set all motors and servos to their starting positions
@@ -384,34 +384,34 @@ task checkButtons()
 
 		if(buttonLiftUp)
 		{
-			writeDebugStreamLine("Switching vertical lift encoder target");
+			writeDebugStreamLine("Switching vertical lift encoder target up");
 			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'u');
 		}
 		else if(buttonLiftDown)
 		{
-			writeDebugStreamLine("Switching vertical lift encoder target");
+			writeDebugStreamLine("Switching vertical lift encoder target down");
 			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'd');
 		}
 
 		if(buttonLiftOut)
 		{
-			writeDebugStreamLine("Switching horizontal lift encoder target");
+			writeDebugStreamLine("Switching horizontal lift encoder target out");
 			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'u');
 		}
 		else if(buttonLiftIn)
 		{
-			writeDebugStreamLine("Switching horizontal lift encoder target");
+			writeDebugStreamLine("Switching horizontal lift encoder target in");
 			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'd');
 		}
 
 		if(buttonTipUp)
 		{
-			writeDebugStreamLine("Switching tip encoder target");
+			writeDebugStreamLine("Switching tip encoder target up");
 			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'u');
 		}
 		else if(buttonTipDown)
 		{
-			writeDebugStreamLine("Switching tip encoder target");
+			writeDebugStreamLine("Switching tip encoder target down");
 			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'd');
 		}
 	}

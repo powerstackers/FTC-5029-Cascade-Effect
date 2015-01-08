@@ -29,7 +29,7 @@
 */
 
 // Include file to handle messages from the joysticks
-#include "JoystickDriver.c"
+#include "../drivers/JoystickDriver.c"
 
 // Constants store the button values
 // Left and right arrow buttons are used to switch a value, the orange button is used to move to the next option in the list.
