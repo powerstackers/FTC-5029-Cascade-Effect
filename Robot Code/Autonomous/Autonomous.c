@@ -46,12 +46,14 @@ task main()
 	*/
 
 	// Print a copyright notice to the debug stream
-	writeDebugStreamLine("Autonomous v%1.1f", programVersion);
+	writeDebugStreamLine("\n\nAutonomous v%1.1f", programVersion);
 	writeDebugStreamLine("Copyright (C) 2015  Powerstackers");
 	writeDebugStreamLine("This program comes with ABSOLUTELY NO WARRANTY.");
-	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.\n");
+	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions;");
+	writeDebugStreamLine("see LICENST.txt for details.\n");
 
 	writeDebugStreamLine("Getting autonomous settings...");
+	PlaySound(soundBeepBeep);
 	runMenu();			// Get gameplay decisions from the operators
 
 	initializeRobot();	// Set the robot to its starting positions
@@ -117,6 +119,7 @@ task main()
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE){
 			// Move from the starting position to block the opponent's rolling goals
+			goTicks(inchesToTicks(36), 100);	// Move 3 feet forwards at full power
 		}
 
 	}

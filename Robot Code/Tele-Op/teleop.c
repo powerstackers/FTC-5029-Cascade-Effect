@@ -33,32 +33,15 @@
 // Version number
 #define programVersion 0.2
 
-/*
-*	MACROS
-*	Macros to store motor speeds, encoder targets, and other values that do not change.
-*/
-#define liftMotorSpeed 	50			// Speed of the vertical lift motor
-#define horizMotorSpeed	50			// Speed of the horizontal slide motor
-#define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	50			// Speed of the brush motor
-
-#define grabberOpenPosition		0	// Rolling goal grabber open servo position
-#define grabberClosedPosition	1	// Rolling goal grabber closed servo position
-#define flapLeftOpenPosition	0	// Left side flap open servo position
-#define flapLeftClosedPosition	1	// Left side flap closed servo position
-#define flapRightOpenPosition	0	// Right side flap open servo position
-#define flapRightClosedPosition	1	// Right side flap closed servo position
-#define trapDoorOpenPosition	0	// Trap door open servo position
-#define trapDoorClosedPosition	1	// Trap door closed servo position
-
 
 task main()
 {
 	// Write a copyright and welcome message to the debug stream
-	writeDebugStreamLine("Teleop v%1.1f", programVersion);
+	writeDebugStreamLine("\n\nTeleop v%1.1f", programVersion);
 	writeDebugStreamLine("Copyright (C) 2015  Powerstackers");
 	writeDebugStreamLine("This program comes with ABSOLUTELY NO WARRANTY.");
-	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions; see LICENST.txt for details.\n");
+	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions;");
+	writeDebugStreamLine("see LICENST.txt for details.\n");
 
 	writeDebugStreamLine("Initializing robot...");
 
@@ -219,7 +202,7 @@ task main()
 		if(buttonGrabToggle && !buttonGrabJustPushed){
 			servo[rGrabber] = (servo[rGrabber]==grabberOpenPosition)?grabberClosedPosition:grabberOpenPosition;
 			buttonGrabJustPushed = true;
-			writeDebugStreamLine("Toggled grabber to %d position", servo[rGrabber]);
+			writeDebugStreamLine("Toggled grabber to %s position", (servo[rGrabber]==grabberOpenPosition)?"open":"closed");
 		}
 		if(!buttonGrabToggle)
 			buttonGrabJustPushed = false;
@@ -229,7 +212,7 @@ task main()
 			servo[rFlapLeft] 	= (servo[rFlapLeft]==flapLeftOpenPosition)	?flapLeftClosedPosition:flapLeftOpenPosition;
 			servo[rFlapRight] 	= (servo[rFlapRight]==flapRightOpenPosition)?flapRightClosedPosition:flapRightOpenPosition;
 			buttonFlapJustPushed = true;
-			writeDebugStreamLine("Toggled flaps to %d position", servo[rFlapLeft]);
+			writeDebugStreamLine("Toggled flaps to %s position", (servo[rFlapLeft]==flapLeftOpenPosition)?"open":"closed");
 		}
 		if(!buttonFlaps)
 			buttonFlapJustPushed = false;
@@ -239,7 +222,7 @@ task main()
 		if(buttonTrapDoor && !buttonTrapDoorJustPushed){
 			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
 			buttonTrapDoorJustPushed = true;
-			writeDebugStreamLine("Toggled trapdoor to %d position", servo[rTrapDoor]);
+			writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");
 		}
 		if(!buttonTrapDoor)
 			buttonTrapDoorJustPushed = false;

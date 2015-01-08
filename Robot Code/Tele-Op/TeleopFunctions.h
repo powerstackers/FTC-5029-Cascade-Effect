@@ -24,6 +24,42 @@
 */
 
 /*
+*	MACROS
+*	Macros to store motor speeds, encoder targets, and other values that do not change.
+*/
+#define liftMotorSpeed 	50			// Speed of the vertical lift motor
+#define horizMotorSpeed	50			// Speed of the horizontal slide motor
+#define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
+#define brushMotorSpeed	50			// Speed of the brush motor
+
+#define grabberOpenPosition		0	// Rolling goal grabber open servo position
+#define grabberClosedPosition	1	// Rolling goal grabber closed servo position
+#define flapLeftOpenPosition	0	// Left side flap open servo position
+#define flapLeftClosedPosition	1	// Left side flap closed servo position
+#define flapRightOpenPosition	0	// Right side flap open servo position
+#define flapRightClosedPosition	1	// Right side flap closed servo position
+#define trapDoorOpenPosition	0	// Trap door open servo position
+#define trapDoorClosedPosition	1	// Trap door closed servo position
+
+// I'll put the actual numbers in later
+#define liftTargetBase 		1	// Vertical lift targets
+#define liftTargetLow 		2
+#define liftTargetMed 		3
+#define liftTargetHigh 		4
+#define liftTargetCent 		5
+
+#define horizTargetBase 	1	// Horizontal lift targets
+#define horizTargetClose	2
+#define horizTargetMed 		3
+#define horizTargetFar 		4
+
+#define tipTargetBase 		1	// Tipper targets
+#define tipTargetLow 		2
+#define tipTargetMed 		3
+#define tipTargetHigh 		4
+
+
+/*
 *	FUNCTION PROTOTYPES
 */
 
@@ -77,24 +113,6 @@ bool	buttonFlaps 			= false;// Flaps button
 *	The different motors all have a starting position, and then a low, medium, and high goal positions.
 *	The vertical lift also has a fifth position for the center goal tube.
 */
-
-// Macros to store the different available positions
-// I'll put the actual numbers in later
-#define liftTargetBase 		1	// Vertical lift targets
-#define liftTargetLow 		2
-#define liftTargetMed 		3
-#define liftTargetHigh 		4
-#define liftTargetCent 		5
-
-#define horizTargetBase 	1	// Horizontal lift targets
-#define horizTargetClose	2
-#define horizTargetMed 		3
-#define horizTargetFar 		4
-
-#define tipTargetBase 		1	// Tipper targets
-#define tipTargetLow 		2
-#define tipTargetMed 		3
-#define tipTargetHigh 		4
 
 // Long integers store the current target
 long liftEncoderTarget 	= 0;	// Vertical lift
@@ -208,6 +226,12 @@ void initializeRobot()
 	motor[mDriveRight] 	= 0;
 	motor[mBrush] 		= 0;
 	motor[mLift] 		= 0;
+
+	// Servos should be set to the closed position
+	servo[rFlapLeft] 	= flapLeftClosedPosition;
+	servo[rFlapRight] 	= flapRightClosedPosition;
+	servo[rGrabber] 	= grabberClosedPosition;
+	servo[rTrapDoor] 	= trapDoorClosedPosition;
 
 	// Initialization done, print to the debug stream
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
@@ -358,9 +382,6 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 		default:
 			break;
 	}
-
-	// Wait 25 milliseconds before continuing, so the drivers have time to let go of the button
-	wait10Msec(25);
 }
 
 /*
@@ -376,44 +397,97 @@ task checkButtons()
 	char horizPosition 	= 'b';
 	char tipPosition 	= 'b';
 
+	// Store whether each button has been recently pushed
+	bool buttonLiftUpRecentlyPushed 	= false;
+	bool buttonLiftDownRecentlyPushed 	= false;
+	bool buttonLiftOutRecentlyPushed 	= false;
+	bool buttonLiftInRecentlyPushed 	= false;
+	bool buttonTipUpRecentlyPushed 		= false;
+	bool buttonTipDownRecentlyPushed 	= false;
+
 	writeDebugStreamLine("-- BUTTON CHECKER ACTIVATED --");
 
 	while(checkingButtons)
 	{
 		// When a button is pressed, switch the variable attached to that function.
 
-		if(buttonLiftUp)
+
+		/*
+		*	VERTICAL LIFT
+		*/
+		// If the up button is pressed, and has not been recently pressed
+		if(buttonLiftUp&&!buttonLiftUpRecentlyPushed)
 		{
+			buttonLiftUpRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target up");
 			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'u');
 		}
-		else if(buttonLiftDown)
+		// If the up button is let go, it has not been recently pressed
+		if(!buttonLiftUp)
+			buttonLiftUpRecentlyPushed = false;
+
+		// If the down button is pressed, has not been recently pressed, and the up button is not pressed
+		if(buttonLiftDown&&!buttonLiftDownRecentlyPushed&&!buttonLiftUp)
 		{
+			buttonLiftDownRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target down");
 			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'd');
 		}
+		// If the down button is not pressed, it has not been recently pressed
+		if(!buttonLiftDown)
+			buttonLiftDownRecentlyPushed = false;
 
-		if(buttonLiftOut)
+
+		/*
+		*	HORIZONTAL LIFT
+		*/
+		// If the out button is pressed and has not been recently pressed
+		if(buttonLiftOut&&!buttonLiftOutRecentlyPushed)
 		{
+			buttonLiftOutRecentlyPushed = true;
 			writeDebugStreamLine("Switching horizontal lift encoder target out");
 			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'u');
 		}
-		else if(buttonLiftIn)
+		// If the out button is let go, it has not been recently pressed
+		if(!buttonLiftOut)
+			buttonLiftOutRecentlyPushed = false;
+
+		// If the in button is pressed, has not been recently pressed, and the out button is not pressed
+		if(buttonLiftIn&&!buttonLiftInRecentlyPushed&&!buttonLiftOut)
 		{
+			buttonLiftInRecentlyPushed = true;
 			writeDebugStreamLine("Switching horizontal lift encoder target in");
 			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'd');
 		}
+		// If the in button is not pressed, it has not been recently pressed
+		if(!buttonLiftIn)
+			buttonLiftInRecentlyPushed = false;
 
-		if(buttonTipUp)
+
+		/*
+		*	TIPPER
+		*/
+		// If the up button is pressed and has not been recently pressed
+		if(buttonTipUp&&!buttonTipUpRecentlyPushed)
 		{
+			buttonTipUpRecentlyPushed = true;
 			writeDebugStreamLine("Switching tip encoder target up");
 			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'u');
 		}
-		else if(buttonTipDown)
+		// If the up button is pressed, it has not been recently pressed
+		if(!buttonTipUp)
+			buttonTipUpRecentlyPushed = false;
+
+		// If the down button is pressed, has not been recently pressed, and the up button is not pressed
+		if(buttonTipDown&&!buttonTipDownRecentlyPushed&&!buttonTipUp)
 		{
+			buttonTipDownRecentlyPushed = true;
 			writeDebugStreamLine("Switching tip encoder target down");
 			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'd');
 		}
+		// If the down button is not pressed, it has not been recently pressed
+		if(!buttonTipDown)
+			buttonTipDownRecentlyPushed = false;
 	}
 
 	writeDebugStreamLine("-- BUTTON CHECKER DEACTIVATED --");

@@ -93,10 +93,10 @@ void switchFloat(float* in, TButtons activeButton, float incrementValue){
 *	Print the chosen settings to the debug stream for review.
 */
 void printSettings(){
-	writeDebugStreamLine("\tAutonomous Settings:");
-	writeDebugStreamLine("\tStarting position: %s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
-	writeDebugStreamLine("\tGame mode: %s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
-	writeDebugStreamLine("\tWait time: %2.2f", waitTime);
+	writeDebugStreamLine("\tAUTONOMOUS SETTINGS:");
+	writeDebugStreamLine("\tStart pos:\t%s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
+	writeDebugStreamLine("\tGame mode:\t%s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
+	writeDebugStreamLine("\tWait time:\t%2.2f", waitTime);
 }
 
 void runMenu(){
