@@ -37,11 +37,11 @@ task main()
 		getJoystickSettings(joystick);
 
 		if(joy1Btn(5)==1)
-			motor[mTip] = 25;
+			motor[mLift] = 25;
 		else if(joy1Btn(7)==1)
-			motor[mTip] = -25;
+			motor[mLift] = -25;
 		else
-			motor[mTip] = 0;
+			motor[mLift] = 0;
 
 		if(joy1Btn(1)==1)
 			nMotorEncoder[mTip] = 0;

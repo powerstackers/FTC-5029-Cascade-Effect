@@ -32,8 +32,8 @@
 #define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
 #define brushMotorSpeed	75			// Speed of the brush motor
 
-#define grabberOpenPosition		0	// Rolling goal grabber open servo position
-#define grabberClosedPosition	240	// Rolling goal grabber closed servo position
+#define grabberOpenPosition		240	// Rolling goal grabber open servo position
+#define grabberClosedPosition	110	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
@@ -235,7 +235,7 @@ void initializeRobot()
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
-	servo[rGrabber] 	= grabberClosedPosition;
+	servo[rGrabber] 	= grabberOpenPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
 
 	// Initialization done, print to the debug stream
