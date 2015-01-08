@@ -44,16 +44,16 @@ void initializeRobot()
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts\n\tNXT Battery level: %2.2f volts", 
-		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);
-	
+	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
+	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
+
 	// If battery levels are low, notify the operators
 	// A battery level below 13 volts is considered low.
 	if(externalBatteryAvg < 13000){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f", 
+		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f",
 			externalBatteryAvg / 1000.0);
-		
+
 		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
@@ -66,7 +66,7 @@ void initializeRobot()
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
 	if(nAvgBatteryLevel < 7500){
 		PlaySound(soundException);
-		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f", 
+		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
 		nxtDisplayCenteredTextLine(5, "NXT BATT LOW");
 	}
@@ -76,7 +76,7 @@ void initializeRobot()
 
 	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
-	
+
 	// When initialization is done, notify the drivers
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }
@@ -102,7 +102,7 @@ char findGoalOrientation()
 
 	// Read the average of the IR seeker
 	int avg = getIRStrength();
-	
+
 	// Find the difference between the average IR signal and the known values for each position
 	int diffA = abs(avg - positionA);
 	int diffB = abs(avg - positionB);
@@ -116,7 +116,7 @@ char findGoalOrientation()
 		facing = CENTGOAL_POSITION_B;
 	else									// If the tower isn't in position a or b, default to position c
 		facing = CENTGOAL_POSITION_C;
-		
+
 	// Print the IR reading, the differences, and the answer to the debug stream
 	writeDebugStreamLine("\tIR:\t%d", avg);
 	writeDebugStreamLine("\tdiifA:", diffA);

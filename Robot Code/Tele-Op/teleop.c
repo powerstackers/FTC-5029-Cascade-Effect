@@ -33,6 +33,8 @@
 // Version number
 #define programVersion 0.2
 
+#define encoderTargetThreshold 50
+
 
 task main()
 {
@@ -73,13 +75,17 @@ task main()
 	bool buttonTrapDoorJustPushed 	= false;
 	bool buttonFlapJustPushed 		= false;
 
+	// Set the number of clicks to the gray button needed to exit the program
+	// We want to exit on our own terms, so we set this to 2. The first click will cause this program to shut itself down
+	nNxtExitClicks = 2;
 
 	/*
 	*	MAIN LOOP
 	*	Watch the joysticks, and update motors and servos accordingly
 	*/
-	// Loop until the Field Control System kills the process
-	while(true)
+	// Loop until the Field Control System kills the process or the user exits
+	bool running = true;
+	while(running)
 	{
 		// Updates joystick settings
 		getJoystickSettings(joystick);
@@ -142,52 +148,42 @@ task main()
 		// This block of code keeps the motors moving towards their target.
 
 		// LIFT
-		// If the motor encoder value is less than the target, move the lift up
-		// If the motor encoder value us greater than the target, move the lift down
-		if(nMotorEncoder[mLift] < liftEncoderTarget)
+		// If the motor encoder value further from its target than a certain threshold, move towards the target
+		if(abs(nMotorEncoder[mLift] - liftEncoderTarget)>encoderTargetThreshold)
 		{
-			motor[mLift] = 	liftMotorSpeed;
+			motor[mLift] = 	(nMotorEncoder[mLift]<liftEncoderTarget)?liftMotorSpeed:(-1*liftMotorSpeed);
 		}
-		else if(nMotorEncoder[mLift] > liftEncoderTarget)
-		{
-			motor[mLift] = -1 * liftMotorSpeed;
-		}
+		// If the encoder is within a certain threshold distance of its target, stop
 		else
 		{
 			motor[mLift] = 0;
 		}
 
 		// HORIZONTAL LIFT
-		// If the motor encoder value is less than the target, move the horizontal lift out
-		// If the motor encoder value us greater than the target, move the horizontal lift in
-		if(nMotorEncoder[mHoriz] < horizEncoderTarget)
+		// If the motor encoder value further from its target than a certain threshold, move towards the target
+		if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
 		{
-			motor[mHoriz] = liftMotorSpeed;
+			motor[mHoriz] = 	(nMotorEncoder[mHoriz]<horizEncoderTarget)?horizMotorSpeed:(-1*horizMotorSpeed);
 		}
-		else if(nMotorEncoder[mHoriz] > horizEncoderTarget)
-		{
-			motor[mHoriz] = -1 * liftMotorSpeed;
-		}
+		// If the encoder is within a certain threshold distance of its target, stop
 		else
 		{
 			motor[mHoriz] = 0;
 		}
 
 		// TIPPER
-		// If the motor encoder value is less than the target, tip the motor up
-		// If the motor encoder value is greater than the target, tip the motor down
-		if(nMotorEncoder[mTip] < tipEncoderTarget)
+		// If the motor encoder value further from its target than a certain threshold, move towards the target
+		if(abs(nMotorEncoder[mTip] - tipEncoderTarget)>encoderTargetThreshold)
 		{
-			motor[mTip] = tipMotorSpeed;
+			motor[mTip] = 	(nMotorEncoder[mTip]<tipEncoderTarget)?tipMotorSpeed:(-1*tipMotorSpeed);
 		}
-		else if(nMotorEncoder[mTip] > tipEncoderTarget)
-		{
-			motor[mTip] = -1 * tipMotorSpeed;
-		}
+		// If the encoder is within a certain threshold distance of its target, stop
 		else
 		{
 			motor[mTip] = 0;
 		}
+
+		//motor[mTip] = (buttonTipUp)?tipMotorSpeed:((buttonTipDown)?-1*tipMotorSpeed:0);
 
 		/*
 		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable
@@ -227,6 +223,26 @@ task main()
 		if(!buttonTrapDoor)
 			buttonTrapDoorJustPushed = false;
 
+		// If the gray button is pressed, exit the main loop
+		if(nNxtButtonPressed==0)
+			running = false;
 	}
 	// END MAIN LOOP
+
+	/*
+	*	EXIT
+	*/
+	// Turn all motors off
+	motor[mDriveLeft] 	= 0;
+	motor[mDriveRight] 	= 0;
+	motor[mTip] 		= 0;
+	motor[mLift] 		= 0;
+	motor[mHoriz] 		= 0;
+
+	// Notify the drivers that we have exited
+	PlaySound(soundBeepBeep);
+	writeDebugStreamLine("\n-- EXIT --");
+	wait10Msec(100);	// Make sure there's enough time for the sound to play
+
+
 }	// END TASK MAIN

@@ -25,21 +25,26 @@
 *	December 31 2014
 *	Version 0.1
 */
-
+#include "drivers/JoystickDriver.c"
 short motorUsing = mDriveLeft;
 
 task main()
 {
-	nMotorEncoder[motorUsing] = 0;
-	motor[motorUsing] = 100;
+	nMotorEncoder[mTip] = 0;
+	bDisplayDiagnostics = false;
+	eraseDisplay();
+	while(true){
+		getJoystickSettings(joystick);
 
-	while(abs(nMotorEncoder[motorUsing]) < 1120) // While encoder ticks less than 1120 (full rotation)
-	{
-		nxtDisplayTextLine(0, "%d", nMotorEncoder[motorUsing]);
+		if(joy1Btn(5)==1)
+			motor[mTip] = 25;
+		else if(joy1Btn(7)==1)
+			motor[mTip] = -25;
+		else
+			motor[mTip] = 0;
+
+		if(joy1Btn(1)==1)
+			nMotorEncoder[mTip] = 0;
+		nxtDisplayTextLine(2, "Enc:%d", nMotorEncoder[mTip]);
 	}
-
-	motor[motorUsing] = 0;
-	writeDebugStreamLine("ENCODER: %d", nMotorEncoder[motorUsing]);
-	PlaySound(soundBeepBeep);
-	wait10Msec(300);
 }

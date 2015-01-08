@@ -30,33 +30,34 @@
 #define liftMotorSpeed 	50			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
 #define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	50			// Speed of the brush motor
+#define brushMotorSpeed	75			// Speed of the brush motor
 
 #define grabberOpenPosition		0	// Rolling goal grabber open servo position
-#define grabberClosedPosition	1	// Rolling goal grabber closed servo position
+#define grabberClosedPosition	240	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 #define trapDoorOpenPosition	0	// Trap door open servo position
-#define trapDoorClosedPosition	1	// Trap door closed servo position
+#define trapDoorClosedPosition	90	// Trap door closed servo position
 
 // I'll put the actual numbers in later
-#define liftTargetBase 		1	// Vertical lift targets
-#define liftTargetLow 		2
-#define liftTargetMed 		3
-#define liftTargetHigh 		4
-#define liftTargetCent 		5
+#define liftTargetBase 		0	// Vertical lift targets
+#define liftTargetLow 		1000
+#define liftTargetMed 		2000
+#define liftTargetHigh 		3000
+#define liftTargetCent 		4000
 
-#define horizTargetBase 	1	// Horizontal lift targets
-#define horizTargetClose	2
-#define horizTargetMed 		3
-#define horizTargetFar 		4
+#define horizTargetBase 	0	// Horizontal lift targets
+#define horizTargetClose	1000
+#define horizTargetMed 		2000
+#define horizTargetFar 		3000
 
-#define tipTargetBase 		1	// Tipper targets
-#define tipTargetLow 		2
-#define tipTargetMed 		3
-#define tipTargetHigh 		4
+#define tipTargetBase 		0	// Tipper targets
+#define tipTargetLow 		-1000
+#define tipTargetMed 		-2000
+#define tipTargetHigh 		-3000
+#define tipTargetFloor		-5400
 
 
 /*
@@ -186,8 +187,8 @@ void initializeRobot()
 	eraseDisplay();
 
 	// Measure and print the battery levels
-	writeDebugStreamLine("\tChecking battery levels...\n\tTETRIX battery level: %2.2f volts\n\tNXT battery level: %2.2f volts",
-		externalBatteryAvg / 1000.0, nAvgBatteryLevel / 1000.0);	// Battery levels are given to us in kilovolts,
+	writeDebugStreamLine("\tChecking battery levels...\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0); // Battery levels are given to us in kilovolts
+	writeDebugStreamLine("\tNXT battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
 
 	// If the battery level is low, notify the drivers
 	if(externalBatteryAvg < 13000){		// Battery level below 13 volts is considered low
@@ -226,6 +227,10 @@ void initializeRobot()
 	motor[mDriveRight] 	= 0;
 	motor[mBrush] 		= 0;
 	motor[mLift] 		= 0;
+
+	// All encoder positions that we use start at zero, unless they are carried over from the autonomous
+	nMotorEncoder[mLift] = 0;
+	nMotorEncoder[mTip] = 0;
 
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
@@ -278,10 +283,10 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 			if(upOrDown == 'u')
 			{
 				// Only move the target up from this position if we are switching the vertical lift
-				if(encoderTarget == &liftEncoderTarget)
+				if(encoderTarget == &liftEncoderTarget||encoderTarget == &tipEncoderTarget)
 				{
 					*currentPosition = 'c';				// Set the current position variable
-					*encoderTarget = liftTargetCent;	// Set the encoder target
+					*encoderTarget = (encoderTarget==&liftEncoderTarget)?liftTargetCent:tipTargetFloor;	// Set the encoder target
 					writeDebugStreamLine("Encoder target set to CENTER");
 				}
 				else
