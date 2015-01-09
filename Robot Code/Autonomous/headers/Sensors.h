@@ -79,11 +79,13 @@ int getIRStrength(tMUXSensor sensor)
 *	IR detection functions for the lone IR seeker. No arguments.
 *
 */
-int getIRDirection(){
+int getIRDirection()
+{
 	return HTIRS2readACDir(infraRed);
 }
 
-int getIRStrength(){
+int getIRStrength()
+{
 	return getIRStrength(infraRed);
 }
 
@@ -100,6 +102,7 @@ float currentGryoReading()
 *	getUltraStrength
 *	Return the strength of the given ultrasonic sensor
 */
-int getUltraStrength(tMUXSensor sensor){
+int getUltraStrength(tMUXSensor sensor)
+{
 	return USreadDist(sensor);
 }

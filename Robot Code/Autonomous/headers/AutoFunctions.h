@@ -53,7 +53,6 @@ void 	turnDegrees(float degrees, int speed);
 #define driveGearMultiplier 2		// Drive gear multiplier.
 									// EXAMPLE: If your drive train is geared 2:1 (1 motor rotation = 2 wheel rotations), set this to 2
 
-
 /*
 *	allMotorsTo
 *	Set all the motors to the input value

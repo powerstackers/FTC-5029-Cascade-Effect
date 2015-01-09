@@ -193,7 +193,8 @@ void initializeRobot()
 	writeDebugStreamLine("\tNXT battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
 
 	// If the battery level is low, notify the drivers
-	if(externalBatteryAvg < 13000){		// Battery level below 13 volts is considered low
+	if(externalBatteryAvg < 13000)
+	{		// Battery level below 13 volts is considered low
 		PlaySound(soundException);		// Beep from the NXT speaker
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\t Avg Batt Level: %2.2f volts",
@@ -201,24 +202,28 @@ void initializeRobot()
 		nxtDisplayTextLine(5, "MAIN BATT LOW");
 
 		// If the battery level reads negative, the battery could be disconnected.
-		if(externalBatteryAvg<0.0){
+		if(externalBatteryAvg<0.0)
+		{
 			writeDebugStreamLine("\tCheck that battery is connected.");
 		}
 	}
-	else{
+	else
+	{
 		// If the battery level is acceptable, print to the NXT LCD screen
 		nxtDisplayTextLine(5, "MAIN BATT GOOD");
 	}
 
 	// NXT Low Battery message
-	if(nAvgBatteryLevel < 7500){	// Battery level below 7.5 volts is considered low
+	if(nAvgBatteryLevel < 7500)
+	{	// Battery level below 7.5 volts is considered low
 		PlaySound(soundException);	// Beep from the NXT speaker
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
 		nxtDisplayTextLine(6, "NXT BATT LOW");
 	}
-	else{
+	else
+	{
 		// If the battery level is acceptable, print to the NXT LCD screen
 		nxtDisplayTextLine(6, "NXT BATT GOOD");
 	}

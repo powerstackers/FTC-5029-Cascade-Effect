@@ -60,7 +60,8 @@ float 	maxDelay = 15.0;
 *	switchBool
 *	Switch a boolean to the opposite value.
 */
-void switchBool(bool* in, TButtons activeButton){
+void switchBool(bool* in, TButtons activeButton)
+{
 	if(activeButton == NEXT_BUTTON || activeButton == PREV_BUTTON)
 		*in = !*in;
 }
@@ -69,7 +70,8 @@ void switchBool(bool* in, TButtons activeButton){
 *	switchInt
 *	Increment or decrement an integer by an increment value.
 */
-void switchInt(int* in, TButtons activeButton, int incrementValue){
+void switchInt(int* in, TButtons activeButton, int incrementValue)
+{
 	if(activeButton == NEXT_BUTTON)
 		*in = *in + incrementValue;
 	if(activeButton == PREV_BUTTON)
@@ -80,7 +82,8 @@ void switchInt(int* in, TButtons activeButton, int incrementValue){
 *	switchFloat
 *	Increment or decrement a floating point number by an increment value.
 */
-void switchFloat(float* in, TButtons activeButton, float incrementValue){
+void switchFloat(float* in, TButtons activeButton, float incrementValue)
+{
 	if(activeButton == NEXT_BUTTON)
 		*in = *in + incrementValue;
 	if(activeButton == PREV_BUTTON)
@@ -92,14 +95,16 @@ void switchFloat(float* in, TButtons activeButton, float incrementValue){
 *	printSettings
 *	Print the chosen settings to the debug stream for review.
 */
-void printSettings(){
+void printSettings()
+{
 	writeDebugStreamLine("\tAUTONOMOUS SETTINGS:");
 	writeDebugStreamLine("\tStart pos:\t%s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
 	writeDebugStreamLine("\tGame mode:\t%s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
 	writeDebugStreamLine("\tWait time:\t%2.2f", waitTime);
 }
 
-void runMenu(){
+void runMenu()
+{
 	// Clear the NXT screen
 	bDisplayDiagnostics = false;
 	eraseDisplay();
@@ -110,7 +115,8 @@ void runMenu(){
 
 	// Run this code until the ENTER button is pressed
 	bool ready = false;
-	while (!ready){
+	while (!ready)
+	{
 
 		// If the delay is below zero, set it to zero (you can't wait negative 1 second)
 		if(waitTime < 0.0)
@@ -127,24 +133,32 @@ void runMenu(){
 
 		// Print a selection icon next to the active variable name
 		// Icon is 7 pixels high
-		if(currVar == &startingPosition){
+		if(currVar == &startingPosition)
+		{
 			nxtDisplayStringAt(94, 63, "<");
 			nxtDisplayString(7,"     ENTER "); // The ready variable option has brackets around it
-		}else if(currVar == &offenseOrDefense){
+		}
+		else if(currVar == &offenseOrDefense)
+		{
 			nxtDisplayStringAt(94, 63, " ");
 			nxtDisplayStringAt(94, 55, "<");
-		}else if(currVar == &waitTime){
+		}
+		else if(currVar == &waitTime)
+		{
 			nxtDisplayStringAt(94, 55, " ");
 			nxtDisplayStringAt(94, 15, "<");
-		}else if(currVar == &ready){
+		}
+		else if(currVar == &ready)
+		{
 			nxtDisplayStringAt(94, 15, " ");
-			nxtDisplayString(7, "    [ENTER]"); // The ready vairable option has brackets around it
+			nxtDisplayString(7, "    [ENTER]"); // The ready variable option has brackets around it
 		}
 
-		// If the right or left arrow button is pressed on the NXT, perform the appropriate action for the data type of the selected variable
+		// If the right or left arrow button is pressed on the NXT, perform the appropriate action 
+		// for the data type of the selected variable.
 		// Switching the ready variable will end the program
-		if(nNxtButtonPressed == NEXT_BUTTON ||
-			nNxtButtonPressed == PREV_BUTTON){
+		if(nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON)
+		{
 			if(currType == 'b')
 				switchBool(currVar, nNxtButtonPressed);
 			else if(currType == 'i')
@@ -162,17 +176,25 @@ void runMenu(){
 		}
 
 		// If the orange button is pressed on the NXT, switch the active variable to the next variable in the list
-		if(nNxtButtonPressed == DOWN_BUTTON){
-			if(currVar == &startingPosition){
+		if(nNxtButtonPressed == DOWN_BUTTON)
+		{
+			if(currVar == &startingPosition)
+			{
 				currVar = &offenseOrDefense;
 				currType = 'b';
-			}else if(currVar == &offenseOrDefense){
+			}
+			else if(currVar == &offenseOrDefense)
+			{
 				currVar = &waitTime;
 				currType = 'f';
-			}else if(currVar == &waitTime){
+			}
+			else if(currVar == &waitTime)
+			{
 				currVar = &ready;
 				currType = 'b';
-			}else if(currVar == &ready){
+			}
+			else if(currVar == &ready)
+			{
 				currVar = &startingPosition;
 				currType = 'b';
 			}
@@ -184,8 +206,8 @@ void runMenu(){
 			ClearTimer(T1);
 			while(nNxtButtonPressed != kNoButton || time1[T1] <= 400){}
 		}
-	}
+	} // END MAIN LOOP
 	// Clear the screen, and print all the settings decisions
 	eraseDisplay();
 	printSettings();
-}
+} // END

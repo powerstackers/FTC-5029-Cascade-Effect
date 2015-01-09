@@ -27,12 +27,14 @@
 */
 
 // Include a file to handle messages from the joystick
-#include "../Autonomous/drivers/JoystickDriver.c"
+#include "../drivers/JoystickDriver.c"
 #include "TeleopFunctions.h"
 
 // Version number
 #define programVersion 0.2
 
+// Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
+// of their targets. This keeps the motor from "wobbling"
 #define encoderTargetThreshold 50
 
 
@@ -195,7 +197,8 @@ task main()
 		*	Using this system, the servo will only change position once per button press.
 		*/
 		// GRABBER
-		if(buttonGrabToggle && !buttonGrabJustPushed){
+		if(buttonGrabToggle && !buttonGrabJustPushed)
+		{
 			servo[rGrabber] = (servo[rGrabber]==grabberOpenPosition)?grabberClosedPosition:grabberOpenPosition;
 			buttonGrabJustPushed = true;
 			writeDebugStreamLine("Toggled grabber to %s position", (servo[rGrabber]==grabberOpenPosition)?"open":"closed");
@@ -204,7 +207,8 @@ task main()
 			buttonGrabJustPushed = false;
 
 		// FLAPS
-		if(buttonFlaps && !buttonFlapJustPushed){
+		if(buttonFlaps && !buttonFlapJustPushed)
+		{
 			servo[rFlapLeft] 	= (servo[rFlapLeft]==flapLeftOpenPosition)	?flapLeftClosedPosition:flapLeftOpenPosition;
 			servo[rFlapRight] 	= (servo[rFlapRight]==flapRightOpenPosition)?flapRightClosedPosition:flapRightOpenPosition;
 			buttonFlapJustPushed = true;
@@ -215,7 +219,8 @@ task main()
 
 
 		// TRAPDOOR
-		if(buttonTrapDoor && !buttonTrapDoorJustPushed){
+		if(buttonTrapDoor && !buttonTrapDoorJustPushed)
+		{
 			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
 			buttonTrapDoorJustPushed = true;
 			writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");

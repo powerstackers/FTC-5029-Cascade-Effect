@@ -45,7 +45,8 @@ void detour();
 *	detour
 *	Use the gyro sensor and encoders to clear an obstruction.
 */
-void detour(){
+void detour()
+{
 	/*
 	*	If the sonar sensors detect an obstruction, the robot will try to find a safe path around
 	*	whatever it is that's in its way. The robot will turn 90 degrees, and use its side sensor

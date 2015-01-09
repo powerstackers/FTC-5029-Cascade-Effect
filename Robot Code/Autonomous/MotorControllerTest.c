@@ -41,7 +41,8 @@ task main()
 
 	// Run the different motors at different speeds
 	short motors[6] = {m1,m2,m3,m4,m5,m6};
-	for(int i = 0; i<6; i++){
+	for(int i = 0; i<6; i++)
+	{
 		nxtDisplayTextLine(1, "running mtr: %d", motors[i]-2);
 		motor[motors[i]] = 100;
 		nxtDisplayTextLine(2, "Pwr: 100");

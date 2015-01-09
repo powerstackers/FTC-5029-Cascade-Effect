@@ -49,7 +49,8 @@ void initializeRobot()
 
 	// If battery levels are low, notify the operators
 	// A battery level below 13 volts is considered low.
-	if(externalBatteryAvg < 13000){
+	if(externalBatteryAvg < 13000)
+	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f",
 			externalBatteryAvg / 1000.0);
@@ -64,7 +65,8 @@ void initializeRobot()
 		nxtDisplayTextLine(4, "MAIN BATT GOOD");
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
-	if(nAvgBatteryLevel < 7500){
+	if(nAvgBatteryLevel < 7500)
+	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
@@ -141,6 +143,7 @@ void dropBall(int height)
 *	kickstand
 *	Knock over the kickstand
 */
-void kickstand(){
+void kickstand()
+{
 
 }

@@ -25,31 +25,49 @@
 *	December 31 2014
 *	Version 0.1
 */
+
+// Include files to handle the joystick messages, and some basic functions.
 #include "../drivers/JoystickDriver.c"
 #include "../Tele-Op/TeleopFunctions.h"
+
+// Store the motor that is currently in use.
 short motorUsing = mLift;
 
 task main()
 {
-	nMotorEncoder[motorUsing] = 0;
+	nMotorEncoder[motorUsing] = 0;	// Set the encoder value to 0
+	
+	// Make sure that the NXT LCD screen is clear
 	bDisplayDiagnostics = false;
 	eraseDisplay();
-	while(true){
+	
+	// Loop until the FCS kills the process
+	while(true)
+	{
+		// Retrieve the joystick values
 		getJoystickSettings(joystick);
 
+		// If joystick 1 left shoulder is pressed, set the motor to 25
 		if(joy1Btn(5)==1)
 			motor[motorUsing] = 25;
+		
+		// If joystick 1 left trigger is pressed, set the motor to -25
 		else if(joy1Btn(7)==1)
 			motor[motorUsing] = -25;
+			
+		// If neither button is pressed, set the motor to 0
 		else
 			motor[motorUsing] = 0;
 
+		// If joystick 1 right shoulder is pressed, lower the trapdoor
 		if(joy1Btn(6)==1)
 			servo[rTrapDoor] = trapDoorOpenPosition;
 
-		//if(joy1Btn(1)==1)
-			//nMotorEncoder[motorUsing] = 0;
+		// If joystick 1 blue button is pressed, reset the encoder value
+		if(joy1Btn(1)==1)
+			nMotorEncoder[motorUsing] = 0;
 
+		// Write the encoder value out to the screen
 		nxtDisplayTextLine(2, "Enc:%d", nMotorEncoder[motorUsing]);
-	}
-}
+	}	// END MAIN LOOP
+}	// END

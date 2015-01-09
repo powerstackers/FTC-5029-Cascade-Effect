@@ -26,27 +26,40 @@
 *	Version 0.1
 */
 
+// Include a file that has some basic functions
 #include "TeleopFunctions.h"
 
+// Define constants for the buttons (this way we can remap them if we need to)
 #define UP_BUTTON 	kRightButton
 #define DOWN_BUTTON	kLeftButton
 #define NEXT_BUTTON	kEnterButton
 
 task main()
 {
+	// Make sure that the NXT screen is empty
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
-	int selectedLine = 0;
-	int previousLine = 5;
+	int selectedLine = 0;			// Store the currently selected line
+	int previousLine = 5;			// Store the previously selected line
+
+	// Start the selection indicator off at the top line
 	nxtDisplayStringAt(94, 63, "<");
 
+	// Display the name of the program in big letters at the bottom of the screen
 	nxtDisplayBigTextLine(6, "AFTMATCH");
 
-	bool enterRecentlyPressed = false;
+	// Store whether the enter button has been recently pressed
+	bool enterRecentlyPressed 	= false;
+
+	// Put all motors and servos to their normal starting positions
+	initializeRobot();
 
 	while(true)
 	{
+		/*
+		*	Print all the motor and servo names and their values to the NXT LCD screen
+		*/
 		nxtDisplayString(0, "Lift:  %d   ", motor[mLift]);
 		nxtDisplayString(1, "Horiz: %d   ", motor[mHoriz]);
 		nxtDisplayString(2, "Tip:   %d   ", motor[mTip]);
@@ -54,6 +67,12 @@ task main()
 		nxtDisplayString(4, "Flaps: %s   ", (servo[rFlapLeft]==flapLeftClosedPosition)?"closed":"open");
 		nxtDisplayString(5, "Grab:  %s   ", (servo[rGrabber]==grabberClosedPosition)?"closed":"open");
 
+		/*
+		*	NEXT BUTTON
+		*	If the NEXT button is pressed, it has been recently pressed. Set the previous line to the current line,
+		*	and the current line to the next line. If the new current line is past the bottom, bring it up to the top.
+		*	Play a short sound to notify the drivers.
+		*/
 		if(nNxtButtonPressed==NEXT_BUTTON&&!enterRecentlyPressed)
 		{
 			enterRecentlyPressed = true;
@@ -63,14 +82,27 @@ task main()
 				selectedLine = 0;
 			PlaySound(soundBlip);
 		}
+		// If the NEXT button is not pressed, it has not been recently pressed.
 		if(nNxtButtonPressed!=NEXT_BUTTON)
 			enterRecentlyPressed = false;
 
+		/*
+		*	Erase the selection indicator from the previously selected line, and write a selection icon
+		*	at the newly selected line.
+		*/
 		nxtDisplayStringAt(94, 63-(selectedLine*8), "<");
 		nxtDisplayStringAt(94, 63-(previousLine*8), " ");
 
+		/*
+		*	UP AND DOWN BUTTONS
+		*	If either the up or down button is pressed, change the value of the currently selected motor or servo.
+		*/
 		if(nNxtButtonPressed==UP_BUTTON||nNxtButtonPressed==DOWN_BUTTON)
 		{
+			/*
+			*	For motors, if the UP button is pressed, run the motor forwards. If the DOWN button is pressed,
+			*	run the motor in reverse.
+			*/
 			if(selectedLine==0)
 				motor[mLift] = (nNxtButtonPressed==UP_BUTTON)?liftMotorSpeed:-1*liftMotorSpeed;
 
@@ -82,7 +114,18 @@ task main()
 
 			if(selectedLine==3)
 				motor[mBrush] = (nNxtButtonPressed==UP_BUTTON)?brushMotorSpeed:-1*brushMotorSpeed;
+
+			/*
+			*	For servos, if the UP button is pressed, switch the servo to the open position. If the DOWN button
+			*	is pressed, set the servo to its closed position.
+			*/
+			if(selectedLine==5)
+				servo[rGrabber] = (nNxtButtonPressed==UP_BUTTON)?grabberOpenPosition:grabberClosedPosition;
 		}
+
+		/*
+		*	If neither the UP or DOWN buttons are pressed, turn the motors off.
+		*/
 		else
 		{
 			motor[mLift] = 0;
@@ -91,5 +134,6 @@ task main()
 			motor[mBrush] = 0;
 		}
 
-	}
-}
+	}// END MAIN LOOP
+
+}// END

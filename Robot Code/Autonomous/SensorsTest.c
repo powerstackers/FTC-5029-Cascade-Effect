@@ -31,13 +31,11 @@
 
 task main()
 {
-
 	//StartTask(getSmux);
-	while(true){
+	while(true)
+	{
 		nxtDisplayTextLine(0, "UsonFr: %d", getUltraStrength(ultraFront));
 		nxtDisplayTextLine(1, "UsonBa: %d", getUltraStrength(ultraBack));
 		nxtDisplayTextLine(2, "IR: %d", getIRStrength(infraRed));
 	}
-
-
 }

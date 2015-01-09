@@ -77,7 +77,8 @@ task main()
 	*	menu earlier. The two main options are the starting position and the game mode (offense or defense).
 	*/
 
-	if(startingPosition==STARTING_RAMP){
+	if(startingPosition==STARTING_RAMP)
+	{
 		/*
 		*	RAMP POSITION
 		*	Starting from this position means that you can only access the rolling goals and the kickstand.
@@ -85,7 +86,8 @@ task main()
 		*/
 
 		// OFFENSIVE MODE
-		if(offenseOrDefense==OFFENSIVE_MODE){
+		if(offenseOrDefense==OFFENSIVE_MODE)
+		{
 			// Go straight down the ramp
 			StartTask(avoidCollision);
 			goTicks(inchesToTicks(36), 75);
@@ -93,16 +95,19 @@ task main()
 
 			// Do stuff
 
-		}
+		}	// END OFFENSE
 
 		// DEFENSIVE MODE
-		else if(offenseOrDefense==DEFENSIVE_MODE){
+		else if(offenseOrDefense==DEFENSIVE_MODE)
+		{
 
-		}
+		}	// END DEFENSE
 
 
 
-	}else if(startingPosition==STARTING_FLOOR){
+	}	// END RAMP START
+	else if(startingPosition==STARTING_FLOOR)
+	{
 		/*
 		*	FLOOR POSITION
 		*	In this position, you are available to block the other team, or to score in the high goal. You
@@ -111,17 +116,19 @@ task main()
 		*/
 
 		// OFFENSIVE MODE
-		if(offenseOrDefense==OFFENSIVE_MODE){
+		if(offenseOrDefense==OFFENSIVE_MODE)
+		{
 			// Place balls in the center goal
 			char goalFacing = findGoalOrientation();
-		}
+		}	// END OFFENSE
 
 		// DEFENSIVE MODE
-		else if(offenseOrDefense==DEFENSIVE_MODE){
+		else if(offenseOrDefense==DEFENSIVE_MODE)
+		{
 			// Move from the starting position to block the opponent's rolling goals
 			goTicks(inchesToTicks(36), 100);	// Move 3 feet forwards at full power
-		}
+		}	// END DEFENSE
 
-	}
+	}	// END FLOOR START
 
-}
+} // END
