@@ -64,7 +64,7 @@ task main()
 		nxtDisplayString(1, "Horiz: %d   ", motor[mHoriz]);
 		nxtDisplayString(2, "Tip:   %d   ", motor[mTip]);
 		nxtDisplayString(3, "Brush: %d   ", motor[mBrush]);
-		nxtDisplayString(4, "Flaps: %s   ", (servo[rFlapLeft]==flapLeftClosedPosition)?"closed":"open");
+		nxtDisplayString(4, "TrapD: %s   ", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open");
 		nxtDisplayString(5, "Grab:  %s   ", (servo[rGrabber]==grabberClosedPosition)?"closed":"open");
 
 		/*
@@ -119,6 +119,8 @@ task main()
 			*	For servos, if the UP button is pressed, switch the servo to the open position. If the DOWN button
 			*	is pressed, set the servo to its closed position.
 			*/
+			if(selectedLine==4)
+				servo[rTrapDoor] = (nNxtButtonPressed==UP_BUTTON)?trapDoorOpenPosition:trapDoorClosedPosition;
 			if(selectedLine==5)
 				servo[rGrabber] = (nNxtButtonPressed==UP_BUTTON)?grabberOpenPosition:grabberClosedPosition;
 		}
