@@ -27,11 +27,11 @@
 #pragma once
 
 // Include files to handle the multiplexer and all the different sensors
-#include "../drivers/hitechnic-sensormux.h"
-#include "../drivers/hitechnic-irseeker-v2.h"
-#include "../drivers/hitechnic-accelerometer.h"
-#include "../drivers/hitechnic-gyro.h"
-#include "../drivers/lego-ultrasound.h"
+#include "../../drivers/hitechnic-sensormux.h"
+#include "../../drivers/hitechnic-irseeker-v2.h"
+#include "../../drivers/hitechnic-accelerometer.h"
+#include "../../drivers/hitechnic-gyro.h"
+#include "../../drivers/lego-ultrasound.h"
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season

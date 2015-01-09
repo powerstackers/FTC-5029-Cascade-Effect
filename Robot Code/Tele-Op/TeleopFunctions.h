@@ -23,6 +23,8 @@
 *	Version 0.2
 */
 
+#include "../drivers/JoystickDriver.c"
+
 /*
 *	MACROS
 *	Macros to store motor speeds, encoder targets, and other values that do not change.
@@ -43,10 +45,10 @@
 
 // I'll put the actual numbers in later
 #define liftTargetBase 		0	// Vertical lift targets
-#define liftTargetLow 		1000
-#define liftTargetMed 		2000
-#define liftTargetHigh 		3000
-#define liftTargetCent 		4000
+#define liftTargetLow 		3500
+#define liftTargetMed 		7600
+#define liftTargetHigh 		11800
+#define liftTargetCent 		15700
 
 #define horizTargetBase 	0	// Horizontal lift targets
 #define horizTargetClose	1000

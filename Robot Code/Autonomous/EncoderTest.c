@@ -25,26 +25,31 @@
 *	December 31 2014
 *	Version 0.1
 */
-#include "drivers/JoystickDriver.c"
-short motorUsing = mDriveLeft;
+#include "../drivers/JoystickDriver.c"
+#include "../Tele-Op/TeleopFunctions.h"
+short motorUsing = mLift;
 
 task main()
 {
-	nMotorEncoder[mTip] = 0;
+	nMotorEncoder[motorUsing] = 0;
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 	while(true){
 		getJoystickSettings(joystick);
 
 		if(joy1Btn(5)==1)
-			motor[mLift] = 25;
+			motor[motorUsing] = 25;
 		else if(joy1Btn(7)==1)
-			motor[mLift] = -25;
+			motor[motorUsing] = -25;
 		else
-			motor[mLift] = 0;
+			motor[motorUsing] = 0;
 
-		if(joy1Btn(1)==1)
-			nMotorEncoder[mTip] = 0;
-		nxtDisplayTextLine(2, "Enc:%d", nMotorEncoder[mTip]);
+		if(joy1Btn(6)==1)
+			servo[rTrapDoor] = trapDoorOpenPosition;
+
+		//if(joy1Btn(1)==1)
+			//nMotorEncoder[motorUsing] = 0;
+
+		nxtDisplayTextLine(2, "Enc:%d", nMotorEncoder[motorUsing]);
 	}
 }

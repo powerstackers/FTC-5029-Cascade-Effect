@@ -88,7 +88,7 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE){
 			// Go straight down the ramp
 			StartTask(avoidCollision);
-			goTicks(100, 75);
+			goTicks(inchesToTicks(36), 75);
 			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
 
 			// Do stuff

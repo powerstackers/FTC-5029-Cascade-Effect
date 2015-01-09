@@ -27,7 +27,7 @@
 */
 
 #include "Sensors.h"
-#include "../drivers/JoystickDriver.c"
+#include "../../drivers/JoystickDriver.c"
 
 
 /*
@@ -48,8 +48,10 @@ void 	turnDegrees(float degrees, int speed);
 /*
 *	GLOBAL CONSTANTS
 */
-// Each time the motors turn once, they turn 1120 ticks
-#define ticksPerRevolution 1120
+#define ticksPerRevolution 	1120	// Number of encoder ticks per motor rotation
+#define wheelDiameter 		4		// Diameter of your wheels in inches
+#define driveGearMultiplier 2		// Drive gear multiplier.
+									// EXAMPLE: If your drive train is geared 2:1 (1 motor rotation = 2 wheel rotations), set this to 2
 
 
 /*
@@ -86,9 +88,11 @@ void driveMotorsTo(int i)
 */
 long inchesToTicks(float inches)
 {
-	// Return the number of inches, multiplied by the number of ticks per 
-	//revolution divided by the circumference of the wheel
-	return (long) inches * (ticksPerRevolution/(4*PI));
+	// Given a distance in inches, calculate the equivalent distance in motor encoder ticks.
+	// We calculate this by taking the number of wheel rotations (inches/(PI*wheelDiameter)) multiplied
+	// by the inverse of the gear ratio, to get the number of motor rotations. Multiply one more time
+	// by the number of motor encoder ticks per one motor revolution.
+	return (long) (1/driveGearMultiplier)*ticksPerRevolution*(inches/(PI*wheelDiameter));
 }
 
 /*
@@ -97,7 +101,11 @@ long inchesToTicks(float inches)
 */
 float ticksToInches(long ticks)
 {
-	return (float) ticks * ((4*PI)/ticksPerRevolution);
+	// Given a number of encoder ticks, calculate the equivalent distance in inches.
+	// We calculate this by taking the number of ticks traveled, divided by the number of ticks per revolution,
+	// and then multiplied by the gear ratio multiplier to get the number of wheel rotations. Multiply one more
+	// time by the circumference of the wheels (PI*wheelDiameter).
+	return (float) (ticks/ticksPerRevolution)*driveGearMultiplier*(PI*wheelDiameter);
 }
 
 /*
@@ -135,7 +143,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Turn off the drive motors here
 		driveMotorsTo(0);
 	}
-	
+
 	// Write to the debug stream that we are done
 	writeDebugStreamLine("\tMoving done");
 }
