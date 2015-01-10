@@ -32,9 +32,9 @@
 #define liftMotorSpeed 	50			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
 #define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	75			// Speed of the brush motor
+#define brushMotorSpeed	50			// Speed of the brush motor
 
-#define grabberOpenPosition		240	// Rolling goal grabber open servo position
+#define grabberOpenPosition		255	// Rolling goal grabber open servo position
 #define grabberClosedPosition	110	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
@@ -46,7 +46,7 @@
 // I'll put the actual numbers in later
 #define liftTargetBase 		0	// Vertical lift targets
 #define liftTargetLow 		3500
-#define liftTargetMed 		7600
+#define liftTargetMed 		7500
 #define liftTargetHigh 		11800
 #define liftTargetCent 		15700
 
@@ -74,6 +74,7 @@ void printInfoToScreen();			// Print diagnostic informaiton to the NXT LCD scree
 short stickToMotorValue(short stickValue);	// Convert a stick value to a motor power level
 void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown);	// Change an encoder target
 task checkButtons();				// Loop through and update encoder targets
+void haltOperation();				// Halt operation of the robot in the event of a lost connection
 
 /*
 *	JOYSTICK ASSIGNMENTS
@@ -94,7 +95,8 @@ short 	stickValueRightBackward = 0;	// Right drive control (backwards)
 bool 	buttonStraightDrive 	= false;// Straight drive mode button
 bool 	buttonBackwardsDrive 	= false;// Backwards drive mode button
 
-bool 	buttonBrush 			= false;// Ball collection brush button
+bool 	buttonBrush 			= false;// Ball collection brush IN button
+bool	buttonBrushReverse		= false;// Ball collection brush OUT button
 bool 	buttonLiftUp 			= false;// Vertical lift UP button
 bool 	buttonLiftDown 			= false;// Vertical lift DOWN button
 bool	buttonTrapDoor 			= false;// Ball bucket door toggle
@@ -140,6 +142,7 @@ void getCustomJoystickSettings ()
 	buttonStraightDrive 	= (joy1Btn(3) == 1);			// Driver 1 red button
 	buttonBackwardsDrive 	= (joy1Btn(5) == 1);			// Driver 1 left shoulder
 	buttonBrush 			= (joy1Btn(6) == 1);			// Driver 1 right shoulder
+	buttonBrushReverse		= (joy1Btn(8) == 1);			// Driver 1 right trigger
 
 	// Player 2
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
@@ -147,8 +150,8 @@ void getCustomJoystickSettings ()
 	buttonLiftOut 			= (joy2Btn(5) == 1);			// Driver 2 left shoulder
 	buttonLiftIn 			= (joy2Btn(7) == 1);			// Driver 2 left trigger
 	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
-	buttonTipUp				= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
-	buttonTipDown 			= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
+	buttonTipUp				= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
+	buttonTipDown 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
 	buttonTrapDoor			= (joy2Btn(2) == 1);			// Driver 2 green button
 	buttonFlaps				= (joy2Btn(4) == 1);			// Driver 2 yellow button
 	buttonDeflectorToggle	= (joy2Btn(3) == 1);			// Driver 2 red button
@@ -174,7 +177,7 @@ void printInfoToScreen()
 */
 short stickToMotorValue(short stickValue)
 {
-	return (short) ( (float)stickValue * 0.78125);
+	return (short) ( -1 * (float)stickValue * 0.78125);
 }
 
 /*
@@ -503,4 +506,9 @@ task checkButtons()
 	}
 
 	writeDebugStreamLine("-- BUTTON CHECKER DEACTIVATED --");
+}
+
+void haltOperation()
+{
+
 }

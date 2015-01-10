@@ -52,6 +52,9 @@ task main()
 	// Sets robot to starting positions
 	initializeRobot();
 
+	// Make it so that we control the disabling of the robot in the event of a lost connection
+	//bOverrideJoystickDisabling = true;
+
 	// Play a ready sound
 	PlaySound(soundFastUpwardTones);
 
@@ -92,6 +95,10 @@ task main()
 		// Updates joystick settings
 		getJoystickSettings(joystick);
 		getCustomJoystickSettings ();
+
+		// Check that we are still recieving messages from the FCS. If not, halt operation
+		if(nNoMessageCounter>nNoMessageCounterLimit)
+			haltOperation();
 
 		// Print diagnostic information to the NXT LCD screen
 		//printInfoToScreen();
@@ -142,9 +149,9 @@ task main()
 
 		// BRUSH
 		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
+		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
-		// The brush can only spin in one direction.
-		motor[mBrush] = (buttonBrush)? brushMotorSpeed : 0;
+		motor[mBrush] = (buttonBrush)? brushMotorSpeed : (buttonBrushReverse? (-1*brushMotorSpeed):0);
 
 		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
 		// This block of code keeps the motors moving towards their target.
@@ -202,6 +209,7 @@ task main()
 			servo[rGrabber] = (servo[rGrabber]==grabberOpenPosition)?grabberClosedPosition:grabberOpenPosition;
 			buttonGrabJustPushed = true;
 			writeDebugStreamLine("Toggled grabber to %s position", (servo[rGrabber]==grabberOpenPosition)?"open":"closed");
+			writeDebugStreamLine("Current servo position: %d", servo[rGrabber]);
 		}
 		if(!buttonGrabToggle)
 			buttonGrabJustPushed = false;

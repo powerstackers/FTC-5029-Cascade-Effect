@@ -36,6 +36,9 @@
 
 task main()
 {
+	// Put all motors and servos to their normal starting positions
+	initializeRobot();
+
 	// Make sure that the NXT screen is empty
 	bDisplayDiagnostics = false;
 	eraseDisplay();
@@ -52,9 +55,6 @@ task main()
 	// Store whether the enter button has been recently pressed
 	bool enterRecentlyPressed 	= false;
 
-	// Put all motors and servos to their normal starting positions
-	initializeRobot();
-
 	while(true)
 	{
 		/*
@@ -64,8 +64,8 @@ task main()
 		nxtDisplayString(1, "Horiz: %d   ", motor[mHoriz]);
 		nxtDisplayString(2, "Tip:   %d   ", motor[mTip]);
 		nxtDisplayString(3, "Brush: %d   ", motor[mBrush]);
-		nxtDisplayString(4, "TrapD: %s   ", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open");
-		nxtDisplayString(5, "Grab:  %s   ", (servo[rGrabber]==grabberClosedPosition)?"closed":"open");
+		nxtDisplayString(4, "TrapD: %s", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open  ");
+		nxtDisplayString(5, "Grab:  %s", (servo[rGrabber]==grabberClosedPosition)?"closed":"open  ");
 
 		/*
 		*	NEXT BUTTON
