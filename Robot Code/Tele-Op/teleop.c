@@ -54,6 +54,7 @@ task main()
 
 	// Make it so that we control the disabling of the robot in the event of a lost connection
 	//bOverrideJoystickDisabling = true;
+	nNoMessageCounterLimit = 250;
 
 	// Play a ready sound
 	PlaySound(soundFastUpwardTones);

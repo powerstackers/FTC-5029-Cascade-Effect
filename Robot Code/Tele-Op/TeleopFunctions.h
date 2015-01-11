@@ -61,6 +61,7 @@
 #define tipTargetHigh 		-3000
 #define tipTargetFloor		-5400
 
+#define motorPowerMultiplier 0.75
 
 /*
 *	FUNCTION PROTOTYPES
@@ -177,7 +178,7 @@ void printInfoToScreen()
 */
 short stickToMotorValue(short stickValue)
 {
-	return (short) ( -1 * (float)stickValue * 0.78125);
+	return (short) ( -1.0 * motorPowerMultiplier * (float)stickValue * 0.78125);
 }
 
 /*
