@@ -89,8 +89,8 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Go straight down the ramp
-			StartTask(avoidCollision);
-			goTicks(inchesToTicks(36), 75);
+			//StartTask(avoidCollision);
+			goTicks(inchesToTicks(80), 75);
 			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
 
 			// Do stuff
@@ -126,7 +126,7 @@ task main()
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
 			// Move from the starting position to block the opponent's rolling goals
-			goTicks(inchesToTicks(36), 100);	// Move 3 feet forwards at full power
+			goTicks(inchesToTicks(60), 100);	// Move 3 feet forwards at full power
 		}	// END DEFENSE
 
 	}	// END FLOOR START

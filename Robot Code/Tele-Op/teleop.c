@@ -35,7 +35,9 @@
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
-#define encoderTargetThreshold 50
+#define encoderTargetThreshold 	50
+#define stickPushThreshold 		15
+#define liftEncoderStepValue 	25
 
 
 task main()
@@ -118,24 +120,24 @@ task main()
 		if(buttonStraightDrive)
 		{
 			// Move both motors together based on left joystick position
-			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
-			motor[mDriveRight] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftForward) > stickPushThreshold)? stickToMotorValue(stickValueLeftForward) : 0;
+			motor[mDriveRight] = (abs(stickValueLeftForward) > stickPushThreshold)? stickToMotorValue(stickValueLeftForward) : 0;
 		}
 		// BACKWARDS DRIVE
 		// If button 5 (left shoulder) on joystick 1 is pressed
 		else if(buttonBackwardsDrive)
 		{
 			// Switch and reverse the drive motors, effectively flipping the front and back of the robot
-			motor[mDriveLeft] = (abs(stickValueLeftBackward) > 15)? stickToMotorValue(stickValueLeftBackward) : 0;
-			motor[mDriveRight] = (abs(stickValueRightBackward) > 15)? stickToMotorValue(stickValueRightBackward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftBackward) > stickPushThreshold)? stickToMotorValue(stickValueLeftBackward) : 0;
+			motor[mDriveRight] = (abs(stickValueRightBackward) > stickPushThreshold)? stickToMotorValue(stickValueRightBackward) : 0;
 		}
 		// NORMAL DRIVE
 		// If button 3 (red button) on joystick 1 is not pressed AND button 5 (left shoulder) on joystick 1 is not pressed
 		else if(!buttonStraightDrive && !buttonBackwardsDrive)
 		{
 			// Move the motors independently, based on their respective joystick positions
-			motor[mDriveLeft] = (abs(stickValueLeftForward) > 15)? stickToMotorValue(stickValueLeftForward) : 0;
-			motor[mDriveRight] = (abs(stickValueRightForward) > 15)? stickToMotorValue(stickValueRightForward) : 0;
+			motor[mDriveLeft] = (abs(stickValueLeftForward) > stickPushThreshold)? stickToMotorValue(stickValueLeftForward) : 0;
+			motor[mDriveRight] = (abs(stickValueRightForward) > stickPushThreshold)? stickToMotorValue(stickValueRightForward) : 0;
 		}
 
 
@@ -152,7 +154,7 @@ task main()
 		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
 		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
-		motor[mBrush] = (buttonBrush)? brushMotorSpeed : (buttonBrushReverse? (-1*brushMotorSpeed):0);
+		motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
 
 		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
 		// This block of code keeps the motors moving towards their target.
@@ -168,6 +170,16 @@ task main()
 		{
 			motor[mLift] = 0;
 		}
+
+		// If the lift motor manual control stick is pushed past the threshold, change the lift motor encoder target
+		if(abs(stickLiftTarget)>stickPushThreshold)
+		{
+			liftEncoderTarget += stickLiftTarget>0? liftEncoderStepValue : (stickLiftTarget<0? -1*liftEncoderStepValue:0);
+		}
+
+		// If the lift encoder reset button is pressed, reset the encoder value to 0
+		if(buttonLiftEncoderReset)
+			nMotorEncoder[mLift] = 0;
 
 		// HORIZONTAL LIFT
 		// If the motor encoder value further from its target than a certain threshold, move towards the target

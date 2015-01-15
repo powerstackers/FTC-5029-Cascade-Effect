@@ -81,17 +81,13 @@ void driveMotorsTo(int i)
 *	inchesToTicks
 *	Convert a distance in inches to a number of ticks
 */
-/*
-*	NEEDS
-*	MODIFIED
-*/
 long inchesToTicks(float inches)
 {
 	// Given a distance in inches, calculate the equivalent distance in motor encoder ticks.
 	// We calculate this by taking the number of wheel rotations (inches/(PI*wheelDiameter)) multiplied
 	// by the inverse of the gear ratio, to get the number of motor rotations. Multiply one more time
 	// by the number of motor encoder ticks per one motor revolution.
-	return (long) (1/driveGearMultiplier)*ticksPerRevolution*(inches/(PI*wheelDiameter));
+	return (1/driveGearMultiplier)*ticksPerRevolution*(inches/(PI*wheelDiameter));
 }
 
 /*
@@ -104,7 +100,7 @@ float ticksToInches(long ticks)
 	// We calculate this by taking the number of ticks traveled, divided by the number of ticks per revolution,
 	// and then multiplied by the gear ratio multiplier to get the number of wheel rotations. Multiply one more
 	// time by the circumference of the wheels (PI*wheelDiameter).
-	return (float) (ticks/ticksPerRevolution)*driveGearMultiplier*(PI*wheelDiameter);
+	return (ticks/ticksPerRevolution)*driveGearMultiplier*(PI*wheelDiameter);
 }
 
 /*
@@ -154,8 +150,11 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 void turnDegrees(float degrees, int speed)
 {
 	// Notify the drivers of what we are about to do
-	writeDebugStreamLine("-- TURNING --\n\tTurning %d degrees at %d speed",
+	string dummy;
+	StringFormat(dummy, "-- TURNING --\n\tTurning %d degrees at %d speed",
 		degrees, speed);
+	writeDebugStreamLine(dummy);
+
 
 	// Store the number of degrees turned so far, i.e., the difference of
 	// the current position and the starting position.

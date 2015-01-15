@@ -92,16 +92,20 @@ short 	stickValueLeftForward 	= 0;	// Left drive control stick (forward)
 short 	stickValueRightForward 	= 0;	// Right drive control stick (forward)
 short 	stickValueLeftBackward 	= 0;	// Left drive control (backwards)
 short 	stickValueRightBackward = 0;	// Right drive control (backwards)
+short	stickLiftTarget			= 0;	// Raise the lift motor encoder target
+
 
 bool 	buttonStraightDrive 	= false;// Straight drive mode button
 bool 	buttonBackwardsDrive 	= false;// Backwards drive mode button
 
 bool 	buttonBrush 			= false;// Ball collection brush IN button
 bool	buttonBrushReverse		= false;// Ball collection brush OUT button
+
 bool 	buttonLiftUp 			= false;// Vertical lift UP button
 bool 	buttonLiftDown 			= false;// Vertical lift DOWN button
 bool	buttonTrapDoor 			= false;// Ball bucket door toggle
 bool	buttonDeflectorToggle 	= false;// Ball deflector toggle
+bool	buttonLiftEncoderReset	= false;// Reset the lift encoder value to 0
 
 bool 	buttonLiftOut 			= false;// Horizontal lift OUT button
 bool 	buttonLiftIn 			= false;// Horizontal lift IN button
@@ -146,8 +150,11 @@ void getCustomJoystickSettings ()
 	buttonBrushReverse		= (joy1Btn(8) == 1);			// Driver 1 right trigger
 
 	// Player 2
+	stickLiftTarget			= joystick.joy2_y2;				// Driver 2 right stick
+
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
 	buttonLiftDown 			= (joy2Btn(8) == 1);			// Driver 2 right trigger
+	buttonLiftEncoderReset	= (joy2Btn(9) == 1);			// Driver 2 START button
 	buttonLiftOut 			= (joy2Btn(5) == 1);			// Driver 2 left shoulder
 	buttonLiftIn 			= (joy2Btn(7) == 1);			// Driver 2 left trigger
 	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
