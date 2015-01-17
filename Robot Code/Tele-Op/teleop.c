@@ -22,8 +22,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 3 2015
-*	Version 0.2
+*	January 16 2015
+*	Version 0.3
 */
 
 // Include a file to handle messages from the joystick
@@ -31,7 +31,7 @@
 #include "TeleopFunctions.h"
 
 // Version number
-#define programVersion 0.2
+#define programVersion 0.3
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
@@ -56,21 +56,25 @@ task main()
 
 	// Make it so that we control the disabling of the robot in the event of a lost connection
 	//bOverrideJoystickDisabling = true;
-	nNoMessageCounterLimit = 250;
+
+	// Set the no message counter limit. This is the maximum acceptable number of milliseconds
+	// since the last message from the field control system
+	nNoMessageCounterLimit = 100;
 
 	// Play a ready sound
 	PlaySound(soundFastUpwardTones);
 
 	// Print a teleop ready message to the NXT LCD screen
-	nxtDisplayBigTextLine(1, "TELEOP");
-	nxtDisplayBigTextLine(3, "READY");
+	nxtDisplayTextLine(0, "2015 Powerstackers");
+	nxtDisplayCenteredBigTextLine(1, "TELEOP");
+	nxtDisplayCenteredBigTextLine(3, "READY");
 
 	// Wait for the start of the match
 	writeDebugStreamLine("\nWaiting for match start...\n");
 	waitForStart();
 
 	// Print a teleop running message
-	nxtDisplayBigTextLine(3, "RUNNING");
+	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 
 	// Play a starting sound
 	PlaySound(soundUpwardTones);
@@ -95,6 +99,9 @@ task main()
 	bool running = true;
 	while(running)
 	{
+		// Reset the NXT's internal inactivity timer. This keeps the NXT from falling asleep, even if the sleep time isn't set
+		alive();
+
 		// Updates joystick settings
 		getJoystickSettings(joystick);
 		getCustomJoystickSettings ();
@@ -105,6 +112,8 @@ task main()
 
 		// Print diagnostic information to the NXT LCD screen
 		//printInfoToScreen();
+		nxtDisplayTextLine(5, "MAIN BATT %s", (externalBatteryAvg>tetrixBatteryMinimumLevel)?"GOOD":"BAD");
+		nxtDisplayTextLine(6, "NXT BATT %s", (nAvgBatteryLevel>nxtBatteryMinimumLevel)?"GOOD":"BAD");
 
 		/*
 		*	DRIVE TRAIN
@@ -254,6 +263,8 @@ task main()
 			running = false;
 	}
 	// END MAIN LOOP
+
+	nxtDisplayCenteredBigTextLine(3, "DONE");
 
 	/*
 	*	EXIT

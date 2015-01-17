@@ -1,8 +1,9 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     SMUX1,          sensorI2CCustom)
-#pragma config(Motor,  mtr_S1_C1_1,     mDriveLeft,    tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C1_2,     mDriveRight,   tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Sensor, S3,     TMUX1,          sensorHiTechnicTouchMux)
+#pragma config(Sensor, S4,     sGyro,          sensorI2CHiTechnicGyro)
+#pragma config(Motor,  mtr_S1_C1_1,     mDriveLeft,    tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C1_2,     mDriveRight,   tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     mBrush,        tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_2,     mLift,         tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     mHoriz,        tmotorTetrix, openLoop, encoder)
@@ -34,6 +35,6 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	December 31 2014
-*	Version 0.1
+*	January 16 2015
+*	Version 0.2
 */

@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 6 2015
-*	Version 0.3
+*	January 16 2015
+*	Version 0.4
 */
 
 // Include guard. This file can only be included one time.
@@ -41,7 +41,7 @@
 #define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
 #define ultraTube	msensor_S2_4		// Ultrasonic, NXT 2 MUX 2
 
-#define sGyro		S3					// Gyroscope, NXT 3
+//#define sGyro		S3					// Gyroscope, NXT 3
 
 /*
 *	getIRDirection

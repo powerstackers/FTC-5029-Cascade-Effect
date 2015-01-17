@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 3 2015
-*	Version 0.2
+*	January 16 2015
+*	Version 0.3
 */
 
 #include "../drivers/JoystickDriver.c"
@@ -61,8 +61,12 @@
 #define tipTargetHigh 		-3000
 #define tipTargetFloor		-5400
 
-#define motorPowerMultiplier 0.75
+// Multiplier for the drive train motors. A value of 1 changes nothing, a value of 0.5 sets all motors to half power
+#define motorPowerMultiplier 		0.75
 
+// Minimum acceptable battery levels. Levels below these values will raise an alert.
+#define nxtBatteryMinimumLevel		7500
+#define tetrixBatteryMinimumLevel	13000
 /*
 *	FUNCTION PROTOTYPES
 */
@@ -139,19 +143,23 @@ long tipEncoderTarget 	= 0;	// Tipper
 void getCustomJoystickSettings ()
 {
 	// Player 1
+	//		Joysticks
 	stickValueRightForward 	= joystick.joy1_y2;				// Driver 1 right stick
 	stickValueLeftForward 	= joystick.joy1_y1;				// Driver 1 left stick
 	stickValueRightBackward = -1 * joystick.joy1_y1;		// Driver 1 left stick
 	stickValueLeftBackward 	= -1 * joystick.joy1_y2;		// Driver 1 right stick
 
+	//		Buttons
 	buttonStraightDrive 	= (joy1Btn(3) == 1);			// Driver 1 red button
 	buttonBackwardsDrive 	= (joy1Btn(5) == 1);			// Driver 1 left shoulder
 	buttonBrush 			= (joy1Btn(6) == 1);			// Driver 1 right shoulder
 	buttonBrushReverse		= (joy1Btn(8) == 1);			// Driver 1 right trigger
 
 	// Player 2
+	//		Joysticks
 	stickLiftTarget			= joystick.joy2_y2;				// Driver 2 right stick
 
+	//		Buttons
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
 	buttonLiftDown 			= (joy2Btn(8) == 1);			// Driver 2 right trigger
 	buttonLiftEncoderReset	= (joy2Btn(9) == 1);			// Driver 2 START button
@@ -185,7 +193,7 @@ void printInfoToScreen()
 */
 short stickToMotorValue(short stickValue)
 {
-	return (short) ( -1.0 * motorPowerMultiplier * (float)stickValue * 0.78125);
+	return (short) (motorPowerMultiplier * (float)stickValue * 0.78125);
 }
 
 /*
@@ -199,12 +207,17 @@ void initializeRobot()
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
-	// Measure and print the battery levels
+	/*
+	*	BATTERY LEVEL CHECK
+	*	The program will measure the NXT and TETRIX battery levels and print them to the debug stream and the
+	*	NXT LCD screen. It will also display error notices if the battery levels are too low.
+	*/
+	// Measure and print the battery levels to the debug stream
 	writeDebugStreamLine("\tChecking battery levels...\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0); // Battery levels are given to us in kilovolts
 	writeDebugStreamLine("\tNXT battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
 
 	// If the battery level is low, notify the drivers
-	if(externalBatteryAvg < 13000)
+	if(externalBatteryAvg < tetrixBatteryMinimumLevel)
 	{		// Battery level below 13 volts is considered low
 		PlaySound(soundException);		// Beep from the NXT speaker
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
@@ -225,7 +238,7 @@ void initializeRobot()
 	}
 
 	// NXT Low Battery message
-	if(nAvgBatteryLevel < 7500)
+	if(nAvgBatteryLevel < nxtBatteryMinimumLevel)
 	{	// Battery level below 7.5 volts is considered low
 		PlaySound(soundException);	// Beep from the NXT speaker
 		// Print Low Battery messages to the debug stream and the NXT LCD screen
@@ -239,22 +252,38 @@ void initializeRobot()
 		nxtDisplayTextLine(6, "NXT BATT GOOD");
 	}
 
-	// Set all motors and servos to their starting positions
-	// All motors should be set to 0 power
+	/*
+	*	MOTOR INITIALIZATION
+	*	This section sets all the motors to their starting position. Some motors have to be at a specific orientation
+	*	at the start of the match in order to function correctly (e.g. the tipper).
+	*/
+	// Set all motors to their starting power levels
+	// All motors should be set to 0 power (i.e. not moving)
 	motor[mDriveLeft] 	= 0;
 	motor[mDriveRight] 	= 0;
 	motor[mBrush] 		= 0;
 	motor[mLift] 		= 0;
 
-	// All encoder positions that we use start at zero, unless they are carried over from the autonomous
+	// All encoder positions that we use start at zero
 	nMotorEncoder[mLift] = 0;
 	nMotorEncoder[mTip] = 0;
 
+	/*
+	*	SERVO INITIALIZATION
+	*	This section sets all servos to their starting positions, and also changes some of the servo settings.
+	*/
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
 	servo[rGrabber] 	= grabberOpenPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
+
+	// Set the servo speed of some servos. This makes the servo change positions slower.
+	// The number of the setting indicates the number of positions the servo moves every 20 milliseconds
+	servoChangeRate[rTrapDoor] = 30;
+
+	// Make it so that servos maintain their positions after the program ends
+	bSystemLeaveServosEnabledOnProgramStop = true;
 
 	// Initialization done, print to the debug stream
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
@@ -516,7 +545,44 @@ task checkButtons()
 	writeDebugStreamLine("-- BUTTON CHECKER DEACTIVATED --");
 }
 
+/*
+*	haltOperation
+*	In the event of a lost connection, halt operation of the robot until the connection is regained.
+*/
 void haltOperation()
 {
+	// Print that the connection has been lost
+	writeDebugStreamLine("\n--! CONNECTION LOST !--");
 
+	// Reset the timer. We want to know how long we were out for
+	ClearTimer(T1);
+
+	// For as long as the time since the last message is longer than the limit
+	while(nNoMessageCounter>nNoMessageCounterLimit){
+		// Halt all the motors
+		motor[mDriveLeft] 	= 0;
+		motor[mDriveRight] 	= 0;
+		motor[mLift] 		= 0;
+		motor[mHoriz] 		= 0;
+		motor[mTip] 		= 0;
+		motor[mBrush] 		= 0;
+
+		// Make an obnoxious beeping sound
+		PlaySound(soundException);
+
+		// Print LOST COMM to the NXT LCD screen
+		nxtDisplayCenteredBigTextLine(1, "LOST");
+		nxtDisplayCenteredBigTextLine(3, "COMM");
+	}	// CONNECTION REESTABLISHED
+
+	// Play a good sound
+	ClearSounds();
+	PlaySound(soundUpwardTones);
+
+	// Print TELEOP RUNNING to the NXT LCD screen
+	nxtDisplayCenteredBigTextLine(1, "TELEOP");
+	nxtDisplayCenteredBigTextLine(3, "RUNNING");
+
+	// Print that the connection has been regained
+	writeDebugStreamLine("-- CONNECTION ESTABLISHED --\n\tTotal downtime: %3.2f seconds", (float)time100[T1]/10);
 }
