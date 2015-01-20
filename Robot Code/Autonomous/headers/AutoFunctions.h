@@ -50,7 +50,7 @@ void 	turnDegrees(float degrees, int speed);
 */
 #define ticksPerRevolution 	1120	// Number of encoder ticks per motor rotation
 #define wheelDiameter 		4		// Diameter of your wheels in inches
-#define driveGearMultiplier 2		// Drive gear multiplier.
+#define driveGearMultiplier 2.0		// Drive gear multiplier.
 									// EXAMPLE: If your drive train is geared 2:1 (1 motor rotation = 2 wheel rotations), set this to 2
 
 /*
@@ -87,6 +87,11 @@ long inchesToTicks(float inches)
 	// We calculate this by taking the number of wheel rotations (inches/(PI*wheelDiameter)) multiplied
 	// by the inverse of the gear ratio, to get the number of motor rotations. Multiply one more time
 	// by the number of motor encoder ticks per one motor revolution.
+
+	// Optional debug information
+	/*writeDebugStreamLine("Drive gear multiplier: %f", 1/driveGearMultiplier);
+	writeDebugStreamLine("Ticks per revolution: %d", ticksPerRevolution);
+	writeDebugStreamLine("Inches to travel: %f", (inches/(PI*wheelDiameter)));*/
 	return (1/driveGearMultiplier)*ticksPerRevolution*(inches/(PI*wheelDiameter));
 }
 
@@ -176,6 +181,9 @@ void turnDegrees(float degrees, int speed)
 		motor[mDriveRight] = -1 * speed;
 	}
 
+	writeDebugStreamLine("\tSet left motor to %d", motor[mDriveLeft]);
+	writeDebugStreamLine("\tSet right motor to %d", motor[mDriveRight]);
+
 	// For as long as the current degree measure doesn't equal the target. This will work in the clockwise and
 	// counterclockwise directions, since we are comparing the absolute values.
 	while(abs(degreesSoFar) < abs(degrees))
@@ -196,5 +204,5 @@ void turnDegrees(float degrees, int speed)
 	driveMotorsTo(0);
 
 	// Notify the drivers that we are done.
-	writeDebugStreamLine("\tTurning done");
+	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
 }

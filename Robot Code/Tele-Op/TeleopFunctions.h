@@ -31,7 +31,7 @@
 */
 #define liftMotorSpeed 	50			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
-#define tipMotorSpeed 	25			// Speed of the rolling goal tipping motor
+#define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
 #define brushMotorSpeed	50			// Speed of the brush motor
 
 #define grabberOpenPosition		255	// Rolling goal grabber open servo position

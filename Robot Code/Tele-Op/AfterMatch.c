@@ -47,7 +47,7 @@ task main()
 	int previousLine = 5;			// Store the previously selected line
 
 	// Start the selection indicator off at the top line
-	nxtDisplayStringAt(94, 63, "<");
+	nxtDisplayStringAt(0, 63, ">");
 
 	// Display the name of the program in big letters at the bottom of the screen
 	nxtDisplayBigTextLine(6, "AFTMATCH");
@@ -60,12 +60,12 @@ task main()
 		/*
 		*	Print all the motor and servo names and their values to the NXT LCD screen
 		*/
-		nxtDisplayString(0, "Lift:  %d   ", motor[mLift]);
-		nxtDisplayString(1, "Horiz: %d   ", motor[mHoriz]);
-		nxtDisplayString(2, "Tip:   %d   ", motor[mTip]);
-		nxtDisplayString(3, "Brush: %d   ", motor[mBrush]);
-		nxtDisplayString(4, "TrapD: %s", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open  ");
-		nxtDisplayString(5, "Grab:  %s", (servo[rGrabber]==grabberClosedPosition)?"closed":"open  ");
+		nxtDisplayStringAt(6, 63, "Lift:  %d   ", motor[mLift]);
+		nxtDisplayStringAt(6, 55, "Horiz: %d   ", motor[mHoriz]);
+		nxtDisplayStringAt(6, 47, "Tip:   %d   ", motor[mTip]);
+		nxtDisplayStringAt(6, 39, "Brush: %d   ", motor[mBrush]);
+		nxtDisplayStringAt(6, 31, "TrapD: %s", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open  ");
+		nxtDisplayStringAt(6, 23, "Grab:  %s", (servo[rGrabber]==grabberClosedPosition)?"closed":"open  ");
 
 		/*
 		*	NEXT BUTTON
@@ -90,8 +90,8 @@ task main()
 		*	Erase the selection indicator from the previously selected line, and write a selection icon
 		*	at the newly selected line.
 		*/
-		nxtDisplayStringAt(94, 63-(selectedLine*8), "<");
-		nxtDisplayStringAt(94, 63-(previousLine*8), " ");
+		nxtDisplayStringAt(0, 63-(selectedLine*8), ">");
+		nxtDisplayStringAt(0, 63-(previousLine*8), " ");
 
 		/*
 		*	UP AND DOWN BUTTONS

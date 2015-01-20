@@ -31,6 +31,10 @@ char findGoalOrientation();
 void dropBall(int height);
 void kickstand();
 
+// Manipulator movement functions
+void moveMotorTo(short affectedMotor, long position);
+
+// General functions
 void initializeRobot();
 
 /*
@@ -58,11 +62,11 @@ void initializeRobot()
 		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
-		nxtDisplayCenteredTextLine(4, "MAIN BATT LOW");
+		nxtDisplayTextLine(5, "MAIN BATT LOW");
 	}
 	else
 		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(4, "MAIN BATT GOOD");
+		nxtDisplayTextLine(5, "MAIN BATT GOOD");
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
 	if(nAvgBatteryLevel < 7500)
@@ -70,11 +74,17 @@ void initializeRobot()
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
-		nxtDisplayCenteredTextLine(5, "NXT BATT LOW");
+		nxtDisplayTextLine(6, "NXT BATT LOW");
 	}
 	else
 		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(5, "NXT BATT GOOD");
+		nxtDisplayTextLine(6, "NXT BATT GOOD");
+
+	if(HTSMUXreadPowerStatus(SMUX1))
+	{
+			writeDebugStreamLine("--! MUX BATTERY LOW !--");
+			writeDebugStreamLine("\tCheck to see that SMUX battery is turned on");
+	}
 
 	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
@@ -136,7 +146,23 @@ char findGoalOrientation()
 */
 void dropBall(int height)
 {
-
+	// put the grabber down,
+	moveMotorTo(mTip, position);
+//then move forward a little,
+goTicks(inchesToTicks(6), 30);
+//then t-rex hand have to go down.
+servo[rGrabber]=grabberClosedPosition;
+//lift hpper,
+moveMotorTo(mLift, position);
+//then trap door has to drop,
+servo[rTrapDoor]=trapDoorOpenPosition;
+//then wait,
+wait10Msec (300);
+//put the trap door back up
+servo[rTrapDoor]=trapDoorClosedPosition;
+// put the lift down.
+moveMotorTo(mTip, position);
+//
 }
 
 /*
@@ -146,4 +172,24 @@ void dropBall(int height)
 void kickstand()
 {
 
+}
+
+void moveMotorTo(short affectedMotor, long position)
+{
+	if(nMotorEncoder[affectedMotor]==posititon)
+	{
+		return;
+	}
+	else
+	{
+		if(position>nMotorEncoder[affectedMotor])
+		{
+			motor[affectedMotor]= tipMotorSpeed;
+			while(position>nMotorEncoder[affectedMotor]){}
+		} else {
+			motor[affectedMotor]= -tipMotorSpeed;
+			while(postition<nMotorEncoder[affectedMotor]){}
+		}
+		motor[affectedMotor]=0;
+	}
 }

@@ -120,7 +120,7 @@ task main()
 		*	Our drive train consists of two sets of two motors, one on the left, and one on the right.
 		*	Pressing the "Straight Drive" button will cause both sets of motors to move together, useful
 		*	for driving in straight lines. Pressing a second "backwards" trigger will cause all of the
-		*	motors to reverse, and the controls to switch sides, essentially switchin the "back" and "front"
+		*	motors to reverse, and the controls to switch sides, essentially switching the "back" and "front"
 		*	of the robot.
 		*/
 

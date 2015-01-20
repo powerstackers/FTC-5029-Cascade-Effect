@@ -60,15 +60,35 @@ task main()
 
 	// Notify the users that the program is ready and running
 	writeDebugStreamLine("Waiting for start of match...");
-	nxtDisplayCenteredBigTextLine(0, "AUTO");
-	nxtDisplayCenteredBigTextLine(2, "READY");
+	nxtDisplayTextLine(0, "2015 Powerstackers");
+	nxtDisplayCenteredBigTextLine(1, "AUTO");
+	nxtDisplayCenteredBigTextLine(3, "READY");
 	PlaySound(soundFastUpwardTones);
+	wait10Msec(200);
 
-	// Wait for the "starting gun" from the field control system
-	waitForStart();
+	/*
+	*	DEBUG MODE
+	*	If debug mode is activated, bypass the waitForStart function.
+	*	Display a 3 second audio and visual countdown, and then execute.
+	*/
+	if(debugMode)
+	{
+		ClearSounds();
+		for(int i = 3; i>0; --i)
+		{
+			nxtDisplayCenteredBigTextLine(3, "IN %d", i);
+			PlaySound(soundException);
+			wait10Msec(150);
+		}
+	}
+	else
+	{
+		// Wait for the "starting gun" from the field control system
+		waitForStart();
+	}
 
 	// Notify the users that the program is running
-	nxtDisplayCenteredBigTextLine(2, "RUNNING");
+	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 	PlaySound(soundUpwardTones);
 
 	/*
@@ -89,9 +109,18 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Go straight down the ramp
-			//StartTask(avoidCollision);
 			goTicks(inchesToTicks(80), 75);
-			avoidanceActive = false;	// Turn off collision avoidance after we're done moving
+			//this will make the robot drop the balls into the rolling goal
+			dropBall();
+			//this will make the robot turn to move twards the parking zone
+			turnDegrees (30,50);
+			//this will make the robot move twards the parking zone
+			goTicks (inchesToTicks(100), 100);
+			//this will make the robot turn so it can be in place so it will move in the parking zone
+			turnDegrees (60,50);
+			//this will make the robot move forward so it is fully in the parking zone
+			goTicks (inchesToTicks(12), 50);
+
 
 			// Do stuff
 
@@ -131,4 +160,8 @@ task main()
 
 	}	// END FLOOR START
 
+	// After the program has been carried out, play a cute "done" sound
+	nxtDisplayCenteredBigTextLine(3, "DONE");
+	PlaySound(soundBeepBeep);
+	wait10Msec(200);
 } // END

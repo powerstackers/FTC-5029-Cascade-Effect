@@ -129,10 +129,10 @@ task avoidCollision()
 {
 	// Set the switch to the ON position
 	avoidanceActive = true;
-	
+
 	// Tell the drivers that the collision avoidance system is activated
 	writeDebugStreamLine("-- COLLISION AVOIDANCE ACTIVATED --");
-	
+
 	// Loop until the switch is thrown
 	while(avoidanceActive)
 	{
@@ -146,7 +146,7 @@ task avoidCollision()
 
 			// Print a STOP message to the NXT screen and debug stream
 			writeDebugStreamLine("--!! OBSTRUCTION DETECTED !!--");
-			nxtDisplayCenteredBigTextLine(2, "SUSPENDED");
+			nxtDisplayCenteredBigTextLine(3, "SUSPENDED");
 			nxtDisplayCenteredTextLine(6, "--!!COLLISION!!--");
 			nxtDisplayCenteredTextLine(7, "--!!DETECTED!!--");
 
@@ -158,7 +158,7 @@ task avoidCollision()
 
 			// Write messages to the nxt and the debug stream
 			writeDebugStreamLine("--!! OBSTRUCTION CLEARED !!--");
-			nxtDisplayCenteredBigTextLine(2, "RUNNING");
+			nxtDisplayCenteredBigTextLine(3, "RUNNING");
 			nxtDisplayCenteredTextLine(6, "--OBSTRUCTION--");
 			nxtDisplayCenteredTextLine(7, "--CLEARED--");
 		}

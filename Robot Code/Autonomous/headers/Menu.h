@@ -52,6 +52,7 @@
 bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
 float 	waitTime			= 0.0;				// Delay time
+bool	debugMode			= false;			// Debug mode on/off
 
 // Maximum allowable wait time
 float 	maxDelay = 15.0;
@@ -100,6 +101,7 @@ void printSettings()
 	writeDebugStreamLine("\tAUTONOMOUS SETTINGS:");
 	writeDebugStreamLine("\tStart pos:\t%s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
 	writeDebugStreamLine("\tGame mode:\t%s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
+	writeDebugStreamLine("\tDebug mode:\t%s", (debugMode ? "ON":"OFF"));
 	writeDebugStreamLine("\tWait time:\t%2.2f", waitTime);
 }
 
@@ -127,34 +129,40 @@ void runMenu()
 			waitTime = maxDelay;
 
 		// Print all the variable names and their current values to the screen
-		nxtDisplayString(0, "StrPos:     %s", startingPosition ? "flr":"rmp");
-		nxtDisplayString(1, "OfDef:      %s", offenseOrDefense ? "off":"def");
-		nxtDisplayString(6, "Delay:      %2.1f", waitTime);
+		nxtDisplayStringAt(6, 63, "StrPos:     %s", startingPosition ? "flr":"rmp");
+		nxtDisplayStringAt(6, 55, "OfDef:      %s", offenseOrDefense ? "off":"def");
+		nxtDisplayStringAt(6, 23, "Debug:      %s", debugMode ? " ON":"OFF");
+		nxtDisplayStringAt(6, 15, "Delay:      %2.1f", waitTime);
 
 		// Print a selection icon next to the active variable name
 		// Icon is 7 pixels high
 		if(currVar == &startingPosition)
 		{
-			nxtDisplayStringAt(94, 63, "<");
-			nxtDisplayString(7,"     ENTER "); // The ready variable option has brackets around it
+			nxtDisplayStringAt(0, 63, ">");
+			nxtDisplayCenteredTextLine(7,"ENTER"); // The ready variable option has brackets around it
 		}
 		else if(currVar == &offenseOrDefense)
 		{
-			nxtDisplayStringAt(94, 63, " ");
-			nxtDisplayStringAt(94, 55, "<");
+			nxtDisplayStringAt(0, 63, " ");
+			nxtDisplayStringAt(0, 55, ">");
+		}
+		else if(currVar == &debugMode)
+		{
+			nxtDisplayStringAt(0, 55, " ");
+			nxtDisplayStringAt(0, 23, ">");
 		}
 		else if(currVar == &waitTime)
 		{
-			nxtDisplayStringAt(94, 55, " ");
-			nxtDisplayStringAt(94, 15, "<");
+			nxtDisplayStringAt(0, 23, " ");
+			nxtDisplayStringAt(0, 15, ">");
 		}
 		else if(currVar == &ready)
 		{
-			nxtDisplayStringAt(94, 15, " ");
-			nxtDisplayString(7, "    [ENTER]"); // The ready variable option has brackets around it
+			nxtDisplayStringAt(0, 15, " ");
+			nxtDisplayCenteredTextLine(7, "[ENTER]"); // The ready variable option has brackets around it
 		}
 
-		// If the right or left arrow button is pressed on the NXT, perform the appropriate action 
+		// If the right or left arrow button is pressed on the NXT, perform the appropriate action
 		// for the data type of the selected variable.
 		// Switching the ready variable will end the program
 		if(nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON)
@@ -184,6 +192,11 @@ void runMenu()
 				currType = 'b';
 			}
 			else if(currVar == &offenseOrDefense)
+			{
+				currVar = &debugMode;
+				currType = 'b';
+			}
+			else if(currVar == &debugMode)
 			{
 				currVar = &waitTime;
 				currType = 'f';
