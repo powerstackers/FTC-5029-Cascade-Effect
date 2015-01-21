@@ -32,6 +32,7 @@
 #include "headers/AutoFunctions.h"
 #include "headers/CascadeEffect.h"
 #include "headers/Menu.h"
+#include "../Robot.h"
 
 // Version number
 #define programVersion 0.2
@@ -46,11 +47,8 @@ task main()
 	*/
 
 	// Print a copyright notice to the debug stream
-	writeDebugStreamLine("\n\nAutonomous v%1.1f", programVersion);
-	writeDebugStreamLine("Copyright (C) 2015  Powerstackers");
-	writeDebugStreamLine("This program comes with ABSOLUTELY NO WARRANTY.");
-	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions;");
-	writeDebugStreamLine("see LICENST.txt for details.\n");
+	string programName = "Autonomous";
+	printWelcomeMessage(programName, programVersion);
 
 	writeDebugStreamLine("Getting autonomous settings...");
 	PlaySound(soundBeepBeep);
@@ -111,7 +109,7 @@ task main()
 			// Go straight down the ramp
 			goTicks(inchesToTicks(80), 75);
 			//this will make the robot drop the balls into the rolling goal
-			dropBall();
+			dropBall(liftTargetMed);
 			//this will make the robot turn to move twards the parking zone
 			turnDegrees (30,50);
 			//this will make the robot move twards the parking zone

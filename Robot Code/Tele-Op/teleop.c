@@ -29,6 +29,7 @@
 // Include a file to handle messages from the joystick
 #include "../drivers/JoystickDriver.c"
 #include "TeleopFunctions.h"
+#include "../Robot.h"
 
 // Version number
 #define programVersion 0.3
@@ -43,11 +44,8 @@
 task main()
 {
 	// Write a copyright and welcome message to the debug stream
-	writeDebugStreamLine("\n\nTeleop v%1.1f", programVersion);
-	writeDebugStreamLine("Copyright (C) 2015  Powerstackers");
-	writeDebugStreamLine("This program comes with ABSOLUTELY NO WARRANTY.");
-	writeDebugStreamLine("This is free software, and you are welcome to redistribute it under certain conditions;");
-	writeDebugStreamLine("see LICENST.txt for details.\n");
+	string programName = "Tele-op";
+	printWelcomeMessage(programName, programVersion);
 
 	writeDebugStreamLine("Initializing robot...");
 

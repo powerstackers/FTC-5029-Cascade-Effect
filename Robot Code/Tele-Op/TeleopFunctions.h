@@ -24,42 +24,12 @@
 */
 
 #include "../drivers/JoystickDriver.c"
+#include "../Robot.h"
 
 /*
 *	MACROS
 *	Macros to store motor speeds, encoder targets, and other values that do not change.
 */
-#define liftMotorSpeed 	50			// Speed of the vertical lift motor
-#define horizMotorSpeed	50			// Speed of the horizontal slide motor
-#define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	50			// Speed of the brush motor
-
-#define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	110	// Rolling goal grabber closed servo position
-#define flapLeftOpenPosition	0	// Left side flap open servo position
-#define flapLeftClosedPosition	1	// Left side flap closed servo position
-#define flapRightOpenPosition	0	// Right side flap open servo position
-#define flapRightClosedPosition	1	// Right side flap closed servo position
-#define trapDoorOpenPosition	0	// Trap door open servo position
-#define trapDoorClosedPosition	90	// Trap door closed servo position
-
-// I'll put the actual numbers in later
-#define liftTargetBase 		0	// Vertical lift targets
-#define liftTargetLow 		3500
-#define liftTargetMed 		7500
-#define liftTargetHigh 		11800
-#define liftTargetCent 		15700
-
-#define horizTargetBase 	0	// Horizontal lift targets
-#define horizTargetClose	1000
-#define horizTargetMed 		2000
-#define horizTargetFar 		3000
-
-#define tipTargetBase 		0	// Tipper targets
-#define tipTargetLow 		-1000
-#define tipTargetMed 		-2000
-#define tipTargetHigh 		-3000
-#define tipTargetFloor		-5400
 
 // Multiplier for the drive train motors. A value of 1 changes nothing, a value of 0.5 sets all motors to half power
 #define motorPowerMultiplier 		0.75

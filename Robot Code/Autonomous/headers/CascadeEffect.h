@@ -25,14 +25,15 @@
 
 #include "AutoFunctions.h"
 #include "CollisionAvoidance.h"
+#include "../../Robot.h"
 
 // Game functions
 char findGoalOrientation();
-void dropBall(int height);
+void dropBall(long height);
 void kickstand();
 
 // Manipulator movement functions
-void moveMotorTo(short affectedMotor, long position);
+void moveMotorTo(short affectedMotor, long position, short speed);
 
 // General functions
 void initializeRobot();
@@ -144,25 +145,24 @@ char findGoalOrientation()
 *	dropBall
 *	Dropping the balls into the tubes
 */
-void dropBall(int height)
+void dropBall(long height)
 {
 	// put the grabber down,
-	moveMotorTo(mTip, position);
-//then move forward a little,
-goTicks(inchesToTicks(6), 30);
-//then t-rex hand have to go down.
-servo[rGrabber]=grabberClosedPosition;
-//lift hpper,
-moveMotorTo(mLift, position);
-//then trap door has to drop,
-servo[rTrapDoor]=trapDoorOpenPosition;
-//then wait,
-wait10Msec (300);
-//put the trap door back up
-servo[rTrapDoor]=trapDoorClosedPosition;
-// put the lift down.
-moveMotorTo(mTip, position);
-//
+	moveMotorTo(mTip, tipTargetFloor, tipMotorSpeed);
+	//then move forward a little,
+	goTicks(inchesToTicks(6), 30);
+	//then t-rex hand have to go down.
+	servo[rGrabber]=grabberClosedPosition;
+	//lift hpper,
+	moveMotorTo(mLift, height, liftMotorSpeed);
+	//then trap door has to drop,
+	servo[rTrapDoor]=trapDoorOpenPosition;
+	//then wait,
+	wait10Msec (300);
+	//put the trap door back up
+	servo[rTrapDoor]=trapDoorClosedPosition;
+	// put the lift down.
+	moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
 }
 
 /*
@@ -174,22 +174,33 @@ void kickstand()
 
 }
 
-void moveMotorTo(short affectedMotor, long position)
+/*
+*	moveMotor
+*	Move a motor to a given encoder position
+*/
+void moveMotorTo(short affectedMotor, long position, short speed)
 {
-	if(nMotorEncoder[affectedMotor]==posititon)
+	// If the motor is already at the target position, don't change it
+	if(nMotorEncoder[affectedMotor]==position)
 	{
 		return;
 	}
 	else
 	{
+		// If the motor is below the target position, move up
 		if(position>nMotorEncoder[affectedMotor])
 		{
-			motor[affectedMotor]= tipMotorSpeed;
+			motor[affectedMotor]= speed;
 			while(position>nMotorEncoder[affectedMotor]){}
-		} else {
-			motor[affectedMotor]= -tipMotorSpeed;
-			while(postition<nMotorEncoder[affectedMotor]){}
 		}
+		// If the motor is above the target position, move down
+		else
+		{
+			motor[affectedMotor]= -speed;
+			while(position<nMotorEncoder[affectedMotor]){}
+		}
+
+		// Turn off the motor
 		motor[affectedMotor]=0;
 	}
 }
