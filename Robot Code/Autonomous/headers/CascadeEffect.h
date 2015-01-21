@@ -144,10 +144,10 @@ char findGoalOrientation()
 *	dropBall
 *	Dropping the balls into the tubes
 */
-void dropBall(int height)
+void dropBall(long height)
 {
 	// put the grabber down,
-	moveMotorTo(mTip, position);
+	moveMotorTo(mTip, height);
 //then move forward a little,
 goTicks(inchesToTicks(6), 30);
 //then t-rex hand have to go down.
@@ -176,7 +176,7 @@ void kickstand()
 
 void moveMotorTo(short affectedMotor, long position)
 {
-	if(nMotorEncoder[affectedMotor]==posititon)
+	if(nMotorEncoder[affectedMotor]=posititon)
 	{
 		return;
 	}
