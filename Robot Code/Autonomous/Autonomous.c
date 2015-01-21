@@ -145,8 +145,21 @@ task main()
 		// OFFENSIVE MODE
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
-			// Place balls in the center goal
+			// Move slightly forwards to get into a better detecting position
+			goTicks(inchesToTicks(10), 50);
+
+			// Detect and store the center goal position
 			char goalFacing = findGoalOrientation();
+
+			// Position the robot to drop the ball in the center goal
+
+			// Drop the ball in the center goal
+
+			// Position the robot correctly to kick the kickstand
+
+			// Go to the robot's ending position
+
+
 		}	// END OFFENSE
 
 		// DEFENSIVE MODE
