@@ -8,7 +8,7 @@
 /*
  * $Id: hitechnic-sensormux.h 133 2013-03-10 15:15:38Z xander $
  */
-
+#pragma once
 #ifndef __HTSMUX_H__
 #define __HTSMUX_H__
 /** \file hitechnic-sensormux.h
@@ -18,7 +18,7 @@
  * drivers.
  * License: You may use this code as you wish, provided you give credit where its due.
  *
- * THIS CODE WILL ONLY WORK WITH ROBOTC VERSION 3.59 AND HIGHER. 
+ * THIS CODE WILL ONLY WORK WITH ROBOTC VERSION 3.59 AND HIGHER.
 
  *
  * Changelog:

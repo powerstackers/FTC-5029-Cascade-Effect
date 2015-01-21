@@ -21,8 +21,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 16 2015
-*	Version 0.4
+*	January 20 2015
+*	Version 0.5
 */
 
 // Include guard. This file can only be included one time.
@@ -30,6 +30,7 @@
 
 // Include files to handle the multiplexer and all the different sensors
 #include "../../drivers/hitechnic-sensormux.h"
+#include "../../drivers/hitechnic-touchmux.h"
 #include "../../drivers/hitechnic-irseeker-v2.h"
 #include "../../drivers/hitechnic-accelerometer.h"
 #include "../../drivers/hitechnic-gyro.h"
@@ -38,12 +39,27 @@
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
 #define infraRed	msensor_S2_1		// Lone IR sensor, NXT 2 MUX 1
-
 #define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
 #define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
 #define ultraTube	msensor_S2_4		// Ultrasonic, NXT 2 MUX 2
 
+// Touch sensors, used in teleop and initialization
+#define touchLiftStop	1
+#define touchTipStop	2
+
 //#define sGyro		S3					// Gyroscope, NXT 3
+
+/*
+*	FUNCTION PROTOTYPES
+*/
+int 	getIRDirection(tMUXSensor sensor);
+int 	getIRStrength(tMUXSensor sensor);
+int 	getIRDirection();
+int 	getIRStrength();
+float 	currentGryoReading();
+float 	getUltraStrength(tMUXSensor sensor);
+bool 	touchActive(int sensor);
+
 
 /*
 *	getIRDirection
@@ -97,7 +113,7 @@ int getIRStrength()
 */
 float currentGryoReading()
 {
-	return HTGyroReadRot(sGyro);
+	return HTGYROreadRot(sGyro);
 }
 
 /*
@@ -107,4 +123,14 @@ float currentGryoReading()
 int getUltraStrength(tMUXSensor sensor)
 {
 	return USreadDist(sensor);
+}
+
+bool touchActive(int sensor)
+{
+	return HTTMUXisActive(TMUX1, sensor);
+}
+
+void initializeMultiplexers()
+{
+
 }

@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 16 2015
-*	Version 0.3
+*	January 19 2015
+*	Version 0.4
 */
 
 #include "../drivers/JoystickDriver.c"
@@ -34,9 +34,6 @@
 // Multiplier for the drive train motors. A value of 1 changes nothing, a value of 0.5 sets all motors to half power
 #define motorPowerMultiplier 		0.75
 
-// Minimum acceptable battery levels. Levels below these values will raise an alert.
-#define nxtBatteryMinimumLevel		7500
-#define tetrixBatteryMinimumLevel	13000
 /*
 *	FUNCTION PROTOTYPES
 */

@@ -25,8 +25,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 2 2015
-*	Version 0.2
+*	January 20 2015
+*	Version 0.3
 */
 
 #include "headers/AutoFunctions.h"
@@ -35,7 +35,7 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 0.2
+#define programVersion 0.3
 
 task main()
 {
