@@ -148,6 +148,7 @@ char findGoalOrientation()
 void dropBall(long height)
 {
 	// put the grabber down,
+<<<<<<< HEAD
 	moveMotorTo(mTip, tipTargetFloor, tipMotorSpeed);
 	//then move forward a little,
 	goTicks(inchesToTicks(6), 30);
@@ -163,6 +164,24 @@ void dropBall(long height)
 	servo[rTrapDoor]=trapDoorClosedPosition;
 	// put the lift down.
 	moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
+=======
+	moveMotorTo(mTip, height);
+//then move forward a little,
+goTicks(inchesToTicks(6), 30);
+//then t-rex hand have to go down.
+servo[rGrabber]=grabberClosedPosition;
+//lift hpper,
+moveMotorTo(mLift, position);
+//then trap door has to drop,
+servo[rTrapDoor]=trapDoorOpenPosition;
+//then wait,
+wait10Msec (300);
+//put the trap door back up
+servo[rTrapDoor]=trapDoorClosedPosition;
+// put the lift down.
+moveMotorTo(mTip, position);
+//
+>>>>>>> origin/master
 }
 
 /*
@@ -180,8 +199,12 @@ void kickstand()
 */
 void moveMotorTo(short affectedMotor, long position, short speed)
 {
+<<<<<<< HEAD
 	// If the motor is already at the target position, don't change it
 	if(nMotorEncoder[affectedMotor]==position)
+=======
+	if(nMotorEncoder[affectedMotor]=posititon)
+>>>>>>> origin/master
 	{
 		return;
 	}
