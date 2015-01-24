@@ -63,7 +63,8 @@ short 	stickValueLeftForward 	= 0;	// Left drive control stick (forward)
 short 	stickValueRightForward 	= 0;	// Right drive control stick (forward)
 short 	stickValueLeftBackward 	= 0;	// Left drive control (backwards)
 short 	stickValueRightBackward = 0;	// Right drive control (backwards)
-short	stickLiftTarget			= 0;	// Raise the lift motor encoder target
+short	stickLiftTarget			= 0;	// Raise or lower the lift motor encoder target
+short	stickTipTarget			= 0;	// Raise or lower the tip motor encoder target
 
 
 bool 	buttonStraightDrive 	= false;// Straight drive mode button
@@ -83,6 +84,7 @@ bool 	buttonLiftIn 			= false;// Horizontal lift IN button
 bool 	buttonGrabToggle 		= false;// Rolling goal grabber toggle button
 bool 	buttonTipUp 			= false;// Goal tipper UP button
 bool 	buttonTipDown 			= false;// Goal tipper DOWN button
+bool	buttonTipEncoderReset	= false;// Reset the tip encoder value to 0
 
 bool	buttonFlaps 			= false;// Flaps button
 
@@ -125,6 +127,7 @@ void getCustomJoystickSettings ()
 	// Player 2
 	//		Joysticks
 	stickLiftTarget			= joystick.joy2_y2;				// Driver 2 right stick
+	stickTipTarget			= joystick.joy2_y1;				// Driver 2 left stick
 
 	//		Buttons
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
@@ -135,6 +138,7 @@ void getCustomJoystickSettings ()
 	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
 	buttonTipUp				= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
 	buttonTipDown 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
+	buttonTipEncoderReset	= (joy2Btn(8) == 1);			// Driver 2 SELECT button
 	buttonTrapDoor			= (joy2Btn(2) == 1);			// Driver 2 green button
 	buttonFlaps				= (joy2Btn(4) == 1);			// Driver 2 yellow button
 	buttonDeflectorToggle	= (joy2Btn(3) == 1);			// Driver 2 red button

@@ -12,32 +12,28 @@ figuration that you want for your robot; an RTF text document with a short descr
 of the parts of your configuration; and finally, a JPG image to display as a thumbnail,
 which shows a small picture or drawing of your standard model configuration.
 
-Standard model files are kept in RobotC's program files on your PC. To access them,
-navigate to this locaiton on your computer:
-	C:\Program Files (x86)\Robomatter Inc\ROBOTC Development Environment\MotorAndSensorModels\Tetrix
-This folder contains all the standard models available to you when you are using the
-TETRIX framework.
+Standard model files are kept in RobotC's program files on your PC. To be able to edit
+them easier, you can change the directory in which RobotC will look for the standard
+models. To do this, go to View->Preferences->Detailed Preferences->General. Under the
+"Directories" tab, change the standard model lookup directory to one of your choosing.
+Then, in the directory you chose, create another directory to store the standard model.
+We recommend naming it "TETRIX", just to keep in step with RobotC's own conventions.
 
-To update an existing standard model, follow these instructions. Since the standard
-models are kept in the Program Files folder, which is a protected folder on your PC,
-it will take a few extra steps to be able to edit those files.
+To create a standard model, follow these instructions.
 
-1. 	First of all, you will not be able to edit standard models if you are not an 
-	Administrator on your PC. Make sure you have Admin access before you continue.
-2.	Create copies of you standard model files somewhere else on your computer. I
-	recommend keeping them near your other source files.
-3.	Create the C source file. This should look familiar to you; it has the same
-	layout as the group of #pragma definitions at the top of every RobotC program.
-	To generate one, go to Robot->Motors and Sensors Setup, or right click an 
-	existing motor and sensor definition and click Edit Motors and Sensors
-	Definition. Either way, use the built-in utility to edit the motors and sensors
-	setup to the configuration you want.
-4.	Create an RTF (Rich Text Format) document with a small description of your
+1.	Create the C source file with your motor and sensor configurations. This should 
+	look familiar to you; it has the same layout as the group of #pragma definitions 
+	at the top of every RobotC program.	To generate one, go to Robot->Motors and 
+	Sensors Setup, or right click an existing motor and sensor definition and click 
+	"Edit Motors and Sensors Definition". Either way, use the built-in utility to edit 
+	the motors and sensors setup to the configuration you want.
+2.	Create an RTF (Rich Text Format) document with a small description of your
 	configuration. You can create an RTF document in any word proccessing program.
-5.	Copy the C source file, the RTF file, and the JPG image into the folder shown
-	above.
-6.	You must restart RobotC for the changes to be recognized.
-7.	Back in RobotC, go back to the Motors and Sensors Setup window, and go to the
-	Standard Models tab, and select your standard model from the list. Click Apply,
-	and you standard model will be applied.
+3. 	Create a JPEG image that visualizes your standard model. This could be a picture
+	of your robot, or you could do as we did and just use your team logo.
+4.	You must restart RobotC for the standard model to be recognized. Each time you make
+	a change, RobotC must be restarted.
+5.	Back in RobotC, in your main program, go back to the Motors and Sensors Setup window,
+	and go to the Standard Models tab, and select your standard model from the list. 
+	Click Apply, and you standard model will be applied.
 

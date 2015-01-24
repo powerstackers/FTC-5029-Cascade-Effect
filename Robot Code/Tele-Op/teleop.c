@@ -212,6 +212,16 @@ task main()
 			motor[mTip] = 0;
 		}
 
+		// If the tip encoder stick is pushed, raise or lower the tip encoder target
+		if(abs(stickTipTarget)>stickPushThreshold)
+		{
+			tipEncoderTarget += stickTipTarget>0? liftEncoderStepValue : (stickTipTarget<0? -1*liftEncoderStepValue:0);
+		}
+
+		// If the tip encoder reset button is pressed, reset the encoder
+		if(buttonTipEncoderReset)
+			nMotorEncoder[mTip] = 0;
+
 		//motor[mTip] = (buttonTipUp)?tipMotorSpeed:((buttonTipDown)?-1*tipMotorSpeed:0);
 
 		/*
