@@ -136,8 +136,8 @@ void getCustomJoystickSettings ()
 	buttonLiftOut 			= (joy2Btn(5) == 1);			// Driver 2 left shoulder
 	buttonLiftIn 			= (joy2Btn(7) == 1);			// Driver 2 left trigger
 	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
-	buttonTipUp				= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
-	buttonTipDown 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
+	//buttonTipUp				= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
+	//buttonTipDown 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
 	buttonTipEncoderReset	= (joy2Btn(8) == 1);			// Driver 2 SELECT button
 	buttonTrapDoor			= (joy2Btn(2) == 1);			// Driver 2 green button
 	buttonFlaps				= (joy2Btn(4) == 1);			// Driver 2 yellow button

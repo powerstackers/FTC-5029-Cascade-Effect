@@ -127,7 +127,8 @@ task main()
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
-
+			// Just go in a straight line
+			goTicks(inchesToTicks(80), 75);
 		}	// END DEFENSE
 
 

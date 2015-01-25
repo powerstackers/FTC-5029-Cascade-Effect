@@ -39,6 +39,7 @@
 #define encoderTargetThreshold 	50
 #define stickPushThreshold 		15
 #define liftEncoderStepValue 	25
+#define tipEncoderStepValue		15
 
 
 task main()
@@ -215,8 +216,9 @@ task main()
 		// If the tip encoder stick is pushed, raise or lower the tip encoder target
 		if(abs(stickTipTarget)>stickPushThreshold)
 		{
-			tipEncoderTarget += stickTipTarget>0? liftEncoderStepValue : (stickTipTarget<0? -1*liftEncoderStepValue:0);
+			tipEncoderTarget += stickTipTarget>0? tipEncoderStepValue : (stickTipTarget<0? -1*tipEncoderStepValue:0);
 		}
+		nxtDisplayTextLine(7, "enc:%d", tipEncoderTarget);
 
 		// If the tip encoder reset button is pressed, reset the encoder
 		if(buttonTipEncoderReset)
