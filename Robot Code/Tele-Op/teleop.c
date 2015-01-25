@@ -22,17 +22,18 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 19 2015
-*	Version 0.4
+*	January 25 2015
+*	Version 0.5
 */
 
 // Include a file to handle messages from the joystick
 #include "../drivers/JoystickDriver.c"
 #include "TeleopFunctions.h"
+#include "../Autonomous/headers/Sensors.h"
 #include "../Robot.h"
 
 // Version number
-#define programVersion 0.4
+#define programVersion 0.5
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
@@ -158,16 +159,34 @@ task main()
 		*	between. Those are controlled in the checkButtons task.
 		*/
 
-		// BRUSH
+		/*
+		*	BRUSH
+		*	Simple button on/off
+		*/
 		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
 		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
 		motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
 
+
+		/*
+		*	VERTICAL LIFT
+		*	Constantly moves toward a target encoder value. The encoder target can be changed manually using
+		*	a joystick, or by flipping through preprogrammed positions with buttons. There is a touch sensor
+		*	that is activated when the lift is at the base position. If this touch sensor is active, the lift
+		*	cannot be moved any lower.
+		*/
 		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
 		// This block of code keeps the motors moving towards their target.
 
-		// LIFT
+		// If the lift stop touch sensor is active, the lift must be at the lowest position.
+		// Reset the encoder value and the encoder target
+		if(touchActive(touchLiftStop))
+		{
+			nMotorEncoder[mLift] = 0;
+			liftEncoderTarget = 0;
+		}
+
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mLift] - liftEncoderTarget)>encoderTargetThreshold)
 		{
@@ -179,17 +198,31 @@ task main()
 			motor[mLift] = 0;
 		}
 
+		// Lift manual control
 		// If the lift motor manual control stick is pushed past the threshold, change the lift motor encoder target
 		if(abs(stickLiftTarget)>stickPushThreshold)
 		{
-			liftEncoderTarget += stickLiftTarget>0? liftEncoderStepValue : (stickLiftTarget<0? -1*liftEncoderStepValue:0);
+			// Only move the lift down if the touch sensor is not activated
+			if(stickLiftTarget<0&&!touchActive(touchLiftStop))
+			{
+				liftEncoderTarget -= liftEncoderStepValue;
+			}
+			else
+			{
+				liftEncoderTarget += liftEncoderStepValue;
+			}
 		}
 
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)
 			nMotorEncoder[mLift] = 0;
 
-		// HORIZONTAL LIFT
+		/*
+		*	HORIZONTAL SLIDE
+		*	Similar to the vertical lift, the horizontal slide seeks an encoder position. The target position
+		*	can be changed using buttons.
+		*/
+
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
 		{
@@ -201,7 +234,11 @@ task main()
 			motor[mHoriz] = 0;
 		}
 
-		// TIPPER
+		/*
+		*	TIPPER
+		*	The tipper works the same as both the lifts, and also has a manual up/down joystick control.
+		*/
+
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mTip] - tipEncoderTarget)>encoderTargetThreshold)
 		{
@@ -216,9 +253,9 @@ task main()
 		// If the tip encoder stick is pushed, raise or lower the tip encoder target
 		if(abs(stickTipTarget)>stickPushThreshold)
 		{
-			tipEncoderTarget += stickTipTarget>0? tipEncoderStepValue : (stickTipTarget<0? -1*tipEncoderStepValue:0);
+			tipEncoderTarget += stickTipTarget>0? tipEncoderStepValue : -tipEncoderStepValue;
 		}
-		nxtDisplayTextLine(7, "enc:%d", tipEncoderTarget);
+		//nxtDisplayTextLine(7, "enc:%d", tipEncoderTarget);
 
 		// If the tip encoder reset button is pressed, reset the encoder
 		if(buttonTipEncoderReset)

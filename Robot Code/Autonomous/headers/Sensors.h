@@ -125,6 +125,10 @@ int getUltraStrength(tMUXSensor sensor)
 	return USreadDist(sensor);
 }
 
+/*
+*	touchActive
+*	Returns the state of a given touch sensor
+*/
 bool touchActive(int sensor)
 {
 	return HTTMUXisActive(TMUX1, sensor);
