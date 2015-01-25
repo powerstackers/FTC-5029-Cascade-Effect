@@ -35,7 +35,8 @@
 // Left and right arrow buttons are used to switch a value, the orange button is used to move to the next option in the list.
 #define NEXT_BUTTON kRightButton
 #define PREV_BUTTON kLeftButton
-#define DOWN_BUTTON kEnterButton
+#define DOWN_BUTTON kExitButton
+#define UP_BUTTON	kEnterButton
 
 // Constants to store settings values
 #define OFFENSIVE_MODE 	true
@@ -107,16 +108,34 @@ void printSettings()
 
 void runMenu()
 {
+	// Set the number of gray button clicks needed to exit the program to something ridiculous
+	nNxtExitClicks = 50;
+
 	// Clear the NXT screen
 	bDisplayDiagnostics = false;
 	eraseDisplay();
+
+	// Store whether the program is ready
+	bool ready = false;
 
 	// Declare variables to store the currently selected variable, and the data type of the currently selected variable
 	unsigned void* currVar 	= &startingPosition;	// A void pointer can store any type of variable address
 	char currType 			= 'b';
 
-	// Run this code until the ENTER button is pressed
-	bool ready = false;
+	unsigned void* allVars[5] = {&startingPosition, &offenseOrDefense, &debugMode, &waitTime, &ready};
+	char allTypes[5] = {'b','b','b','f','b'};
+
+	int currLine = 0;
+	int prevLine = 5;
+
+	// Store whether the UP and DOWN buttons have been recently pressed
+	bool upRecentlyPressed = false;
+	bool downRecentlyPressed = false;
+
+	// We have to print the ENTER line here at least once
+	nxtDisplayCenteredTextLine(4, "ENTER");
+
+	// Run until I say stop
 	while (!ready)
 	{
 
@@ -131,8 +150,30 @@ void runMenu()
 		// Print all the variable names and their current values to the screen
 		nxtDisplayStringAt(6, 63, "StrPos:     %s", startingPosition ? "flr":"rmp");
 		nxtDisplayStringAt(6, 55, "OfDef:      %s", offenseOrDefense ? "off":"def");
-		nxtDisplayStringAt(6, 23, "Debug:      %s", debugMode ? " ON":"OFF");
-		nxtDisplayStringAt(6, 15, "Delay:      %2.1f", waitTime);
+		nxtDisplayStringAt(6, 47, "Debug:      %s", debugMode ? " ON":"OFF");
+		nxtDisplayStringAt(6, 39, "Delay:      %2.1f", waitTime);
+
+		// Print a selection icon next to the current line, or the appropriate string if we're on the ENTER line
+		if(currLine==4)
+		{
+			nxtDisplayCenteredTextLine(4, "[ENTER]");
+		}
+		else
+		{
+			nxtDisplayStringAt(0, 63-(currLine*8), ">");
+		}
+
+		// Erase the selection icon from next to the previously selected line
+		if(prevLine==4)
+		{
+			nxtDisplayCenteredTextLine(4, "ENTER");
+		}
+		else
+		{
+			nxtDisplayStringAt(0, 63-(prevLine*8), " ");
+		}
+
+
 
 		// Print a selection icon next to the active variable name
 		// Icon is 7 pixels high
