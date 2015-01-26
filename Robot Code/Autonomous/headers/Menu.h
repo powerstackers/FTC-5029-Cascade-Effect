@@ -44,6 +44,10 @@
 #define STARTING_RAMP 	true
 #define STARTING_FLOOR 	false
 
+#define maxLineIndex 	4
+#define enterLine 		4
+#define maxDelay 		15.0
+
 /*
 *	SETTINGS OPTIONS
 *	These options are edited using this menu program. The options control different tasks and functions
@@ -54,44 +58,6 @@ bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
 float 	waitTime			= 0.0;				// Delay time
 bool	debugMode			= false;			// Debug mode on/off
-
-// Maximum allowable wait time
-float 	maxDelay = 15.0;
-
-/*
-*	switchBool
-*	Switch a boolean to the opposite value.
-*/
-void switchBool(bool* in, TButtons activeButton)
-{
-	if(activeButton == NEXT_BUTTON || activeButton == PREV_BUTTON)
-		*in = !*in;
-}
-
-/*
-*	switchInt
-*	Increment or decrement an integer by an increment value.
-*/
-void switchInt(int* in, TButtons activeButton, int incrementValue)
-{
-	if(activeButton == NEXT_BUTTON)
-		*in = *in + incrementValue;
-	if(activeButton == PREV_BUTTON)
-		*in = *in - incrementValue;
-}
-
-/*
-*	switchFloat
-*	Increment or decrement a floating point number by an increment value.
-*/
-void switchFloat(float* in, TButtons activeButton, float incrementValue)
-{
-	if(activeButton == NEXT_BUTTON)
-		*in = *in + incrementValue;
-	if(activeButton == PREV_BUTTON)
-		*in = *in - incrementValue;
-}
-
 
 /*
 *	printSettings
@@ -118,27 +84,22 @@ void runMenu()
 	// Store whether the program is ready
 	bool ready = false;
 
-	// Declare variables to store the currently selected variable, and the data type of the currently selected variable
-	unsigned void* currVar 	= &startingPosition;	// A void pointer can store any type of variable address
-	char currType 			= 'b';
-
-	unsigned void* allVars[5] = {&startingPosition, &offenseOrDefense, &debugMode, &waitTime, &ready};
-	char allTypes[5] = {'b','b','b','f','b'};
-
+	// Store the currently selected line and the previously selected line
+	// Initialize the currenly selected line to line 0, and the previous line to the highest available line
 	int currLine = 0;
-	int prevLine = 5;
+	int prevLine = maxLineIndex;
 
-	// Store whether the UP and DOWN buttons have been recently pressed
+	// Store whether the UP, DOWN, and ARROW buttons have been recently pressed
 	bool upRecentlyPressed = false;
 	bool downRecentlyPressed = false;
+	bool arrowRecentlyPressed = false;
 
 	// We have to print the ENTER line here at least once
-	nxtDisplayCenteredTextLine(4, "ENTER");
+	nxtDisplayCenteredTextLine(enterLine, "ENTER");
 
-	// Run until I say stop
+	// Run until the enter button is pressed
 	while (!ready)
 	{
-
 		// If the delay is below zero, set it to zero (you can't wait negative 1 second)
 		if(waitTime < 0.0)
 			waitTime = 0.0;
@@ -154,9 +115,9 @@ void runMenu()
 		nxtDisplayStringAt(6, 39, "Delay:      %2.1f", waitTime);
 
 		// Print a selection icon next to the current line, or the appropriate string if we're on the ENTER line
-		if(currLine==4)
+		if(currLine==enterLine)
 		{
-			nxtDisplayCenteredTextLine(4, "[ENTER]");
+			nxtDisplayCenteredTextLine(enterLine, "[ENTER]");
 		}
 		else
 		{
@@ -164,102 +125,97 @@ void runMenu()
 		}
 
 		// Erase the selection icon from next to the previously selected line
-		if(prevLine==4)
+		if(prevLine==enterLine)
 		{
-			nxtDisplayCenteredTextLine(4, "ENTER");
+			nxtDisplayCenteredTextLine(enterLine, "ENTER");
 		}
 		else
 		{
 			nxtDisplayStringAt(0, 63-(prevLine*8), " ");
 		}
 
+		// If the right or left arrow button is pressed on the NXT, perform the appropriate action for the data
+		// type of the selected variable. Switching the ready variable will end the program
+		if((nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON)&&!arrowRecentlyPressed)
+		{
+			// The arrow button is being pressed, so it has been recently pressed
+			arrowRecentlyPressed = true;
 
-
-		// Print a selection icon next to the active variable name
-		// Icon is 7 pixels high
-		if(currVar == &startingPosition)
-		{
-			nxtDisplayStringAt(0, 63, ">");
-			nxtDisplayCenteredTextLine(7,"ENTER"); // The ready variable option has brackets around it
-		}
-		else if(currVar == &offenseOrDefense)
-		{
-			nxtDisplayStringAt(0, 63, " ");
-			nxtDisplayStringAt(0, 55, ">");
-		}
-		else if(currVar == &debugMode)
-		{
-			nxtDisplayStringAt(0, 55, " ");
-			nxtDisplayStringAt(0, 23, ">");
-		}
-		else if(currVar == &waitTime)
-		{
-			nxtDisplayStringAt(0, 23, " ");
-			nxtDisplayStringAt(0, 15, ">");
-		}
-		else if(currVar == &ready)
-		{
-			nxtDisplayStringAt(0, 15, " ");
-			nxtDisplayCenteredTextLine(7, "[ENTER]"); // The ready variable option has brackets around it
-		}
-
-		// If the right or left arrow button is pressed on the NXT, perform the appropriate action
-		// for the data type of the selected variable.
-		// Switching the ready variable will end the program
-		if(nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON)
-		{
-			if(currType == 'b')
-				switchBool(currVar, nNxtButtonPressed);
-			else if(currType == 'i')
-				switchInt(currVar, nNxtButtonPressed, 1);
-			else if(currType == 'f')
-				switchFloat(currVar, nNxtButtonPressed, 0.5);
-
-			// Play a short sound
-			PlaySound(soundBlip);
-
-			// Clear the timer. While the timer reads less than four seconds
-			// And any button is pressed, do nothing
-			ClearTimer(T1);
-			while(nNxtButtonPressed != kNoButton || time1[T1] <= 400){}
-		}
-
-		// If the orange button is pressed on the NXT, switch the active variable to the next variable in the list
-		if(nNxtButtonPressed == DOWN_BUTTON)
-		{
-			if(currVar == &startingPosition)
+			// Switch the variable that is on the currently selected line
+			switch(currLine)
 			{
-				currVar = &offenseOrDefense;
-				currType = 'b';
-			}
-			else if(currVar == &offenseOrDefense)
-			{
-				currVar = &debugMode;
-				currType = 'b';
-			}
-			else if(currVar == &debugMode)
-			{
-				currVar = &waitTime;
-				currType = 'f';
-			}
-			else if(currVar == &waitTime)
-			{
-				currVar = &ready;
-				currType = 'b';
-			}
-			else if(currVar == &ready)
-			{
-				currVar = &startingPosition;
-				currType = 'b';
+				case 0:
+					startingPosition = !startingPosition;
+					break;
+				case 1:
+					offenseOrDefense = !offenseOrDefense;
+					break;
+				case 2:
+					debugMode = !debugMode;
+					break;
+				case 3:
+					waitTime += nNxtButtonPressed==NEXT_BUTTON?0.5:-0.5;
+					break;
+				case 4:
+					ready = !ready;
 			}
 
 			// Play a short sound
 			PlaySound(soundBlip);
-
-			// Clear the timer. Wait until no buttons are pressed or at least 400 milliseconds have passed
-			ClearTimer(T1);
-			while(nNxtButtonPressed != kNoButton || time1[T1] <= 400){}
 		}
+
+		// If the arrow buttons are not being pressed, then they have not been recently pressed
+		if(nNxtButtonPressed!=NEXT_BUTTON&&nNxtButtonPressed!=PREV_BUTTON)
+			arrowRecentlyPressed = false;
+
+		// If the down button is pressed on the NXT, switch the active variable to the previous variable in the list
+		if(nNxtButtonPressed==DOWN_BUTTON&&!downRecentlyPressed)
+		{
+			// If the down button is being pressed, then it has been recently pressed
+			downRecentlyPressed = true;
+
+			// Set the previously selected line to the current line
+			prevLine = currLine;
+
+			// Move the current line one closer to the end
+			currLine++;
+
+			// If we've set the current line higher than it can go, loop back to the beginning
+			if(currLine>maxLineIndex)
+				currLine = 0;
+
+			// Play a short sound
+			PlaySound(soundBlip);
+		}
+
+		// If the down button is not being pressed, then it has not been recently pressed
+		if(nNxtButtonPressed!=DOWN_BUTTON)
+			downRecentlyPressed = false;
+
+		// If the up button is pressed on the NXT, switch the active variable to the next variable in the list
+		if(nNxtButtonPressed==UP_BUTTON&&!upRecentlyPressed)
+		{
+			// If the up button is being pressed, then it has been recently pressed
+			upRecentlyPressed = true;
+
+			// Set the previously selected line to the current line
+			prevLine = currLine;
+
+			// Move the currently selected line one towards the beginning
+			currLine--;
+
+			// If we've set the current line lower than it can possibly go, move it to the last variable in the list
+			if(currLine<0)
+				currLine = maxLineIndex;
+
+			// Play a short sound
+			PlaySound(soundBlip);
+		}
+
+		// If the up button is not being pressed, then it has not been recently pressed
+		if(nNxtButtonPressed!=UP_BUTTON)
+			upRecentlyPressed = false;
+
 	} // END MAIN LOOP
 	// Clear the screen, and print all the settings decisions
 	eraseDisplay();

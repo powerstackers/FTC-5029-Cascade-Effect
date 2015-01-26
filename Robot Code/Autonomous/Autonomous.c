@@ -76,7 +76,7 @@ task main()
 		{
 			nxtDisplayCenteredBigTextLine(3, "IN %d", i);
 			PlaySound(soundException);
-			wait10Msec(150);
+			wait10Msec(100);
 		}
 	}
 	else
