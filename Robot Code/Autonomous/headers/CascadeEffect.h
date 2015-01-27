@@ -119,21 +119,21 @@ char findGoalOrientation()
 void dropBall(long height)
 {
 	// put the grabber down,
-	moveMotorTo(mTip, tipTargetFloor, tipMotorSpeed);
+	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
 	//then move forward a little,
-	goTicks(inchesToTicks(6), 30);
+	goTicks(inchesToTicks(-10), 50);
 	//then t-rex hand have to go down.
 	servo[rGrabber]=grabberClosedPosition;
 	//lift hpper,
-	moveMotorTo(mLift, height, liftMotorSpeed);
+	//moveMotorTo(mLift, height, liftMotorSpeed);
 	//then trap door has to drop,
-	servo[rTrapDoor]=trapDoorOpenPosition;
+	//servo[rTrapDoor]=trapDoorOpenPosition;
 	//then wait,
-	wait10Msec (300);
+	//wait10Msec (300);
 	//put the trap door back up
-	servo[rTrapDoor]=trapDoorClosedPosition;
+	//servo[rTrapDoor]=trapDoorClosedPosition;
 	// put the lift down.
-	moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
+	//moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
 }
 
 /*
@@ -151,6 +151,8 @@ void kickstand()
 */
 void moveMotorTo(short affectedMotor, long position, short speed)
 {
+	writeDebugStreamLine("-- MOVING MOTOR TO POSITION --\n\tCurrent position: %d", nMotorEncoder[affectedMotor]);
+	writeDebugStreamLine("\tTarget position: %d", position);
 	// If the motor is already at the target position, don't change it
 	if(nMotorEncoder[affectedMotor]==position)
 	{
@@ -174,4 +176,6 @@ void moveMotorTo(short affectedMotor, long position, short speed)
 		// Turn off the motor
 		motor[affectedMotor]=0;
 	}
+
+	writeDebugStreamLine("-- MOTOR MOVED --");
 }
