@@ -23,7 +23,7 @@
 *	powerstackersftc.com
 *	github.com/powerstackers
 *	January 25 2015
-*	Version 0.5
+*	Version 0.6
 */
 
 // Include a file to handle messages from the joystick
@@ -33,13 +33,13 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 0.5
+#define programVersion 0.6
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
 #define encoderTargetThreshold 	50
 #define stickPushThreshold 		15
-#define liftEncoderStepValue 	25
+#define liftEncoderStepValue 	15
 #define tipEncoderStepValue		15
 
 
@@ -181,11 +181,11 @@ task main()
 
 		// If the lift stop touch sensor is active, the lift must be at the lowest position.
 		// Reset the encoder value and the encoder target
-		if(touchActive(touchLiftStop))
+		/*if(touchActive(touchLiftStop))
 		{
 			nMotorEncoder[mLift] = 0;
 			liftEncoderTarget = 0;
-		}
+		}*/
 
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mLift] - liftEncoderTarget)>encoderTargetThreshold)
@@ -202,16 +202,23 @@ task main()
 		// If the lift motor manual control stick is pushed past the threshold, change the lift motor encoder target
 		if(abs(stickLiftTarget)>stickPushThreshold)
 		{
-			// Only move the lift down if the touch sensor is not activated
+			// Move the lift down if the stick is pushed down and the touch sensor is not activated
 			if(stickLiftTarget<0&&!touchActive(touchLiftStop))
 			{
 				liftEncoderTarget -= liftEncoderStepValue;
 			}
-			else
+			// Move the lift up if the stick is pushed up
+			else if(stickLiftTarget>0)
 			{
 				liftEncoderTarget += liftEncoderStepValue;
 			}
 		}
+		// If the stick is released, the lift stops moving
+		else
+		{
+			liftEncoderTarget = nMotorEncoder[mLift];
+		}
+
 
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)
@@ -255,7 +262,11 @@ task main()
 		{
 			tipEncoderTarget += stickTipTarget>0? tipEncoderStepValue : -tipEncoderStepValue;
 		}
-		//nxtDisplayTextLine(7, "enc:%d", tipEncoderTarget);
+		// If the stick is released, the motor stops moving
+		else
+		{
+			tipEncoderTarget = nMotorEncoder[mTip];
+		}
 
 		// If the tip encoder reset button is pressed, reset the encoder
 		if(buttonTipEncoderReset)

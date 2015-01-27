@@ -52,7 +52,7 @@ void checkBatteryLevels();
 
 // Servo positions
 #define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	110	// Rolling goal grabber closed servo position
+#define grabberClosedPosition	50// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
