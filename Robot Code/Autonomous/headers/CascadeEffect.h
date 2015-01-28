@@ -38,33 +38,6 @@ void kickstand();
 // Manipulator movement functions
 void moveMotorTo(short affectedMotor, long position, short speed);
 
-// General functions
-void initializeRobot();
-
-/*
-*	initializeRobot
-*	Move all motors and servos to their starting positions
-*/
-void initializeRobot()
-{
-	// Turn of the diagnostic display from JoystickDriver.c, and clear the NXT screen
-	bDisplayDiagnostics = false;
-	eraseDisplay();
-
-	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
-	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
-
-	// Make sure that the batteries are at acceptable levels
-	checkBatteryLevels();
-
-	// Put all motors and servos into their starting positions
-	allMotorsTo(0);
-
-	// When initialization is done, notify the drivers
-	writeDebugStreamLine("-- ROBOT INITIALIZED --");
-}
-
 // Macros for the different positions of the center goal
 // The number indicates the average reading for the IR sensors when the goal is at that position
 #define positionA 80

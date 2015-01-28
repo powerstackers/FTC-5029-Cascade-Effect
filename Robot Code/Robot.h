@@ -52,13 +52,16 @@ void checkBatteryLevels();
 
 // Servo positions
 #define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	50// Rolling goal grabber closed servo position
+#define grabberClosedPosition	50	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 #define trapDoorOpenPosition	0	// Trap door open servo position
 #define trapDoorClosedPosition	90	// Trap door closed servo position
+
+#define trapDoorChangeRate		45 	// Trap door servo change rate
+									// Given in positions per update (20 ms, 50 updates per second)
 
 // Motor encoder targets
 //		Lift motor
@@ -145,4 +148,50 @@ void checkBatteryLevels()
 	{	// If the MUX battery is good, say so
 		writeDebugStreamLine("\tMUX battery good");
 	}
+}
+
+void initializeRobot()
+{
+	// Turn of the diagnostic display from JoystickDriver.c, and clear the NXT screen
+	bDisplayDiagnostics = false;
+	eraseDisplay();
+
+	// Measure and print the battery levels
+	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
+	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
+
+	// Make sure that the batteries are at acceptable levels
+	checkBatteryLevels();
+
+	// Put all motors and servos into their starting positions
+	motor[mDriveLeft] 	= 0;
+	motor[mDriveRight] 	= 0;
+	motor[mLift]		= 0;
+	motor[mTip] 		= 0;
+	motor[mHoriz] 		= 0;
+	motor[mBrush] 		= 0;
+
+		// All encoder positions that we use start at zero
+	nMotorEncoder[mLift] = 0;
+	nMotorEncoder[mTip] = 0;
+
+	/*
+	*	SERVO INITIALIZATION
+	*	This section sets all servos to their starting positions, and also changes some of the servo settings.
+	*/
+	// Servos should be set to the closed position
+	servo[rFlapLeft] 	= flapLeftClosedPosition;
+	servo[rFlapRight] 	= flapRightClosedPosition;
+	servo[rGrabber] 	= grabberOpenPosition;
+	servo[rTrapDoor] 	= trapDoorClosedPosition;
+
+	// Set the servo speed of some servos. This makes the servo change positions slower.
+	// The number of the setting indicates the number of positions the servo moves every 20 milliseconds
+	servoChangeRate[rTrapDoor] = trapDoorChangeRate;
+
+	// Make it so that servos maintain their positions after the program ends
+	bSystemLeaveServosEnabledOnProgramStop = true;
+
+	// Initialization done, print to the debug stream
+	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }

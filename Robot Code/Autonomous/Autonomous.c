@@ -112,7 +112,7 @@ task main()
 			dropBall(liftTargetMed);
 			//this will make the robot turn to move twards the parking zone
 			turnDegrees (-8,75);
-			goTicks(inchesToTicks(18), 75;
+			goTicks(inchesToTicks(18), 75);
 			turnDegrees(-15, 75);
 			//this will make the robot move twards the parking zone
 			goTicks (inchesToTicks(72), 75);
@@ -152,7 +152,7 @@ task main()
 			goTicks(inchesToTicks(10), 50);
 
 			// Detect and store the center goal position
-			char goalFacing = findGoalOrientation();
+			//char goalFacing = findGoalOrientation();
 
 			// Position the robot to drop the ball in the center goal
 
