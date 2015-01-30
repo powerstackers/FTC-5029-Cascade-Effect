@@ -50,17 +50,19 @@ bool nxtBatteryGoodState();
 #define liftMotorSpeed 	50			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
 #define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	50			// Speed of the brush motor
+#define brushMotorSpeed	65			// Speed of the brush motor
 
 // Servo positions
 #define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	50// Rolling goal grabber closed servo position
+#define grabberClosedPosition	50	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
-#define trapDoorOpenPosition	0	// Trap door open servo position
-#define trapDoorClosedPosition	90	// Trap door closed servo position
+#define trapDoorOpenPosition	20	// Trap door open servo position
+#define trapDoorClosedPosition	128	// Trap door closed servo position
+#define trapDoorIdlePosition	90	// Idling position for the grabber
+#define trapDoorAlignPosition	50	// Trap door precision alignment position
 
 // Motor encoder targets
 //		Lift motor

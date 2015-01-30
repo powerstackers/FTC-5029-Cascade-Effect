@@ -314,7 +314,25 @@ task main()
 		// TRAPDOOR
 		if(buttonTrapDoor && !buttonTrapDoorJustPushed)
 		{
-			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
+			// If the trapdoor is in the open or starting positions, move it to the idle position
+			if(servo[rTrapDoor]==trapDoorOpenPosition||servo[rTrapDoor]==trapDoorClosedPosition)
+			{
+				servo[rTrapDoor] = trapDoorIdlePosition;
+			}
+
+			// If the trapdoor is in the align position (second lowest), move it to the open position (lowest)
+			else if(servo[rTrapDoor]==trapDoorAlignPosition)
+			{
+				servo[rTrapDoor] = trapDoorOpenPosition;
+			}
+
+			// If the trapdoor is in the idle position (second highest), move it to the align position (second lowest)
+			else if(servo[rTrapDoor]==trapDoorIdlePosition)
+			{
+				servo[rTrapDoor] = trapDoorAlignPosition;
+			}
+
+
 			buttonTrapDoorJustPushed = true;
 			writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");
 		}
