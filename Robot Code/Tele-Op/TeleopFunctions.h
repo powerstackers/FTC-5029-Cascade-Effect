@@ -238,6 +238,7 @@ void initializeRobot()
 	// All encoder positions that we use start at zero
 	nMotorEncoder[mLift] = 0;
 	nMotorEncoder[mTip] = 0;
+	nMotorEncoder[mHoriz] = 0;
 
 	/*
 	*	SERVO INITIALIZATION

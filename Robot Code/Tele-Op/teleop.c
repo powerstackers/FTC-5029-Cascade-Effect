@@ -208,9 +208,17 @@ task main()
 		if(abs(stickLiftTarget)>stickPushThreshold)
 		{
 			// Move the lift down if the stick is pushed down and the touch sensor is not activated
-			if(stickLiftTarget<0&&!touchActive(touchLiftStop))
+			if(stickLiftTarget<0)
 			{
-				liftEncoderTarget -= liftEncoderStepValue;
+				if(touchActive(touchLiftStop))
+				{
+					nMotorEncoder[mLift] = 0;
+					liftEncoderTarget = 0;
+				}
+				else
+				{
+					liftEncoderTarget -= liftEncoderStepValue;
+				}
 			}
 			// Move the lift up if the stick is pushed up
 			else if(stickLiftTarget>0)
@@ -223,7 +231,7 @@ task main()
 		{
 			liftEncoderTarget = nMotorEncoder[mLift];
 		}
-
+		nxtDisplayTextLine(7, "enc: %d", nMotorEncoder[mLift]);
 
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)
@@ -236,11 +244,23 @@ task main()
 		*/
 
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
-		if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
+		/*if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
 		{
 			motor[mHoriz] = 	(nMotorEncoder[mHoriz]<horizEncoderTarget)?horizMotorSpeed:(-1*horizMotorSpeed);
 		}
 		// If the encoder is within a certain threshold distance of its target, stop
+		else
+		{
+			motor[mHoriz] = 0;
+		}*/
+		if(buttonLiftOut)
+		{
+			motor[mHoriz] = horizMotorSpeed;
+		}
+		else if(buttonLiftIn)
+		{
+			motor[mHoriz] = -horizMotorSpeed;
+		}
 		else
 		{
 			motor[mHoriz] = 0;

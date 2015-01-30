@@ -61,7 +61,7 @@ bool nxtBatteryGoodState();
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
-#define trapDoorIdlePosition	90	// Idling position for the grabber
+#define trapDoorIdlePosition	100	// Idling position for the grabber
 #define trapDoorAlignPosition	50	// Trap door precision alignment position
 
 // Motor encoder targets
