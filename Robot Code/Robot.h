@@ -34,6 +34,8 @@
 */
 void printWelcomeMessage(string programName, float versionNumber);
 void checkBatteryLevels();
+bool tetrixBatteryGoodState();
+bool nxtBatteryGoodState();
 
 /*
 *	GLOBAL CONSTANTS
@@ -101,6 +103,24 @@ void printWelcomeMessage(string programName, float versionNumber)
 }
 
 /*
+*	tetrixBatteryGoodState
+*	Return whether or not the main TETRIX battery is acceptably full.
+*/
+bool tetrixBatteryGoodState()
+{
+	return externalBatteryAvg / 1000.0 > tetrixBatteryMinimumLevel;
+}
+
+/*
+*	nxtBatteryGoodState
+*	Return whether or not the NXT battery is acceptably full.
+*/
+bool nxtBatteryGoodState()
+{
+	return nAvgBatteryLevel / 1000.0 > nxtBatteryMinimumLevel;
+}
+
+/*
 *	checkBatteryLevels
 *	Check the NXT and TETRIX battery levels
 */
@@ -108,7 +128,7 @@ void checkBatteryLevels()
 {
 	// If battery levels are low, notify the operators
 	// A battery level below 13 volts is considered low.
-	if(externalBatteryAvg < tetrixBatteryMinimumLevel)
+	if(!tetrixBatteryGoodState())
 	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f",
@@ -117,23 +137,19 @@ void checkBatteryLevels()
 		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
-		nxtDisplayTextLine(5, "MAIN BATT LOW");
 	}
-	else
-		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(5, "MAIN BATT GOOD");
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
-	if(nAvgBatteryLevel < nxtBatteryMinimumLevel)
+	if(!nxtBatteryGoodState())
 	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
-		nxtDisplayTextLine(6, "NXT BATT LOW");
 	}
-	else
-		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(6, "NXT BATT GOOD");
+
+	// Print both battery states, good or bad, to the NXT LCD screen
+	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
 
 	// Check that the multiplexer battery is in a good state
 	if(HTSMUXreadPowerStatus(SMUX1))

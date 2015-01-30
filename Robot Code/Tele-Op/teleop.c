@@ -106,6 +106,11 @@ task main()
 		getJoystickSettings(joystick);
 		getCustomJoystickSettings ();
 
+		// Print both battery states, good or bad, to the NXT LCD screen
+		nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+		nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
+
+
 		// Check that we are still recieving messages from the FCS. If not, halt operation
 		if(nNoMessageCounter>nNoMessageCounterLimit)
 			haltOperation();

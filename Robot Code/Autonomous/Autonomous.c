@@ -112,7 +112,7 @@ task main()
 			dropBall(liftTargetMed);
 			//this will make the robot turn to move twards the parking zone
 			turnDegrees (-8,75);
-			goTicks(inchesToTicks(18), 75;
+			goTicks(inchesToTicks(18), 75);
 			turnDegrees(-15, 75);
 			//this will make the robot move twards the parking zone
 			goTicks (inchesToTicks(72), 75);
@@ -121,19 +121,14 @@ task main()
 			//this will make the robot move forward so it is fully in the parking zone
 			//goTicks (inchesToTicks(12), 50);
 
-
-			// Do stuff
-
 		}	// END OFFENSE
 
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
 			// Just go in a straight line
-			goTicks(inchesToTicks(80), 75);
+			goTicks(inchesToTicks(80), 50);
 		}	// END DEFENSE
-
-
 
 	}	// END RAMP START
 	else if(startingPosition==STARTING_FLOOR)
