@@ -148,7 +148,7 @@ task main()
 			goTicks(inchesToTicks(10), 50);
 
 			// Detect and store the center goal position
-			char goalFacing = findGoalOrientation();
+			//char goalFacing = findGoalOrientation();
 
 			// Position the robot to drop the ball in the center goal
 

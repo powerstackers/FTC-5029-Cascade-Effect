@@ -64,6 +64,9 @@ bool nxtBatteryGoodState();
 #define trapDoorIdlePosition	100	// Idling position for the grabber
 #define trapDoorAlignPosition	50	// Trap door precision alignment position
 
+#define trapDoorChangeRate		45 	// Trap door servo change rate
+									// Given in positions per update (20 ms, 50 updates per second)
+
 // Motor encoder targets
 //		Lift motor
 #define liftTargetBase 		0
@@ -163,4 +166,50 @@ void checkBatteryLevels()
 	{	// If the MUX battery is good, say so
 		writeDebugStreamLine("\tMUX battery good");
 	}
+}
+
+void initializeRobot()
+{
+	// Turn of the diagnostic display from JoystickDriver.c, and clear the NXT screen
+	bDisplayDiagnostics = false;
+	eraseDisplay();
+
+	// Measure and print the battery levels
+	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
+	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
+
+	// Make sure that the batteries are at acceptable levels
+	checkBatteryLevels();
+
+	// Put all motors and servos into their starting positions
+	motor[mDriveLeft] 	= 0;
+	motor[mDriveRight] 	= 0;
+	motor[mLift]		= 0;
+	motor[mTip] 		= 0;
+	motor[mHoriz] 		= 0;
+	motor[mBrush] 		= 0;
+
+		// All encoder positions that we use start at zero
+	nMotorEncoder[mLift] = 0;
+	nMotorEncoder[mTip] = 0;
+
+	/*
+	*	SERVO INITIALIZATION
+	*	This section sets all servos to their starting positions, and also changes some of the servo settings.
+	*/
+	// Servos should be set to the closed position
+	servo[rFlapLeft] 	= flapLeftClosedPosition;
+	servo[rFlapRight] 	= flapRightClosedPosition;
+	servo[rGrabber] 	= grabberOpenPosition;
+	servo[rTrapDoor] 	= trapDoorClosedPosition;
+
+	// Set the servo speed of some servos. This makes the servo change positions slower.
+	// The number of the setting indicates the number of positions the servo moves every 20 milliseconds
+	servoChangeRate[rTrapDoor] = trapDoorChangeRate;
+
+	// Make it so that servos maintain their positions after the program ends
+	bSystemLeaveServosEnabledOnProgramStop = true;
+
+	// Initialization done, print to the debug stream
+	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }

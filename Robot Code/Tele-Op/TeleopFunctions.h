@@ -37,8 +37,6 @@
 /*
 *	FUNCTION PROTOTYPES
 */
-
-void initializeRobot();				// Put the robot into its starting positions
 void getCustomJoystickSettings ();	// Fetch all the custom joystick configurations
 
 // Utility functions
@@ -168,6 +166,8 @@ short stickToMotorValue(short stickValue)
 }
 
 /*
+<<<<<<< HEAD
+=======
 *	initializeRobot
 *	Sets the robot's motors and servos to their starting values. Also
 *	prepares sensors and multiplexers, as well as the NXT.
@@ -263,6 +263,7 @@ void initializeRobot()
 
 
 /*
+>>>>>>> origin/master
 *	switchEncoderTarget
 *	Move an encoder target up or down one position
 *	Inputs: encoder target variable to switch; the current position of the motor; wether to move up or down one position.
