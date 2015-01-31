@@ -107,17 +107,20 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Go straight down the ramp
-			goTicks(inchesToTicks(-70), 25);
+			goTicks(inchesToTicks(-25), 30);
+			turnDegrees(5, 50);
+			goTicks(inchesToTicks(-40), 50);
 			//this will make the robot drop the balls into the rolling goal
 			grabTube();
 			//this will make the robot turn to move twards the parking zone
 			turnDegrees (-8,75);
-			goTicks(inchesToTicks(18), 75);
-			turnDegrees(-15, 75);
+			goTicks(inchesToTicks(12), 75);
+			turnDegrees(-20, 75);
 			//this will make the robot move twards the parking zone
-			goTicks (inchesToTicks(72), 75);
+			goTicks (inchesToTicks(78), 75);
 			//this will make the robot turn so it can be in place so it will move in the parking zone
-			turnDegrees (-90,50);
+			turnDegrees (-80,75);
+			goTicks(inchesToTicks(10), 50);
 			dropBall(liftTargetMed);
 
 		}	// END OFFENSE
@@ -163,7 +166,7 @@ task main()
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
 			// Move from the starting position to block the opponent's rolling goals
-			goTicks(inchesToTicks(60), 100);	// Move 3 feet forwards at full power
+			goTicks(inchesToTicks(20), 100);	// Move 3 feet forwards at full power
 		}	// END DEFENSE
 
 	}	// END FLOOR START

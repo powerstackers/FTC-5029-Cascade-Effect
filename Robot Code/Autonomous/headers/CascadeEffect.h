@@ -92,6 +92,7 @@ char findGoalOrientation()
 void dropBall(long height)
 {
 	//lift hpper,
+	nMotorEncoder[mLift] = 0;
 	moveMotorTo(mLift, height, liftMotorSpeed);
 	//then trap door has to drop,
 	servo[rTrapDoor]=trapDoorOpenPosition;
@@ -106,11 +107,16 @@ void dropBall(long height)
 void grabTube()
 {
 	// put the grabber down,
+	turnDegrees(18, 50);
 	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
+	// Open the grabber
+	servo[rGrabber] = grabberOpenPosition;
+	wait10Msec(50);
 	//then move forward a little,
-	goTicks(inchesToTicks(-10), 50);
+	goTicks(inchesToTicks(-15), 50);
 	//then t-rex hand have to go down.
 	servo[rGrabber]=grabberClosedPosition;
+	//goTicks(inchesToTicks(5), 50);
 }
 
 /*

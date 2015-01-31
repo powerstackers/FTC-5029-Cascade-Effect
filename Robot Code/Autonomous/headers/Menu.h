@@ -59,7 +59,7 @@ bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
 bool	doCenterGoal		= false;			// Place ball in center goal or not
 bool	doKickstand			= false;			// Knock over the kickstand or nor
 float 	waitTime			= 0.0;				// Delay time
-bool	debugMode			= false;			// Debug mode on/off
+bool	debugMode			= true;			// Debug mode on/off
 
 /*
 *	printSettings
