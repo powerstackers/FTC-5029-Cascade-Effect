@@ -62,7 +62,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
-#define trapDoorIdlePosition	90	// Idling position for the grabber
+#define trapDoorIdlePosition	85	// Idling position for the grabber
 #define trapDoorAlignPosition	50	// Trap door precision alignment position
 
 #define trapDoorChangeRate		45 	// Trap door servo change rate
