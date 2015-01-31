@@ -231,7 +231,7 @@ task main()
 		{
 			liftEncoderTarget = nMotorEncoder[mLift];
 		}
-		nxtDisplayTextLine(7, "enc: %d", nMotorEncoder[mLift]);
+		//nxtDisplayTextLine(7, "enc: %d", nMotorEncoder[mLift]);
 
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)

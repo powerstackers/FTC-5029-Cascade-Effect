@@ -67,10 +67,10 @@ bool nxtBatteryGoodState();
 // Motor encoder targets
 //		Lift motor
 #define liftTargetBase 		0
-#define liftTargetLow 		3500
-#define liftTargetMed 		7500
-#define liftTargetHigh 		11800
-#define liftTargetCent 		15700
+#define liftTargetLow 		5000
+#define liftTargetMed 		11000
+#define liftTargetHigh 		16850
+#define liftTargetCent 		22700
 
 //		Horizontal lift motor
 #define horizTargetBase 	0

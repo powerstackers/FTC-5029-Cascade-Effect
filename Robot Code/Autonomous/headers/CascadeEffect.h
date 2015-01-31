@@ -61,6 +61,9 @@ void initializeRobot()
 	// Put all motors and servos into their starting positions
 	allMotorsTo(0);
 
+	// Zero all encoders
+	nMotorEncoder[mLift] = 0;
+
 	// When initialization is done, notify the drivers
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
 }
@@ -118,22 +121,26 @@ char findGoalOrientation()
 */
 void dropBall(long height)
 {
+	//lift hpper,
+	moveMotorTo(mLift, height, liftMotorSpeed);
+	//then trap door has to drop,
+	servo[rTrapDoor]=trapDoorOpenPosition;
+	//then wait,
+	wait10Msec (300);
+	//put the trap door back up
+	servo[rTrapDoor]=trapDoorClosedPosition;
+	// put the lift down.
+	moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
+}
+
+void grabTube()
+{
 	// put the grabber down,
 	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
 	//then move forward a little,
 	goTicks(inchesToTicks(-10), 50);
 	//then t-rex hand have to go down.
 	servo[rGrabber]=grabberClosedPosition;
-	//lift hpper,
-	//moveMotorTo(mLift, height, liftMotorSpeed);
-	//then trap door has to drop,
-	//servo[rTrapDoor]=trapDoorOpenPosition;
-	//then wait,
-	//wait10Msec (300);
-	//put the trap door back up
-	//servo[rTrapDoor]=trapDoorClosedPosition;
-	// put the lift down.
-	//moveMotorTo(mLift, liftTargetBase, liftMotorSpeed);
 }
 
 /*
