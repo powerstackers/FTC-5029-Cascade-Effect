@@ -34,6 +34,8 @@
 */
 void printWelcomeMessage(string programName, float versionNumber);
 void checkBatteryLevels();
+bool tetrixBatteryGoodState();
+bool nxtBatteryGoodState();
 
 /*
 *	GLOBAL CONSTANTS
@@ -48,7 +50,7 @@ void checkBatteryLevels();
 #define liftMotorSpeed 	50			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
 #define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	50			// Speed of the brush motor
+#define brushMotorSpeed	65			// Speed of the brush motor
 
 // Servo positions
 #define grabberOpenPosition		255	// Rolling goal grabber open servo position
@@ -57,8 +59,10 @@ void checkBatteryLevels();
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
-#define trapDoorOpenPosition	0	// Trap door open servo position
-#define trapDoorClosedPosition	90	// Trap door closed servo position
+#define trapDoorOpenPosition	20	// Trap door open servo position
+#define trapDoorClosedPosition	128	// Trap door closed servo position
+#define trapDoorIdlePosition	100	// Idling position for the grabber
+#define trapDoorAlignPosition	50	// Trap door precision alignment position
 
 #define trapDoorChangeRate		45 	// Trap door servo change rate
 									// Given in positions per update (20 ms, 50 updates per second)
@@ -104,6 +108,24 @@ void printWelcomeMessage(string programName, float versionNumber)
 }
 
 /*
+*	tetrixBatteryGoodState
+*	Return whether or not the main TETRIX battery is acceptably full.
+*/
+bool tetrixBatteryGoodState()
+{
+	return externalBatteryAvg / 1000.0 > tetrixBatteryMinimumLevel;
+}
+
+/*
+*	nxtBatteryGoodState
+*	Return whether or not the NXT battery is acceptably full.
+*/
+bool nxtBatteryGoodState()
+{
+	return nAvgBatteryLevel / 1000.0 > nxtBatteryMinimumLevel;
+}
+
+/*
 *	checkBatteryLevels
 *	Check the NXT and TETRIX battery levels
 */
@@ -111,7 +133,7 @@ void checkBatteryLevels()
 {
 	// If battery levels are low, notify the operators
 	// A battery level below 13 volts is considered low.
-	if(externalBatteryAvg < tetrixBatteryMinimumLevel)
+	if(!tetrixBatteryGoodState())
 	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! MAIN BATTERY LOW !!--\n\tAvg battery level: %2.2f",
@@ -120,23 +142,19 @@ void checkBatteryLevels()
 		// A negative reading may indicate that the battery is disconnected
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
-		nxtDisplayTextLine(5, "MAIN BATT LOW");
 	}
-	else
-		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(5, "MAIN BATT GOOD");
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
-	if(nAvgBatteryLevel < nxtBatteryMinimumLevel)
+	if(!nxtBatteryGoodState())
 	{
 		PlaySound(soundException);
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
-		nxtDisplayTextLine(6, "NXT BATT LOW");
 	}
-	else
-		// If the battery level is acceptable, print a Battery Good message
-		nxtDisplayTextLine(6, "NXT BATT GOOD");
+
+	// Print both battery states, good or bad, to the NXT LCD screen
+	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
 
 	// Check that the multiplexer battery is in a good state
 	if(HTSMUXreadPowerStatus(SMUX1))

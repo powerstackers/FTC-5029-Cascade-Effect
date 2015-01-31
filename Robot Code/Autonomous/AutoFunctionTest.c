@@ -35,11 +35,11 @@ task main()
 	initializeRobot();
 	waitForStart();
 
-	//dropBall(30);
-	//turnDegrees(-8, 75);
-	//goTicks(inchesToTicks(18), 75;
-	//turnDegrees(-15, 75);
-	//goTicks(inchesToTicks(72), 75);
+	dropBall(30);
+	turnDegrees(-8, 75);
+	goTicks(inchesToTicks(18), 75;
+	turnDegrees(-15, 75);
+	goTicks(inchesToTicks(72), 75);
 	turnDegrees(-90, 75);
 
 }

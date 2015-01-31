@@ -106,6 +106,11 @@ task main()
 		getJoystickSettings(joystick);
 		getCustomJoystickSettings ();
 
+		// Print both battery states, good or bad, to the NXT LCD screen
+		nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+		nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
+
+
 		// Check that we are still recieving messages from the FCS. If not, halt operation
 		if(nNoMessageCounter>nNoMessageCounterLimit)
 			haltOperation();
@@ -203,9 +208,17 @@ task main()
 		if(abs(stickLiftTarget)>stickPushThreshold)
 		{
 			// Move the lift down if the stick is pushed down and the touch sensor is not activated
-			if(stickLiftTarget<0&&!touchActive(touchLiftStop))
+			if(stickLiftTarget<0)
 			{
-				liftEncoderTarget -= liftEncoderStepValue;
+				if(touchActive(touchLiftStop))
+				{
+					nMotorEncoder[mLift] = 0;
+					liftEncoderTarget = 0;
+				}
+				else
+				{
+					liftEncoderTarget -= liftEncoderStepValue;
+				}
 			}
 			// Move the lift up if the stick is pushed up
 			else if(stickLiftTarget>0)
@@ -218,7 +231,7 @@ task main()
 		{
 			liftEncoderTarget = nMotorEncoder[mLift];
 		}
-
+		nxtDisplayTextLine(7, "enc: %d", nMotorEncoder[mLift]);
 
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)
@@ -231,11 +244,23 @@ task main()
 		*/
 
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
-		if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
+		/*if(abs(nMotorEncoder[mHoriz] - horizEncoderTarget)>encoderTargetThreshold)
 		{
 			motor[mHoriz] = 	(nMotorEncoder[mHoriz]<horizEncoderTarget)?horizMotorSpeed:(-1*horizMotorSpeed);
 		}
 		// If the encoder is within a certain threshold distance of its target, stop
+		else
+		{
+			motor[mHoriz] = 0;
+		}*/
+		if(buttonLiftOut)
+		{
+			motor[mHoriz] = horizMotorSpeed;
+		}
+		else if(buttonLiftIn)
+		{
+			motor[mHoriz] = -horizMotorSpeed;
+		}
 		else
 		{
 			motor[mHoriz] = 0;
@@ -309,7 +334,25 @@ task main()
 		// TRAPDOOR
 		if(buttonTrapDoor && !buttonTrapDoorJustPushed)
 		{
-			servo[rTrapDoor] = (servo[rTrapDoor]==trapDoorOpenPosition)?trapDoorClosedPosition:trapDoorOpenPosition;
+			// If the trapdoor is in the open or starting positions, move it to the idle position
+			if(servo[rTrapDoor]==trapDoorOpenPosition||servo[rTrapDoor]==trapDoorClosedPosition)
+			{
+				servo[rTrapDoor] = trapDoorIdlePosition;
+			}
+
+			// If the trapdoor is in the align position (second lowest), move it to the open position (lowest)
+			else if(servo[rTrapDoor]==trapDoorAlignPosition)
+			{
+				servo[rTrapDoor] = trapDoorOpenPosition;
+			}
+
+			// If the trapdoor is in the idle position (second highest), move it to the align position (second lowest)
+			else if(servo[rTrapDoor]==trapDoorIdlePosition)
+			{
+				servo[rTrapDoor] = trapDoorAlignPosition;
+			}
+
+
 			buttonTrapDoorJustPushed = true;
 			writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");
 		}

@@ -44,8 +44,8 @@
 #define STARTING_RAMP 	true
 #define STARTING_FLOOR 	false
 
-#define maxLineIndex 	4
-#define enterLine 		4
+#define maxLineIndex 	6
+#define enterLine 		6
 #define maxDelay 		15.0
 
 /*
@@ -56,6 +56,8 @@
 */
 bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
+bool	doCenterGoal		= false;			// Place ball in center goal or not
+bool	doKickstand			= false;			// Knock over the kickstand or nor
 float 	waitTime			= 0.0;				// Delay time
 bool	debugMode			= false;			// Debug mode on/off
 
@@ -66,9 +68,11 @@ bool	debugMode			= false;			// Debug mode on/off
 void printSettings()
 {
 	writeDebugStreamLine("\tAUTONOMOUS SETTINGS:");
-	writeDebugStreamLine("\tStart pos:\t%s", (startingPosition==STARTING_FLOOR)?"floor":"ramp");
-	writeDebugStreamLine("\tGame mode:\t%s", (offenseOrDefense==OFFENSIVE_MODE)?"offensive":"defensive");
-	writeDebugStreamLine("\tDebug mode:\t%s", (debugMode ? "ON":"OFF"));
+	writeDebugStreamLine("\tStart pos:\t%s", startingPosition==STARTING_FLOOR?"floor":"ramp");
+	writeDebugStreamLine("\tGame mode:\t%s", offenseOrDefense==OFFENSIVE_MODE?"offensive":"defensive");
+	writeDebugStreamLine("\tDo kickstand:\t%s", doKickstand?"YES":"NO");
+	writeDebugStreamLine("\tDo center goal:\t%s", doCenterGoal?"YES":"NO");
+	writeDebugStreamLine("\tDebug mode:\t%s", debugMode ? "ON":"OFF");
 	writeDebugStreamLine("\tWait time:\t%2.2f", waitTime);
 }
 
@@ -109,10 +113,12 @@ void runMenu()
 			waitTime = maxDelay;
 
 		// Print all the variable names and their current values to the screen
-		nxtDisplayStringAt(6, 63, "StrPos:     %s", startingPosition ? "flr":"rmp");
-		nxtDisplayStringAt(6, 55, "OfDef:      %s", offenseOrDefense ? "off":"def");
-		nxtDisplayStringAt(6, 47, "Debug:      %s", debugMode ? " ON":"OFF");
-		nxtDisplayStringAt(6, 39, "Delay:      %2.1f", waitTime);
+		nxtDisplayStringAt(6, 63, "StrPos:   %s", startingPosition ? "FLOOR":" RAMP");
+		nxtDisplayStringAt(6, 55, "OfDef:      %s", offenseOrDefense ? "OFF":"DEF");
+		nxtDisplayStringAt(6, 47, "Center:     %s", doCenterGoal? " ON":"OFF");
+		nxtDisplayStringAt(6, 39, "Kickst:     %s", doKickstand? " ON":"OFF");
+		nxtDisplayStringAt(6, 31, "Debug:      %s", debugMode ? " ON":"OFF");
+		nxtDisplayStringAt(6, 23, "Delay:      %2.1f", waitTime);
 
 		// Print a selection icon next to the current line, or the appropriate string if we're on the ENTER line
 		if(currLine==enterLine)
@@ -151,12 +157,18 @@ void runMenu()
 					offenseOrDefense = !offenseOrDefense;
 					break;
 				case 2:
-					debugMode = !debugMode;
+					doCenterGoal = !doCenterGoal;
 					break;
 				case 3:
-					waitTime += nNxtButtonPressed==NEXT_BUTTON?0.5:-0.5;
+					doKickstand = !doKickstand;
 					break;
 				case 4:
+					debugMode = !debugMode;
+					break;
+				case 5:
+					waitTime += nNxtButtonPressed==NEXT_BUTTON?0.5:-0.5;
+					break;
+				case 6:
 					ready = !ready;
 			}
 
@@ -220,4 +232,7 @@ void runMenu()
 	// Clear the screen, and print all the settings decisions
 	eraseDisplay();
 	printSettings();
+
+	// Put the gray button back to normal
+	nNxtExitClicks = 1;
 } // END
