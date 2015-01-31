@@ -86,6 +86,7 @@ task main()
 	bool buttonGrabJustPushed 		= false;
 	bool buttonTrapDoorJustPushed 	= false;
 	bool buttonFlapJustPushed 		= false;
+	bool stickLiftRecentlyPushed	= false;
 
 	// Set the number of clicks to the gray button needed to exit the program
 	// We want to exit on our own terms, so we set this to 2. The first click will cause this program to shut itself down
@@ -184,14 +185,6 @@ task main()
 		// The encoder targets for the lift, horizontal lift, and tipper are updated by the checkButtons task, independent of the main task.
 		// This block of code keeps the motors moving towards their target.
 
-		// If the lift stop touch sensor is active, the lift must be at the lowest position.
-		// Reset the encoder value and the encoder target
-		/*if(touchActive(touchLiftStop))
-		{
-			nMotorEncoder[mLift] = 0;
-			liftEncoderTarget = 0;
-		}*/
-
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mLift] - liftEncoderTarget)>encoderTargetThreshold)
 		{
@@ -207,6 +200,9 @@ task main()
 		// If the lift motor manual control stick is pushed past the threshold, change the lift motor encoder target
 		if(abs(stickLiftTarget)>stickPushThreshold)
 		{
+			// The lift stick has been recenly pushed
+			stickLiftRecentlyPushed = true;
+
 			// Move the lift down if the stick is pushed down and the touch sensor is not activated
 			if(stickLiftTarget<0)
 			{
@@ -226,9 +222,11 @@ task main()
 				liftEncoderTarget += liftEncoderStepValue;
 			}
 		}
-		// If the stick is released, the lift stops moving
-		else
+		// If the stick is released and the stick has been recenly pushed, the lift stops moving
+		// We check this so that the lift only halts at this point if the user has pressed and then released the stick
+		else if(stickLiftRecentlyPushed)
 		{
+			stickLiftRecentlyPushed = false;
 			liftEncoderTarget = nMotorEncoder[mLift];
 		}
 		//nxtDisplayTextLine(7, "enc: %d", nMotorEncoder[mLift]);
