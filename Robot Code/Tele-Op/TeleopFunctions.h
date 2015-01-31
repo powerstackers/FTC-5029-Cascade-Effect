@@ -315,14 +315,15 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 *	checkButtons
 *	Watch the buttons and make changes accordingly
 */
+// Store the desired positions for the horizontal and vertical lifts
+// Initialize them to their starting positions
+char liftPosition 	= 'b';
+char horizPosition 	= 'b';
+char tipPosition 	= 'b';
 bool checkingButtons = true;
 task checkButtons()
 {
-	// Store the desired positions for the horizontal and vertical lifts
-	// Initialize them to their starting positions
-	char liftPosition 	= 'b';
-	char horizPosition 	= 'b';
-	char tipPosition 	= 'b';
+
 
 	// Store whether each button has been recently pushed
 	bool buttonLiftUpRecentlyPushed 	= false;

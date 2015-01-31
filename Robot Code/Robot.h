@@ -62,7 +62,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
-#define trapDoorIdlePosition	100	// Idling position for the grabber
+#define trapDoorIdlePosition	90	// Idling position for the grabber
 #define trapDoorAlignPosition	50	// Trap door precision alignment position
 
 #define trapDoorChangeRate		45 	// Trap door servo change rate
@@ -202,7 +202,7 @@ void initializeRobot()
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
-	servo[rGrabber] 	= grabberOpenPosition;
+	servo[rGrabber] 	= grabberClosedPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
 
 	// Set the servo speed of some servos. This makes the servo change positions slower.

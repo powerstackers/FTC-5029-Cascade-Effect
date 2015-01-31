@@ -210,6 +210,7 @@ task main()
 				{
 					nMotorEncoder[mLift] = 0;
 					liftEncoderTarget = 0;
+					liftPosition = 'b';
 				}
 				else
 				{
