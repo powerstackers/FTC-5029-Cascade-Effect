@@ -22,51 +22,21 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 20 2015
-*	Version 0.4
+*	January 30 2015
+*	Version 0.5
 */
 
 #include "AutoFunctions.h"
-#include "CollisionAvoidance.h"
+//#include "CollisionAvoidance.h"
 #include "../../Robot.h"
 
-// Game functions
+/*
+*	FUNCTION PROTOTYPES
+*/
 char findGoalOrientation();
 void dropBall(long height);
 void kickstand();
-
-// Manipulator movement functions
-void moveMotorTo(short affectedMotor, long position, short speed);
-
-// General functions
-void initializeRobot();
-
-/*
-*	initializeRobot
-*	Move all motors and servos to their starting positions
-*/
-void initializeRobot()
-{
-	// Turn of the diagnostic display from JoystickDriver.c, and clear the NXT screen
-	bDisplayDiagnostics = false;
-	eraseDisplay();
-
-	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
-	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
-
-	// Make sure that the batteries are at acceptable levels
-	checkBatteryLevels();
-
-	// Put all motors and servos into their starting positions
-	allMotorsTo(0);
-
-	// Zero all encoders
-	nMotorEncoder[mLift] = 0;
-
-	// When initialization is done, notify the drivers
-	writeDebugStreamLine("-- ROBOT INITIALIZED --");
-}
+void grabTube();
 
 // Macros for the different positions of the center goal
 // The number indicates the average reading for the IR sensors when the goal is at that position
@@ -150,39 +120,4 @@ void grabTube()
 void kickstand()
 {
 
-}
-
-/*
-*	moveMotor
-*	Move a motor to a given encoder position
-*/
-void moveMotorTo(short affectedMotor, long position, short speed)
-{
-	writeDebugStreamLine("-- MOVING MOTOR TO POSITION --\n\tCurrent position: %d", nMotorEncoder[affectedMotor]);
-	writeDebugStreamLine("\tTarget position: %d", position);
-	// If the motor is already at the target position, don't change it
-	if(nMotorEncoder[affectedMotor]==position)
-	{
-		return;
-	}
-	else
-	{
-		// If the motor is below the target position, move up
-		if(position>nMotorEncoder[affectedMotor])
-		{
-			motor[affectedMotor]= speed;
-			while(position>nMotorEncoder[affectedMotor]){}
-		}
-		// If the motor is above the target position, move down
-		else
-		{
-			motor[affectedMotor]= -speed;
-			while(position<nMotorEncoder[affectedMotor]){}
-		}
-
-		// Turn off the motor
-		motor[affectedMotor]=0;
-	}
-
-	writeDebugStreamLine("-- MOTOR MOVED --");
 }

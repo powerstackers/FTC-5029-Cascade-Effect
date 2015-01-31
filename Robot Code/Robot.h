@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 20 2015
-*	Version 0.1
+*	January 30 2015
+*	Version 0.2
 */
 
 // Include guard. This file can only be included one time
@@ -36,6 +36,7 @@ void printWelcomeMessage(string programName, float versionNumber);
 void checkBatteryLevels();
 bool tetrixBatteryGoodState();
 bool nxtBatteryGoodState();
+void moveMotorTo(short affectedMotor, long position, short speed);
 
 /*
 *	GLOBAL CONSTANTS
@@ -213,4 +214,39 @@ void initializeRobot()
 
 	// Initialization done, print to the debug stream
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");
+}
+
+/*
+*	moveMotor
+*	Move a motor to a given encoder position
+*/
+void moveMotorTo(short affectedMotor, long position, short speed)
+{
+	writeDebugStreamLine("-- MOVING MOTOR TO POSITION --\n\tCurrent position: %d", nMotorEncoder[affectedMotor]);
+	writeDebugStreamLine("\tTarget position: %d", position);
+	// If the motor is already at the target position, don't change it
+	if(nMotorEncoder[affectedMotor]==position)
+	{
+		return;
+	}
+	else
+	{
+		// If the motor is below the target position, move up
+		if(position>nMotorEncoder[affectedMotor])
+		{
+			motor[affectedMotor]= speed;
+			while(position>nMotorEncoder[affectedMotor]){}
+		}
+		// If the motor is above the target position, move down
+		else
+		{
+			motor[affectedMotor]= -speed;
+			while(position<nMotorEncoder[affectedMotor]){}
+		}
+
+		// Turn off the motor
+		motor[affectedMotor]=0;
+	}
+
+	writeDebugStreamLine("-- MOTOR MOVED --");
 }

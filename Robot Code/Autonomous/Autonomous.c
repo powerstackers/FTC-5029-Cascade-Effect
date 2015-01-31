@@ -25,8 +25,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 26 2015
-*	Version 0.4
+*	January 30 2015
+*	Version 0.5
 */
 
 #include "headers/AutoFunctions.h"
@@ -35,7 +35,7 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 0.4
+#define programVersion 0.5
 
 task main()
 {
@@ -119,15 +119,13 @@ task main()
 			//this will make the robot turn so it can be in place so it will move in the parking zone
 			turnDegrees (-90,50);
 			dropBall(liftTargetMed);
-			//this will make the robot move forward so it is fully in the parking zone
-			//goTicks (inchesToTicks(12), 50);
 
 		}	// END OFFENSE
 
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
-			// Just go in a straight line
+			// Just go in a straight line down the ramp
 			goTicks(inchesToTicks(80), 50);
 		}	// END DEFENSE
 
