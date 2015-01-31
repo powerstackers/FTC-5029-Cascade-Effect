@@ -65,15 +65,15 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define trapDoorIdlePosition	85	// Idling position for the grabber
 #define trapDoorAlignPosition	50	// Trap door precision alignment position
 
-#define trapDoorChangeRate		45 	// Trap door servo change rate
+#define trapDoorChangeRate		30 	// Trap door servo change rate
 									// Given in positions per update (20 ms, 50 updates per second)
 
 // Motor encoder targets
 //		Lift motor
 #define liftTargetBase 		0
 #define liftTargetLow 		5000
-#define liftTargetMed 		11000
-#define liftTargetHigh 		16850
+#define liftTargetMed 		10000
+#define liftTargetHigh 		17000
 #define liftTargetCent 		22700
 
 //		Horizontal lift motor
