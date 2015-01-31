@@ -113,10 +113,10 @@ void runMenu()
 			waitTime = maxDelay;
 
 		// Print all the variable names and their current values to the screen
-		nxtDisplayStringAt(6, 63, "StrPos:   %s", startingPosition ? "FLOOR":" RAMP");
-		nxtDisplayStringAt(6, 55, "OfDef:      %s", offenseOrDefense ? "OFF":"DEF");
-		nxtDisplayStringAt(6, 47, "Center:     %s", doCenterGoal? " ON":"OFF");
-		nxtDisplayStringAt(6, 39, "Kickst:     %s", doKickstand? " ON":"OFF");
+		nxtDisplayStringAt(6, 63, "StrPos:   %s", startingPosition==STARTING_FLOOR ? "FLOOR":" RAMP");
+		nxtDisplayStringAt(6, 55, "OfDef:  %s", offenseOrDefense==OFFENSIVE_MODE ? "OFFENSE":"DEFENSE");
+		nxtDisplayStringAt(6, 47, "Center:     %s", doCenterGoal? "YES":"NO ");
+		nxtDisplayStringAt(6, 39, "Kickst:     %s", doKickstand? "YES":"NO ");
 		nxtDisplayStringAt(6, 31, "Debug:      %s", debugMode ? " ON":"OFF");
 		nxtDisplayStringAt(6, 23, "Delay:      %2.1f", waitTime);
 
