@@ -48,7 +48,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define tetrixBatteryMinimumLevel	13000
 
 // Motor speeds
-#define liftMotorSpeed 	50			// Speed of the vertical lift motor
+#define liftMotorSpeed 	75			// Speed of the vertical lift motor
 #define horizMotorSpeed	50			// Speed of the horizontal slide motor
 #define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
 #define brushMotorSpeed	65			// Speed of the brush motor

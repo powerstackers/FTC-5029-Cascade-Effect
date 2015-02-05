@@ -171,13 +171,14 @@ task main()
 			turnDegrees(45, 75);
 			// Drive forward to disrupt the opponent rolling goals
 			goTicks(inchesToTicks(34), 75);
-
 			goTicks(inchesToTicks(-12), 100);
 
 			// turn slightly to get the rest of the goals
 			turnDegrees(40, 50);
 			goTicks(inchesToTicks(18), 75);
 			goTicks(inchesToTicks(-18), 100);
+
+			// Turn and go around the center goal towards our rolling goals
 			turnDegrees(-45, 50);
 			goTicks(inchesToTicks(-36), 100);
 			turnDegrees(60, 50);
