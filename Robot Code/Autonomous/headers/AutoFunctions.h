@@ -123,9 +123,6 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks %s at %d speed",
 		ticks, ((ticks>0)?"forward":"backward"), speed);
 
-
-	StartTask(stablizePath);
-
 	// If we are going forwards or backwards
 	// A positive number of ticks to travel indicates we are moving fowards.
 	// A negative value indicates we are moving backwards.
@@ -133,8 +130,11 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	{
 		// Set the drive motors to the given speed
 		driveMotorsTo(speed);
+		// While this function runs, keep the robot on a constant heading
+		StartTask(stablizePath);
 		// Wait until both motors have reached the target
 		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight){}
+		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Stop the drive motors here
 		driveMotorsTo(0);
@@ -143,8 +143,11 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	{
 		// Set the drive motors to the speed (in reverse)
 		driveMotorsTo(-1 * speed);
+		// While this function runs, keep the robot on a constant heading
+		StartTask(stablizePath);
 		// Wait until both motors have reached the target
 		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight){}
+		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Turn off the drive motors here
 		driveMotorsTo(0);
