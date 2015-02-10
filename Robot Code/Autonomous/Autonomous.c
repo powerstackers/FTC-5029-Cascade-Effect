@@ -32,6 +32,7 @@
 #include "headers/AutoFunctions.h"
 #include "headers/CascadeEffect.h"
 #include "headers/Menu.h"
+#include "headers/EncoderFix.h"
 #include "../Robot.h"
 
 // Version number
@@ -88,6 +89,7 @@ task main()
 	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 	PlaySound(soundUpwardTones);
+	StartTask(watchMotors);
 
 	/*
 	*	GAMEPLAY

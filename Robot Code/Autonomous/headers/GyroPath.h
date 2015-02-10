@@ -42,7 +42,7 @@ task stablizePath ()
 	// Create a variable to store the current heading
 	float currentHeading = 0.0;
 	// The amount to change the motor speed by
-	short correctionAmount = 25;
+	//short correctionAmount = 25;
 	// Threshold outside which we say that the robot has turned too far
 	float threshold = 10.0;
 
