@@ -134,5 +134,8 @@ task main ()
 			motor[mLeft]=50;
 			motor[mRight]=50;
 		}
+
+		nxtDisplayTextLine(6, "MainBatt: %2.2fv", externalBatteryAvg/1000.0);
+		nxtDisplayTextLine(7, "NxtBatt:  %2.2fv", nAvgBatteryLevel/1000.0);
 	}
 }

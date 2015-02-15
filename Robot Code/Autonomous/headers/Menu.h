@@ -83,6 +83,7 @@ void runMenu()
 
 	// Clear the NXT screen
 	bDisplayDiagnostics = false;
+	wait10Msec(20);
 	eraseDisplay();
 
 	// Store whether the program is ready
