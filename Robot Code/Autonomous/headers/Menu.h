@@ -54,7 +54,7 @@
 *	during the autonomous position, such as starting position on the field, which strategy we want to use,
 *	etc. The options and settings are used by the main autonomous program to make decisions.
 */
-bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
+bool 	startingPosition 	= STARTING_FLOOR;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
 bool	doCenterGoal		= false;			// Place ball in center goal or not
 bool	doKickstand			= false;			// Knock over the kickstand or nor

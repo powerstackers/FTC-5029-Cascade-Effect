@@ -35,6 +35,6 @@ task main()
 	initializeRobot();
 	waitForStart();
 
-	goTicks(inchesToTicks(72), 50);
+	goTicks(inchesToTicks(12), 50);
 
 }

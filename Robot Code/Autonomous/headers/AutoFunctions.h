@@ -120,8 +120,8 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	long targetLeft = nMotorEncoder[mDriveLeft] + ticks;
 
 	// Print what we are going to do to the debug stream
-	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks %s at %d speed",
-		ticks, ((ticks>0)?"forward":"backward"), speed);
+	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks (%3.2f inches) %s at %d speed",
+		ticks, ticksToInches(ticks), ((ticks>0)?"forward":"backward"), speed);
 
 	// If we are going forwards or backwards
 	// A positive number of ticks to travel indicates we are moving fowards.
@@ -133,20 +133,26 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// While this function runs, keep the robot on a constant heading
 		StartTask(stablizePath);
 		// Wait until both motors have reached the target
-		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight){}
+		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight)
+		{
+			//writeDebugStreamLine("Curr: %d\tTarg: %d", nMotorEncoder[mDriveLeft], targetLeft);
+		}
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Stop the drive motors here
 		driveMotorsTo(0);
 	}
-	else
+	else if(ticks < 0)
 	{
 		// Set the drive motors to the speed (in reverse)
 		driveMotorsTo(-1 * speed);
 		// While this function runs, keep the robot on a constant heading
 		StartTask(stablizePath);
 		// Wait until both motors have reached the target
-		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight){}
+		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight)
+		{
+			//writeDebugStreamLine("Curr: %d\tTarg: %d", nMotorEncoder[mDriveLeft], targetLeft);
+		}
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Turn off the drive motors here
@@ -154,7 +160,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	}
 
 	// Write to the debug stream that we are done
-	writeDebugStreamLine("\tMoving done");
+	writeDebugStreamLine("-- MOVING DONE --");
 }
 
 /*

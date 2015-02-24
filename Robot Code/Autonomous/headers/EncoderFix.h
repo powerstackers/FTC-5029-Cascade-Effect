@@ -61,6 +61,9 @@ task watchMotors ()
 			// the acceptable threshold since the last loop, stop and reverse the motor
 			if(motor[(tMotor)i]!=0&& ((long)abs(prevEncoderValue[(tMotor)i]-nMotorEncoder[(tMotor)i]))>encoderThreshold)
 			{
+
+				writeDebugStreamLine("-- HALTED MOTOR DETECTED --\nStopping motor, and reversing");
+
 				// Store the desired speed (also stores the direction)
 				short motorSpeed = motor [(tMotor)i];
 
@@ -73,26 +76,29 @@ task watchMotors ()
 				// If the motor is one of the drive motors, reverse both of the drive motors.
 				if((tMotor)i==mDriveLeft || (tMotor)i==mDriveRight)
 				{
+					writeDebugStreamLine("Drive motors affected. Moving both back for 200 ms");
 					// Set both motors to the reverse of the original speed
 					driveMotorsTo(-motorSpeed);
 					// Wait 200 ms
-					wait10Msec(20);
+					//wait10Msec(20);
 					// Turn the motors back off
-					driveMotorsTo(0);
+					driveMotorsTo(motorSpeed);
 				}
 				// For all motors besides the drive motors
 				else
 				{
+					writeDebugStreamLine("Moving motor %d back for 200 ms");
 					// Set the affected motor to the reverse of its original speed
 					motor[(tMotor)i] = -motorSpeed;
 					// Wait 200 ms
-					wait10Msec(20);
+					//wait10Msec(20);
 					// Turn off the affected motor
-					motor[(tMotor)i] = 0;
+					motor[(tMotor)i] = motorSpeed;
 				}
 
 				// Allow other tasks to run again
 				releaseCPU();
+				writeDebugStreamLine("-- RELEASED HALTED MOTOR --");
 			}	// End of chekc
 		}	// End of for loop
 	}	// End of main loop

@@ -153,6 +153,7 @@ task main()
 			// Detect and store the center goal position
 			//char goalFacing = findGoalOrientation();
 
+
 			// Position the robot to drop the ball in the center goal
 
 			// Drop the ball in the center goal
