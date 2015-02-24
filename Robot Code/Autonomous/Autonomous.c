@@ -153,7 +153,7 @@ task main()
 			// Detect and store the center goal position
 			char goalFacing = findGoalOrientation();
 			{
-			turnDegrees(-65, 75);
+			turnDegrees(-65, 50);
 			}
 			goTicks(inchesToTicks(-10),50);
 
