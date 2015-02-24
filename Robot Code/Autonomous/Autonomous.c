@@ -89,7 +89,7 @@ task main()
 	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 	PlaySound(soundUpwardTones);
-	StartTask(watchMotors);
+	//StartTask(watchMotors);
 
 	/*
 	*	GAMEPLAY
@@ -148,11 +148,14 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Move slightly forwards to get into a better detecting position
-			goTicks(inchesToTicks(10), 50);
+			goTicks(inchesToTicks(-35), 100);
 
 			// Detect and store the center goal position
-			//char goalFacing = findGoalOrientation();
-
+			char goalFacing = findGoalOrientation();
+			{
+			turnDegrees(-65, 75);
+			}
+			goTicks(inchesToTicks(-10),50);
 
 			// Position the robot to drop the ball in the center goal
 
