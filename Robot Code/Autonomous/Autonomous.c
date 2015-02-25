@@ -148,14 +148,36 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Move slightly forwards to get into a better detecting position
-			goTicks(inchesToTicks(-35), 100);
+			goTicks(inchesToTicks(-10), 50);
 
 			// Detect and store the center goal position
 			char goalFacing = findGoalOrientation();
+
+			switch (goalFacing)
 			{
-			turnDegrees(-65, 50);
+				case CENTGOAL_POSITION_A :           //closeness   do not ever put random comments in other stuff until after you think about it.
+				{
+				goTicks(inchesToTicks(-20),50);
+				break;
+				}
+
+				case CENTGOAL_POSITION_B :           //middle
+				{
+				break;
+				}
+
+				case CENTGOAL_POSITION_C :			//90 degrees
+				{
+				break;
+				}
+
+				default:
+				{
+				break;
+				}
+
 			}
-			goTicks(inchesToTicks(-10),50);
+
 
 			// Position the robot to drop the ball in the center goal
 

@@ -76,9 +76,9 @@ char findGoalOrientation()
 
 	// Print the IR reading, the differences, and the answer to the debug stream
 	writeDebugStreamLine("\tIR:\t%d", avg);
-	writeDebugStreamLine("\tdiifA:", diffA);
-	writeDebugStreamLine("\tdiffB:", diffB);
-	writeDebugStreamLine("\tdiffC:", diffC);
+	writeDebugStreamLine("\tdiifA:\t%d", diffA);
+	writeDebugStreamLine("\tdiffB:\t%d", diffB);
+	writeDebugStreamLine("\tdiffC:\t%d", diffC);
 	writeDebugStreamLine("\tThe thing is in position %c", facing);
 
 	// Return the direction that the center goal is facing
