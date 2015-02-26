@@ -148,7 +148,7 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Move slightly forwards to get into a better detecting position
-			goTicks(inchesToTicks(-10), 50);
+			goTicks(inchesToTicks(-20), 50);
 
 			// Detect and store the center goal position
 			char goalFacing = findGoalOrientation();
@@ -157,7 +157,7 @@ task main()
 			{
 				case CENTGOAL_POSITION_A :           //closeness   do not ever put random comments in other stuff until after you think about it.
 				{
-				goTicks(inchesToTicks(-20),50);
+				//goTicks(inchesToTicks(-10),50);
 				break;
 				}
 
