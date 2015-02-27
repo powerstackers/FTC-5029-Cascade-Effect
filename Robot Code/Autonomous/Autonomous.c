@@ -178,23 +178,23 @@ task main()
 				{
 				turnDegrees (87,75); writeDebugStreamLine("Done");
 
-				goTicks(inchesToTicks(31),50); writeDebugStreamLine("Done");
+				goTicks(inchesToTicks(31),75); writeDebugStreamLine("Done");
 
 				turnDegrees (-87,75); writeDebugStreamLine("Done");
 
 				turnDegrees (75,75); writeDebugStreamLine("Done");
 
-				goTicks(inchesToTicks(-43),50); writeDebugStreamLine("Done");
+				goTicks(inchesToTicks(-43),75); writeDebugStreamLine("Done");
 
 				turnDegrees(-83,75); writeDebugStreamLine("Done");
 
-				goTicks(inchesToTicks(-6),50); writeDebugStreamLine("Done");
+				goTicks(inchesToTicks(-6),75); writeDebugStreamLine("Done");
 
 				break;
 				}
 
 				default:
-				goTicks(inchesToTicks(-20),50); writeDebugStreamLine("Done");
+				goTicks(inchesToTicks(-20),75); writeDebugStreamLine("Done");
 				{
 				break;
 				}
@@ -203,7 +203,7 @@ task main()
 
 
 			// Position the robot to drop the ball in the center goal
-
+			moveMotorTo(liftTargetCent);
 			// Drop the ball in the center goal
 
 			// Position the robot correctly to kick the kickstand
