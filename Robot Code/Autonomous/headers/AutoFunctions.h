@@ -131,7 +131,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Set the drive motors to the given speed
 		driveMotorsTo(speed);
 		// While this function runs, keep the robot on a constant heading
-		StartTask(stablizePath);
+		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
 		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight)
 		{
@@ -147,7 +147,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Set the drive motors to the speed (in reverse)
 		driveMotorsTo(-1 * speed);
 		// While this function runs, keep the robot on a constant heading
-		StartTask(stablizePath);
+		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
 		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight)
 		{

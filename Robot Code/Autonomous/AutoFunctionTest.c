@@ -35,7 +35,5 @@ task main()
 	initializeRobot();
 	waitForStart();
 
-	goTicks(inchesToTicks(-20), 50);
-	char r = findGoalOrientation();
-
+goTicks(inchesToTicks(-7),50);
 }

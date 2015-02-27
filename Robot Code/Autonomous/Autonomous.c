@@ -157,21 +157,44 @@ task main()
 			{
 				case CENTGOAL_POSITION_A :           //closeness   do not ever put random comments in other stuff until after you think about it.
 				{
-				//goTicks(inchesToTicks(-10),50);
+
+				goTicks(inchesToTicks(-10),50); writeDebugStreamLine("Done");
+
 				break;
 				}
 
 				case CENTGOAL_POSITION_B :           //middle
 				{
+				turnDegrees (45,75); 	writeDebugStreamLine("Done");
+
+				goTicks(inchesToTicks(-30),75); writeDebugStreamLine("Done");
+
+				turnDegrees (-87,75); writeDebugStreamLine("Done");
+
 				break;
 				}
 
 				case CENTGOAL_POSITION_C :			//90 degrees
 				{
+				turnDegrees (87,75); writeDebugStreamLine("Done");
+
+				goTicks(inchesToTicks(31),50); writeDebugStreamLine("Done");
+
+				turnDegrees (-87,75); writeDebugStreamLine("Done");
+
+				turnDegrees (75,75); writeDebugStreamLine("Done");
+
+				goTicks(inchesToTicks(-43),50); writeDebugStreamLine("Done");
+
+				turnDegrees(-83,75); writeDebugStreamLine("Done");
+
+				goTicks(inchesToTicks(-6),50); writeDebugStreamLine("Done");
+
 				break;
 				}
 
 				default:
+				goTicks(inchesToTicks(-20),50); writeDebugStreamLine("Done");
 				{
 				break;
 				}
