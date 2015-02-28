@@ -37,13 +37,14 @@
 *
 */
 
-// Utility functions
+// Function prototypes
 void 	allMotorsTo(int i);
 void 	driveMotorsTo(int i);
 long 	inchesToTicks(float inches);
 float 	ticksToInches(long ticks);
 void	goTicks(long ticks, int speed);
 void 	turnDegrees(float degrees, int speed);
+void	wallAlign(bool forwardBackward);
 
 
 /*
@@ -220,4 +221,64 @@ void turnDegrees(float degrees, int speed)
 
 	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
+}
+
+
+#define ALIGN_FORWARD 	true
+#define ALIGN_BACKWARD 	false
+/*
+*	wallAlign
+*	Use a wall or other rigid surface to align the robot.
+*/
+void wallAlign(bool forwardBackward)
+{
+	writeDebugStreamLine("-- ALIGNING ROBOT --\n\tMoving %s", forwardBackward? "forward":"backward");
+
+	// If we are going to move forward into the wall
+	if(forwardBackward==ALIGN_FORWARD)
+	{
+		driveMotorsTo(50);
+	}
+	// If we are going to move backward into the wall
+	else
+	{
+		driveMotorsTo(-50);
+	}
+
+	// Store whether the left and right sides are finished aligning
+	bool rightDone = false;
+	bool leftDone = false;
+
+	// Store the previously read value of the left and right encoders, and initialize them to the current positions
+	long leftPrevValue = nMotorEncoder[mDriveLeft];
+	long rightPrevValue = nMotorEncoder[mDriveRight];
+
+	// This is our threshold. A change less than this will indicate that the motor has met resistance
+	const unsigned long stopThreshold = 500;
+
+	while(!rightDone&&!leftDone)
+	{
+		// Wait for 1 second to give the motors time to move, if they're going to
+		wait10Msec(100);
+
+		// If the left motor hasn't changed an acceptable amount in the last second, then it has met resistance
+		if(abs(leftPrevValue - nMotorEncoder[mDriveLeft]) < stopThreshold)
+		{
+			// Turn the motor off, and indicate that this side is aligned
+			motor[mDriveLeft] = 0;
+			leftDone = true;
+			writeDebugStreamLine("\tLeft side aligned");
+		}
+		// If the right motor hasn't changed an acceptable amount in the last second, then it has met resistance
+		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold)
+		{
+			// Turn the motor off, and indicate that this side is aligned
+			motor[mDriveRight] = 0;
+			rightDone = true;
+			writeDebugStreamLine("\tRight side aligned");
+		}
+
+	}
+
+	writeDebugStreamLine("-- ALIGNMENT DONE --");
 }
