@@ -268,6 +268,7 @@ void wallAlign(bool forwardBackward)
 			motor[mDriveLeft] = 0;
 			leftDone = true;
 			writeDebugStreamLine("\tLeft side aligned");
+			PlaySound(soundBeepBeep);
 		}
 		// If the right motor hasn't changed an acceptable amount in the last second, then it has met resistance
 		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold)
@@ -276,6 +277,7 @@ void wallAlign(bool forwardBackward)
 			motor[mDriveRight] = 0;
 			rightDone = true;
 			writeDebugStreamLine("\tRight side aligned");
+			PlaySound(soundBeepBeep);
 		}
 
 	}
