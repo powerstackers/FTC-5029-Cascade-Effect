@@ -37,6 +37,7 @@ char findGoalOrientation();
 void dropBall(long height);
 void kickstand();
 void grabTube();
+void irAlign();
 
 // Macros for the different positions of the center goal
 // The number indicates the average reading for the IR sensors when the goal is at that position
@@ -124,6 +125,11 @@ void grabTube()
 *	Knock over the kickstand
 */
 void kickstand()
+{
+
+}
+
+void irAlign()
 {
 
 }

@@ -254,7 +254,7 @@ void wallAlign(bool forwardBackward)
 	long rightPrevValue = nMotorEncoder[mDriveRight];
 
 	// This is our threshold. A change less than this will indicate that the motor has met resistance
-	const unsigned long stopThreshold = 500;
+	const unsigned long stopThreshold = 300;
 
 	while(!rightDone&&!leftDone)
 	{
@@ -267,8 +267,10 @@ void wallAlign(bool forwardBackward)
 			// Turn the motor off, and indicate that this side is aligned
 			motor[mDriveLeft] = 0;
 			leftDone = true;
-			writeDebugStreamLine("\tLeft side aligned");
+			writeDebugStreamLine("\tLeft side aligned. Diff: %d", abs(leftPrevValue - nMotorEncoder[mDriveLeft]));
 			PlaySound(soundBeepBeep);
+			if(!rightDone)
+				motor[mDriveRight] = 100;
 		}
 		// If the right motor hasn't changed an acceptable amount in the last second, then it has met resistance
 		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold)
@@ -276,9 +278,14 @@ void wallAlign(bool forwardBackward)
 			// Turn the motor off, and indicate that this side is aligned
 			motor[mDriveRight] = 0;
 			rightDone = true;
-			writeDebugStreamLine("\tRight side aligned");
+			writeDebugStreamLine("\tRight side aligned. Diff: %d", abs(rightPrevValue - nMotorEncoder[mDriveRight]));
 			PlaySound(soundBeepBeep);
+			if(!leftDone)
+				motor[mDriveLeft] = 100;
 		}
+
+		leftPrevValue = nMotorEncoder[mDriveLeft];
+		rightPrevValue = nMotorEncoder[mDriveRight];
 
 	}
 
