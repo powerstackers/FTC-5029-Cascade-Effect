@@ -34,6 +34,12 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-
-goTicks(inchesToTicks(-7),50);
+wait10Msec (200);
+nMotorEncoder[mLift] = 0;
+moveMotorTo(mLift, liftTargetCent, 75);
+servo[rTrapDoor]=trapDoorOpenPosition;
+wait10Msec (500);
+servo[rTrapDoor]=trapDoorClosedPosition;
+wait10Msec (100);
+moveMotorTo(mLift, liftTargetBase, 75);
 }

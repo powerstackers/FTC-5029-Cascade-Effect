@@ -206,6 +206,7 @@ task main()
 			moveMotorTo(liftTargetCent);
 			// Drop the ball in the center goal
 
+
 			// Position the robot correctly to kick the kickstand
 
 			// Go to the robot's ending position
