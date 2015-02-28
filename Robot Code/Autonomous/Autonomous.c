@@ -176,19 +176,17 @@ task main()
 
 				case CENTGOAL_POSITION_C :			//90 degrees
 				{
-				turnDegrees (87,75); writeDebugStreamLine("Done");
+				wait10Msec(100);
 
-				goTicks(inchesToTicks(31),75); writeDebugStreamLine("Done");
-
-				turnDegrees (-87,75); writeDebugStreamLine("Done");
-
-				turnDegrees (75,75); writeDebugStreamLine("Done");
-
-				goTicks(inchesToTicks(-43),75); writeDebugStreamLine("Done");
-
-				turnDegrees(-83,75); writeDebugStreamLine("Done");
-
-				goTicks(inchesToTicks(-6),75); writeDebugStreamLine("Done");
+				turnDegrees (87,65);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-31),65);
+				wait10Msec(100);
+				turnDegrees (-76,65);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-43),65);
+				wait10Msec(100);
+				turnDegrees(-79,65); writeDebugStreamLine("Done");
 
 				break;
 				}
@@ -203,12 +201,24 @@ task main()
 
 
 			// Position the robot to drop the ball in the center goal
-			moveMotorTo(liftTargetCent);
+			wait10Msec (200);
+			nMotorEncoder[mLift] = 0;
+			moveMotorTo(mLift, liftTargetCent, 75);
+
 			// Drop the ball in the center goal
+			wait10Msec (100);
+			servo[rTrapDoor]=trapDoorOpenPosition;
+			wait10Msec (500);
+			servo[rTrapDoor]=trapDoorClosedPosition;
+			wait10Msec (100);
 
-
+			// Drop down the lift
+			moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
-
+			turnDegrees (-87, 75);
+			goTicks(inchesToTicks(-15), 75);
+			turnDegrees (-73, 75);
+			goTicks(inchesToTicks(35), 100);
 			// Go to the robot's ending position
 
 

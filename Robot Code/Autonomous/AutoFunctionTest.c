@@ -34,12 +34,6 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-wait10Msec (200);
-nMotorEncoder[mLift] = 0;
-moveMotorTo(mLift, liftTargetCent, 75);
-servo[rTrapDoor]=trapDoorOpenPosition;
-wait10Msec (500);
-servo[rTrapDoor]=trapDoorClosedPosition;
-wait10Msec (100);
-moveMotorTo(mLift, liftTargetBase, 75);
+turnDegrees (1,75);
+//goTicks(inchesToTicks(-43),75);
 }
