@@ -238,15 +238,15 @@ task main()
 			// Move from the starting position to block the opponent's rolling goals
 			goTicks(inchesToTicks(15), 100);	// Move 3 feet forwards at full power
 			// Turn towards the opponent rolling goals
-			turnDegrees(45, 75);
+			turnDegrees(60, 75);
 			// Drive forward to disrupt the opponent rolling goals
 			goTicks(inchesToTicks(34), 75);
 			goTicks(inchesToTicks(-12), 100);
 
 			// turn slightly to get the rest of the goals
 			turnDegrees(40, 50);
-			goTicks(inchesToTicks(18), 75);
-			goTicks(inchesToTicks(-18), 100);
+			goTicks(inchesToTicks(28), 75);
+			goTicks(inchesToTicks(-28), 100);
 
 			// Turn and go around the center goal towards our rolling goals
 			turnDegrees(-45, 50);
