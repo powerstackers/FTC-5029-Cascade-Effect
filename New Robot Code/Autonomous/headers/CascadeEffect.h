@@ -54,36 +54,43 @@ void irAlign();
 *	findGoalOrientation
 *	Find which way the center goal is facing
 */
+int prematchIRreading = 0;
 char findGoalOrientation()
 {
-	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
+	//writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
 
-	// Read the average of the IR seeker
-	int avg = getIRStrength();
+	//// Read the average of the IR seeker
+	//int avg = getIRStrength();
 
-	// Find the difference between the average IR signal and the known values for each position
-	int diffA = abs(avg - positionA);
-	int diffB = abs(avg - positionB);
-	int diffC = abs(avg - positionC);
+	//// Find the difference between the average IR signal and the known values for each position
+	//int diffA = abs(avg - positionA);
+	//int diffB = abs(avg - positionB);
+	//int diffC = abs(avg - positionC);
 
-	// The lowest difference is the position the center goal is facing
-	char facing;	// Create a variable to store the decision
-	if(diffA < diffB && diffA < diffC)		// If the difference in position a is lowest, the tower must be in position a
-		facing = CENTGOAL_POSITION_A;
-	else if(diffB < diffA && diffB < diffC)	// If the difference in position b is lowest, the tower must be in position b
-		facing = CENTGOAL_POSITION_B;
-	else									// If the tower isn't in position a or b, default to position c
-		facing = CENTGOAL_POSITION_C;
+	//// The lowest difference is the position the center goal is facing
+	//char facing;	// Create a variable to store the decision
+	//if(diffA < diffB && diffA < diffC)		// If the difference in position a is lowest, the tower must be in position a
+	//	facing = CENTGOAL_POSITION_A;
+	//else if(diffB < diffA && diffB < diffC)	// If the difference in position b is lowest, the tower must be in position b
+	//	facing = CENTGOAL_POSITION_B;
+	//else									// If the tower isn't in position a or b, default to position c
+	//	facing = CENTGOAL_POSITION_C;
 
-	// Print the IR reading, the differences, and the answer to the debug stream
-	writeDebugStreamLine("\tIR:\t%d", avg);
-	writeDebugStreamLine("\tdiifA:\t%d", diffA);
-	writeDebugStreamLine("\tdiffB:\t%d", diffB);
-	writeDebugStreamLine("\tdiffC:\t%d", diffC);
-	writeDebugStreamLine("\tThe thing is in position %c", facing);
+	//// Print the IR reading, the differences, and the answer to the debug stream
+	//writeDebugStreamLine("\tIR:\t%d", avg);
+	//writeDebugStreamLine("\tdiifA:\t%d", diffA);
+	//writeDebugStreamLine("\tdiffB:\t%d", diffB);
+	//writeDebugStreamLine("\tdiffC:\t%d", diffC);
+	//writeDebugStreamLine("\tThe thing is in position %c", facing);
 
-	// Return the direction that the center goal is facing
-	return facing;
+	//// Return the direction that the center goal is facing
+	//return facing;
+
+	int currentIRreading = getIRStrength(infraRed);
+
+	float percentDiff = abs(1.0 - (float) (currentIRreading/prematchIRreading));
+
+	writeDebugStreamLine("-- CALCULATING CENTER GOAL ORIENTATION --\n\tPercent diff since initialization: %2.8f", percentDiff);
 }
 
 /*
@@ -109,14 +116,14 @@ void grabTube()
 {
 	// put the grabber down,
 	turnDegrees(18, 50);
-	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
+//	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
 	// Open the grabber
-	servo[rGrabber] = grabberOpenPosition;
+//	servo[rGrabber] = grabberOpenPosition;
 	wait10Msec(50);
 	//then move forward a little,
 	goTicks(inchesToTicks(-15), 50);
 	//then t-rex hand have to go down.
-	servo[rGrabber]=grabberClosedPosition;
+//	servo[rGrabber]=grabberClosedPosition;
 	//goTicks(inchesToTicks(5), 50);
 }
 
@@ -129,7 +136,33 @@ void kickstand()
 
 }
 
+/*
+*	irAlign
+*	Use the secondary infrared seeker to align the robot onto the cetner structure
+*/
 void irAlign()
 {
+	// Create a variable to store the previous ir value, and initialize it to 0
+	int prevIRvalue = 0;
 
+	// Set the drive motors to -50
+	driveMotorsTo(-50);
+
+	// For as long as the infrared value is increasing, run this code
+	// Essentially, the idea is to keep moving until the ir reading starts to decrease, indicating
+	// that we've passed the center structure
+	do
+	{
+		// Record the new infrared reading
+		prevIRvalue = getIRStrength(infraRedSide);
+		// Wait for a few milliseconds, to give us time to move forward a little
+		wait10Msec(10);
+	}
+	while(getIRStrength(infraRedSide) > prevIRvalue);
+
+	// Once past the center structure, turn off the motors
+	driveMotorsTo(0);
+
+	// Turn 90 degrees to face the center structure
+	turnDegrees(90);
 }
