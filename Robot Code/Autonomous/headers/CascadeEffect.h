@@ -26,8 +26,11 @@
 *	Version 0.5
 */
 
+#pragma once
+
 #include "AutoFunctions.h"
 //#include "CollisionAvoidance.h"
+#include "Menu.h"
 #include "../../Robot.h"
 
 /*
@@ -56,31 +59,24 @@ void irAlign();
 */
 char findGoalOrientation()
 {
-	writeDebugStreamLine("-- FINDING CENTER GOAL ORIENTATION --");
+	// Print out that this function is running
+	writeDebugStreamLine("-- CALCULATING CENTER GOAL ORIENTATION --");
 
-	// Read the average of the IR seeker
-	int avg = getIRStrength();
+	// Calculate the percent difference between the current reading and the reading taken
+	// before the match started
+	float percentDiff = 1.0 - (float) (getIRStrength(infraRed)/prematchIRreading);
 
-	// Find the difference between the average IR signal and the known values for each position
-	int diffA = abs(avg - positionA);
-	int diffB = abs(avg - positionB);
-	int diffC = abs(avg - positionC);
+	// Print out the percent difference
+	writeDebugStreamLine("\tPercent diff since initialization: %2.8f", percentDiff);
 
-	// The lowest difference is the position the center goal is facing
-	char facing;	// Create a variable to store the decision
-	if(diffA < diffB && diffA < diffC)		// If the difference in position a is lowest, the tower must be in position a
-		facing = CENTGOAL_POSITION_A;
-	else if(diffB < diffA && diffB < diffC)	// If the difference in position b is lowest, the tower must be in position b
-		facing = CENTGOAL_POSITION_B;
-	else									// If the tower isn't in position a or b, default to position c
-		facing = CENTGOAL_POSITION_C;
+	char facing;
 
-	// Print the IR reading, the differences, and the answer to the debug stream
-	writeDebugStreamLine("\tIR:\t%d", avg);
-	writeDebugStreamLine("\tdiifA:\t%d", diffA);
-	writeDebugStreamLine("\tdiffB:\t%d", diffB);
-	writeDebugStreamLine("\tdiffC:\t%d", diffC);
-	writeDebugStreamLine("\tThe thing is in position %c", facing);
+	// If the percent difference between the inital reading and current reading is very small,
+	// assume that the center structure has not moved
+	if(percentDiff < 0.1)
+	{
+		facing = centerStartPos;
+	}
 
 	// Return the direction that the center goal is facing
 	return facing;
@@ -109,14 +105,14 @@ void grabTube()
 {
 	// put the grabber down,
 	turnDegrees(18, 50);
-	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
+	//moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
 	// Open the grabber
-	servo[rGrabber] = grabberOpenPosition;
+	moveMotorTo(mGrab, grabOpenPosition, 100);
 	wait10Msec(50);
 	//then move forward a little,
 	goTicks(inchesToTicks(-15), 50);
 	//then t-rex hand have to go down.
-	servo[rGrabber]=grabberClosedPosition;
+	moveMotorTo(mGrab, grabClosedPosition, 100);
 	//goTicks(inchesToTicks(5), 50);
 }
 
@@ -136,7 +132,7 @@ void kickstand()
 void irAlign()
 {
 	// Store the previously recorded IR value
-	int prevIRvlaue;
+	int prevIRvalue;
 
 	// Set the drive motors to -50
 	driveMotorsTo(-50);

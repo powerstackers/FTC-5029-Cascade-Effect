@@ -29,6 +29,7 @@
 
 // Include files to run various devices
 #include "drivers/hitechnic-sensormux.h"
+#include "Autonomous/headers/Sensors.h"
 
 /*
 *	FUNCTION PROTOTYPES
@@ -75,6 +76,9 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define liftTargetMed 		10000
 #define liftTargetHigh 		17000
 #define liftTargetCent 		22700
+
+// Reading on the IR sensor before the center structure is put in its position
+int prematchIRreading;
 
 /*
 *	printWelcomeMessage
@@ -199,6 +203,9 @@ void initializeRobot()
 
 	// Make it so that servos maintain their positions after the program ends
 	bSystemLeaveServosEnabledOnProgramStop = true;
+
+	// Take an initial reading of the IR sensor
+	prematchIRreading = getIRStrength(infraRed);
 
 	// Initialization done, print to the debug stream
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");

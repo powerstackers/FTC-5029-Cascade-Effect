@@ -28,8 +28,11 @@
 *	Version 0.1
 */
 
+#pragma once
+
 // Include file to handle messages from the joysticks
 #include "../drivers/JoystickDriver.c"
+#include "CascadeEffect.h"
 
 // Constants store the button values
 // Left and right arrow buttons are used to switch a value, the orange button is used to move to the next option in the list.
@@ -44,8 +47,8 @@
 #define STARTING_RAMP 	true
 #define STARTING_FLOOR 	false
 
-#define maxLineIndex 	6
-#define enterLine 		6
+#define maxLineIndex 	5
+#define enterLine 		5
 #define maxDelay 		15.0
 
 /*
@@ -56,8 +59,9 @@
 */
 bool 	startingPosition 	= STARTING_FLOOR;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
-bool	doCenterGoal		= false;			// Place ball in center goal or not
-bool	doKickstand			= false;			// Knock over the kickstand or nor
+//bool	doCenterGoal		= false;			// Place ball in center goal or not
+//bool	doKickstand			= false;			// Knock over the kickstand or nor
+char	centerStartPos		= 'a';	// Center goal orientation before setup
 float 	waitTime			= 0.0;				// Delay time
 bool	debugMode			= false;			// Debug mode on/off
 
@@ -70,8 +74,9 @@ void printSettings()
 	writeDebugStreamLine("\tAUTONOMOUS SETTINGS:");
 	writeDebugStreamLine("\tStart pos:\t%s", startingPosition==STARTING_FLOOR?"floor":"ramp");
 	writeDebugStreamLine("\tGame mode:\t%s", offenseOrDefense==OFFENSIVE_MODE?"offensive":"defensive");
-	writeDebugStreamLine("\tDo kickstand:\t%s", doKickstand?"YES":"NO");
-	writeDebugStreamLine("\tDo center goal:\t%s", doCenterGoal?"YES":"NO");
+	// writeDebugStreamLine("\tDo kickstand:\t%s", doKickstand?"YES":"NO");
+	// writeDebugStreamLine("\tDo center goal:\t%s", doCenterGoal?"YES":"NO");
+	writeDebugStreamLine("\tCenter goal orientation:\t%c", centerStartPos);
 	writeDebugStreamLine("\tDebug mode:\t%s", debugMode ? "ON":"OFF");
 	writeDebugStreamLine("\tWait time:\t%2.2f", waitTime);
 }
@@ -116,10 +121,10 @@ void runMenu()
 		// Print all the variable names and their current values to the screen
 		nxtDisplayStringAt(7, 63, "StrPos:   %s", startingPosition==STARTING_FLOOR ? "FLOOR":" RAMP");
 		nxtDisplayStringAt(7, 55, "OfDef:  %s", offenseOrDefense==OFFENSIVE_MODE ? "OFFENSE":"DEFENSE");
-		nxtDisplayStringAt(7, 47, "Center:     %s", doCenterGoal? "YES":"NO ");
-		nxtDisplayStringAt(7, 39, "Kickst:     %s", doKickstand? "YES":"NO ");
-		nxtDisplayStringAt(7, 31, "Debug:      %s", debugMode ? " ON":"OFF");
-		nxtDisplayStringAt(7, 23, "Delay:      %2.1f", waitTime);
+		nxtDisplayStringAt(7, 47, "CentPos:    %c", centerStartPos);
+		nxtDisplayStringAt(7, 39, "Debug:      %s", debugMode ? " ON":"OFF");
+		nxtDisplayStringAt(7, 31, "Delay:      %2.1f", waitTime);
+
 
 		// Print a selection icon next to the current line, or the appropriate string if we're on the ENTER line
 		if(currLine==enterLine)
@@ -151,25 +156,35 @@ void runMenu()
 			// Switch the variable that is on the currently selected line
 			switch(currLine)
 			{
+				// Starting position
 				case 0:
 					startingPosition = !startingPosition;
 					break;
+				// Play mode
 				case 1:
 					offenseOrDefense = !offenseOrDefense;
 					break;
+				// Center goal starting orientation
 				case 2:
-					doCenterGoal = !doCenterGoal;
+					if(nNxtButtonPressed == NEXT_BUTTON)
+					{
+						centerStartPos = (centerStartPos=='a'?'b':(centerStartPos=='b'?'c':'a'));
+					}
+					else
+					{
+						centerStartPos = (centerStartPos=='a'?'c':(centerStartPos=='b'?'a':'b'));
+					}
 					break;
+				// Debug mode
 				case 3:
-					doKickstand = !doKickstand;
-					break;
-				case 4:
 					debugMode = !debugMode;
 					break;
-				case 5:
+				// Wait time
+				case 4:
 					waitTime += nNxtButtonPressed==NEXT_BUTTON?0.5:-0.5;
 					break;
-				case 6:
+				// Enter button
+				case enterLine:
 					ready = !ready;
 			}
 
