@@ -42,8 +42,8 @@ void irAlign();
 // Macros for the different positions of the center goal
 // The number indicates the average reading for the IR sensors when the goal is at that position
 #define positionA 80
-#define positionB 40
-#define positionC 5
+#define positionB 35
+#define positionC 17
 
 // Macros to store the different position names
 #define CENTGOAL_POSITION_A 'a'

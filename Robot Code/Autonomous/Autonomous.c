@@ -158,18 +158,21 @@ task main()
 				case CENTGOAL_POSITION_A :           //closeness   do not ever put random comments in other stuff until after you think about it.
 				{
 
-				goTicks(inchesToTicks(-10),50); writeDebugStreamLine("Done");
+				goTicks(inchesToTicks(-8.5),50);
+				turnDegrees(2,75);
 
 				break;
 				}
 
 				case CENTGOAL_POSITION_B :           //middle
 				{
-				turnDegrees (45,75); 	writeDebugStreamLine("Done");
-
-				goTicks(inchesToTicks(-30),75); writeDebugStreamLine("Done");
-
-				turnDegrees (-87,75); writeDebugStreamLine("Done");
+				turnDegrees (50,75);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-27),75);
+				wait10Msec(100);
+				turnDegrees (-87,75);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-4), 75);
 
 				break;
 				}
@@ -177,16 +180,17 @@ task main()
 				case CENTGOAL_POSITION_C :			//90 degrees
 				{
 				wait10Msec(100);
-
 				turnDegrees (87,65);
 				wait10Msec(1000);
 				goTicks(inchesToTicks(-31),65);
 				wait10Msec(1000);
-				turnDegrees (-76,65);
+				turnDegrees (-73,65);
 				wait10Msec(1000);
-				goTicks(inchesToTicks(-43),65);
+				goTicks(inchesToTicks(-37),65);
 				wait10Msec(1000);
-				turnDegrees(-79,65);
+				turnDegrees(-77,65);
+				wait10Msec (1000);
+				goTicks(inchesToTicks(-3), 75);
 
 				break;
 				}
@@ -216,13 +220,13 @@ task main()
 			//moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
 			wait10Msec (1000);
-			turnDegrees (-87, 75);
+			turnDegrees (-82, 75);
 			wait10Msec (1000);
 			goTicks(inchesToTicks(-15), 75);
 			wait10Msec (1000);
-			turnDegrees (-73, 75);
+			turnDegrees (-71, 75);
 			wait10Msec (1000);
-			goTicks(inchesToTicks(35), 100);
+			goTicks(inchesToTicks(30), 100);
 			// Go to the robot's ending position
 
 
