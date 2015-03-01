@@ -54,7 +54,7 @@
 *	during the autonomous position, such as starting position on the field, which strategy we want to use,
 *	etc. The options and settings are used by the main autonomous program to make decisions.
 */
-bool 	startingPosition 	= STARTING_RAMP;	// Starting position (ramp or floor)
+bool 	startingPosition 	= STARTING_FLOOR;	// Starting position (ramp or floor)
 bool 	offenseOrDefense 	= OFFENSIVE_MODE;	// Game mode (offensive or defensive)
 bool	doCenterGoal		= false;			// Place ball in center goal or not
 bool	doKickstand			= false;			// Knock over the kickstand or nor
@@ -114,12 +114,12 @@ void runMenu()
 			waitTime = maxDelay;
 
 		// Print all the variable names and their current values to the screen
-		nxtDisplayStringAt(6, 63, "StrPos:   %s", startingPosition==STARTING_FLOOR ? "FLOOR":" RAMP");
-		nxtDisplayStringAt(6, 55, "OfDef:  %s", offenseOrDefense==OFFENSIVE_MODE ? "OFFENSE":"DEFENSE");
-		nxtDisplayStringAt(6, 47, "Center:     %s", doCenterGoal? "YES":"NO ");
-		nxtDisplayStringAt(6, 39, "Kickst:     %s", doKickstand? "YES":"NO ");
-		nxtDisplayStringAt(6, 31, "Debug:      %s", debugMode ? " ON":"OFF");
-		nxtDisplayStringAt(6, 23, "Delay:      %2.1f", waitTime);
+		nxtDisplayStringAt(7, 63, "StrPos:   %s", startingPosition==STARTING_FLOOR ? "FLOOR":" RAMP");
+		nxtDisplayStringAt(7, 55, "OfDef:  %s", offenseOrDefense==OFFENSIVE_MODE ? "OFFENSE":"DEFENSE");
+		nxtDisplayStringAt(7, 47, "Center:     %s", doCenterGoal? "YES":"NO ");
+		nxtDisplayStringAt(7, 39, "Kickst:     %s", doKickstand? "YES":"NO ");
+		nxtDisplayStringAt(7, 31, "Debug:      %s", debugMode ? " ON":"OFF");
+		nxtDisplayStringAt(7, 23, "Delay:      %2.1f", waitTime);
 
 		// Print a selection icon next to the current line, or the appropriate string if we're on the ENTER line
 		if(currLine==enterLine)

@@ -34,7 +34,7 @@ task main()
 {
 	initializeRobot();
 	waitForStart();
-
-	goTicks(inchesToTicks(72), 50);
-
+//turnDegrees (1,75);
+//goTicks(inchesToTicks(-43),75);
+	wallAlign(ALIGN_BACKWARD);
 }

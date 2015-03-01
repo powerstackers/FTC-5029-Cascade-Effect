@@ -89,7 +89,7 @@ task main()
 	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 	PlaySound(soundUpwardTones);
-	StartTask(watchMotors);
+	//StartTask(watchMotors);
 
 	/*
 	*	GAMEPLAY
@@ -148,17 +148,77 @@ task main()
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Move slightly forwards to get into a better detecting position
-			goTicks(inchesToTicks(10), 50);
+			goTicks(inchesToTicks(-20), 50);
 
 			// Detect and store the center goal position
-			//char goalFacing = findGoalOrientation();
+			char goalFacing = findGoalOrientation();
+
+			switch (goalFacing)
+			{
+				case CENTGOAL_POSITION_A :           //closeness   do not ever put random comments in other stuff until after you think about it.
+				{
+
+				goTicks(inchesToTicks(-10),50); writeDebugStreamLine("Done");
+
+				break;
+				}
+
+				case CENTGOAL_POSITION_B :           //middle
+				{
+				turnDegrees (45,75); 	writeDebugStreamLine("Done");
+
+				goTicks(inchesToTicks(-30),75); writeDebugStreamLine("Done");
+
+				turnDegrees (-87,75); writeDebugStreamLine("Done");
+
+				break;
+				}
+
+				case CENTGOAL_POSITION_C :			//90 degrees
+				{
+				wait10Msec(100);
+
+				turnDegrees (87,65);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-31),65);
+				wait10Msec(100);
+				turnDegrees (-76,65);
+				wait10Msec(100);
+				goTicks(inchesToTicks(-43),65);
+				wait10Msec(100);
+				turnDegrees(-79,65); writeDebugStreamLine("Done");
+
+				break;
+				}
+
+				default:
+				goTicks(inchesToTicks(-20),75); writeDebugStreamLine("Done");
+				{
+				break;
+				}
+
+			}
+
 
 			// Position the robot to drop the ball in the center goal
+			wait10Msec (200);
+			nMotorEncoder[mLift] = 0;
+			moveMotorTo(mLift, liftTargetCent, 75);
 
 			// Drop the ball in the center goal
+			wait10Msec (100);
+			servo[rTrapDoor]=trapDoorOpenPosition;
+			wait10Msec (500);
+			servo[rTrapDoor]=trapDoorClosedPosition;
+			wait10Msec (100);
 
+			// Drop down the lift
+			moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
-
+			turnDegrees (-87, 75);
+			goTicks(inchesToTicks(-15), 75);
+			turnDegrees (-73, 75);
+			goTicks(inchesToTicks(35), 100);
 			// Go to the robot's ending position
 
 

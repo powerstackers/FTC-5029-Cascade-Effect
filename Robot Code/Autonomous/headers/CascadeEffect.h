@@ -37,12 +37,13 @@ char findGoalOrientation();
 void dropBall(long height);
 void kickstand();
 void grabTube();
+void irAlign();
 
 // Macros for the different positions of the center goal
 // The number indicates the average reading for the IR sensors when the goal is at that position
 #define positionA 80
-#define positionB 95
-#define positionC 70
+#define positionB 40
+#define positionC 5
 
 // Macros to store the different position names
 #define CENTGOAL_POSITION_A 'a'
@@ -76,9 +77,9 @@ char findGoalOrientation()
 
 	// Print the IR reading, the differences, and the answer to the debug stream
 	writeDebugStreamLine("\tIR:\t%d", avg);
-	writeDebugStreamLine("\tdiifA:", diffA);
-	writeDebugStreamLine("\tdiffB:", diffB);
-	writeDebugStreamLine("\tdiffC:", diffC);
+	writeDebugStreamLine("\tdiifA:\t%d", diffA);
+	writeDebugStreamLine("\tdiffB:\t%d", diffB);
+	writeDebugStreamLine("\tdiffC:\t%d", diffC);
 	writeDebugStreamLine("\tThe thing is in position %c", facing);
 
 	// Return the direction that the center goal is facing
@@ -124,6 +125,11 @@ void grabTube()
 *	Knock over the kickstand
 */
 void kickstand()
+{
+
+}
+
+void irAlign()
 {
 
 }

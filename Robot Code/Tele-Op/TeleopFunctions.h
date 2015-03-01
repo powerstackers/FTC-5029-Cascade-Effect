@@ -42,7 +42,7 @@ void getCustomJoystickSettings ();	// Fetch all the custom joystick configuratio
 // Utility functions
 void printInfoToScreen();			// Print diagnostic informaiton to the NXT LCD screen
 short stickToMotorValue(short stickValue);	// Convert a stick value to a motor power level
-void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown);	// Change an encoder target
+void switchEncoderTarget(char* currentPosition, char upOrDown);	// Change an encoder target
 task checkButtons();				// Loop through and update encoder targets
 void haltOperation();				// Halt operation of the robot in the event of a lost connection
 
@@ -62,8 +62,6 @@ short 	stickValueRightForward 	= 0;	// Right drive control stick (forward)
 short 	stickValueLeftBackward 	= 0;	// Left drive control (backwards)
 short 	stickValueRightBackward = 0;	// Right drive control (backwards)
 short	stickLiftTarget			= 0;	// Raise or lower the lift motor encoder target
-short	stickTipTarget			= 0;	// Raise or lower the tip motor encoder target
-
 
 bool 	buttonStraightDrive 	= false;// Straight drive mode button
 bool 	buttonBackwardsDrive 	= false;// Backwards drive mode button
@@ -74,15 +72,9 @@ bool	buttonBrushReverse		= false;// Ball collection brush OUT button
 bool 	buttonLiftUp 			= false;// Vertical lift UP button
 bool 	buttonLiftDown 			= false;// Vertical lift DOWN button
 bool	buttonTrapDoor 			= false;// Ball bucket door toggle
-bool	buttonDeflectorToggle 	= false;// Ball deflector toggle
 bool	buttonLiftEncoderReset	= false;// Reset the lift encoder value to 0
 
-bool 	buttonLiftOut 			= false;// Horizontal lift OUT button
-bool 	buttonLiftIn 			= false;// Horizontal lift IN button
 bool 	buttonGrabToggle 		= false;// Rolling goal grabber toggle button
-bool 	buttonTipUp 			= false;// Goal tipper UP button
-bool 	buttonTipDown 			= false;// Goal tipper DOWN button
-bool	buttonTipEncoderReset	= false;// Reset the tip encoder value to 0
 
 bool	buttonFlaps 			= false;// Flaps button
 
@@ -97,8 +89,8 @@ bool	buttonFlaps 			= false;// Flaps button
 
 // Long integers store the current target
 long liftEncoderTarget 	= 0;	// Vertical lift
-long horizEncoderTarget = 0;	// Horizontal lift
-long tipEncoderTarget 	= 0;	// Tipper
+long grabEncoderTarget 	= 0;
+
 
 /*
 *	getCustomJoystickSettings
@@ -125,21 +117,14 @@ void getCustomJoystickSettings ()
 	// Player 2
 	//		Joysticks
 	stickLiftTarget			= joystick.joy2_y2;				// Driver 2 right stick
-	stickTipTarget			= joystick.joy2_y1;				// Driver 2 left stick
 
 	//		Buttons
 	buttonLiftUp 			= (joy2Btn(6) == 1);			// Driver 2 right shoulder
 	buttonLiftDown 			= (joy2Btn(8) == 1);			// Driver 2 right trigger
 	buttonLiftEncoderReset	= (joy2Btn(9) == 1);			// Driver 2 START button
-	buttonLiftOut 			= (joy2Btn(5) == 1);			// Driver 2 left shoulder
-	buttonLiftIn 			= (joy2Btn(7) == 1);			// Driver 2 left trigger
 	buttonGrabToggle		= (joy2Btn(1) == 1);			// Driver 2 blue button
-	//buttonTipUp				= (joystick.joy2_TopHat == 4);	// Driver 2 top hat down
-	//buttonTipDown 			= (joystick.joy2_TopHat == 0);	// Driver 2 top hat up
-	buttonTipEncoderReset	= (joy2Btn(8) == 1);			// Driver 2 SELECT button
 	buttonTrapDoor			= (joy2Btn(2) == 1);			// Driver 2 green button
 	buttonFlaps				= (joy2Btn(4) == 1);			// Driver 2 yellow button
-	buttonDeflectorToggle	= (joy2Btn(3) == 1);			// Driver 2 red button
 }
 
 /*
@@ -172,142 +157,113 @@ short stickToMotorValue(short stickValue)
 *	The tipper, vertical lift, and horizontal lift all have four positions: base, low, medium, and high. The vertical lift
 *	also has an additional "center goal" position.
 */
-void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, char upOrDown)
+void switchEncoderTarget(char* currentPosition, char upOrDown)
 {
 	// Check the current position, and move it one up or one down in the list.
 	switch(*currentPosition)
 	{
-		// Target currently at the "center goal" position
-		// Only the vertical lift can move to this position
-		case 'c':
-			// If switching the target to a lower position
-			if(upOrDown != 'u')
-			{
-				*currentPosition = 'h';
+	// Target currently at the "center goal" position
+	case 'c':
+		// If switching the target to a lower position
+		if(upOrDown != 'u')
+		{
+			*currentPosition = 'h';				// Set teh current position variable
+			liftEncoderTarget = liftTargetHigh;	// Set the encoder target
 
-				// Determine which encoder target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
-					((encoderTarget == &horizEncoderTarget)?horizTargetFar : tipTargetHigh);
+			writeDebugStreamLine("Switched encoder target to HIGH");
+		}
+		// If switching the target to a higher position, don't change the target
+		// The target cannot be set higher than this position
+		else
+		{
+			writeDebugStreamLine("Encoder target cannot be set any higher");
+		}
+		break;
 
-				writeDebugStreamLine("Switched encoder target to HIGH");
-			}
-			// If switching the target to a higher position, don't change the target
-			// The target cannot be set higher than this position
-			else
-			{
-				writeDebugStreamLine("Encoder target cannot be set any higher");
-			}
-			break;
+	// Target currently at the "high" position
+	case 'h':
+		// If moving the target up one position
+		if(upOrDown == 'u')
+		{
+			*currentPosition = 'c';				// Set the current position variable
+			liftEncoderTarget = liftTargetCent;	// Set the encoder target
+			writeDebugStreamLine("Encoder target set to CENTER");
+		}
 
-		// Target currently at the "high" position
-		case 'h':
-			// If moving the target up one position
-			if(upOrDown == 'u')
-			{
-				// Only move the target up from this position if we are switching the vertical lift
-				if(encoderTarget == &liftEncoderTarget||encoderTarget == &tipEncoderTarget)
-				{
-					*currentPosition = 'c';				// Set the current position variable
-					*encoderTarget = (encoderTarget==&liftEncoderTarget)?liftTargetCent:tipTargetFloor;	// Set the encoder target
-					writeDebugStreamLine("Encoder target set to CENTER");
-				}
-				else
-					// If the encoder target can't be set higher
-					writeDebugStreamLine("Encoder target cannot be set any higher");
-			}
+		// If moving the target down one level
+		else if(upOrDown == 'd')
+		{
+			*currentPosition = 'm';				// Set the current position variable
+			liftEncoderTarget = liftTargetMed;	// Set the encoder target
 
-			// If moving the target down one level
-			else if(upOrDown == 'd')
-			{
-				*currentPosition = 'm';		// Set the current position variable
+			writeDebugStreamLine("Encoder target set to MED");
+		}
+		break;
 
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
-					((encoderTarget == &horizEncoderTarget)?horizTargetMed : tipTargetMed);
+	// Target currently at the "medium" position
+	case 'm':
+		// If moving the target up one level
+		if(upOrDown == 'u')
+		{
+			*currentPosition = 'h';				// Set the current position variable
+			liftEncoderTarget = liftTargetHigh;	// Set the encoder target
 
-				writeDebugStreamLine("Encoder target set to MED");
-			}
-			break;
+			writeDebugStreamLine("Encoder target set to HIGH");
+		}
 
-		// Target currently at the "medium" position
-		case 'm':
-			// If moving the target up one level
-			if(upOrDown == 'u')
-			{
-				*currentPosition = 'h';		// Set the current position variable
+		// If moving the target down one level
+		else if(upOrDown == 'd')
+		{
+			*currentPosition = 'l';				// Set the current position variable
+			liftEncoderTarget = liftTargetLow;	// Set the encoder target
 
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetHigh :
-					((encoderTarget == &horizEncoderTarget)?horizTargetFar : tipTargetHigh);
+			writeDebugStreamLine("Encoder target set to LOW");
+		}
+		break;
 
-				writeDebugStreamLine("Encoder target set to HIGH");
-			}
+	// Target currently at the "low" position
+	case 'l' :
+		// If moving the target up one level
+		if(upOrDown == 'u')
+		{
+			*currentPosition = 'm';				// Set the current position variable
+			liftEncoderTarget = liftTargetMed;	// Set the encoder target
 
-			// If moving the target down one level
-			else if(upOrDown == 'd')
-			{
-				*currentPosition = 'l';		// Set the encoder target
+			writeDebugStreamLine("Encoder target set to MED");
+		}
 
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
-					((encoderTarget == &horizEncoderTarget)?horizTargetClose : tipTargetLow);
+		// If moving the target down one level
+		else if(upOrDown == 'd')
+		{
+			*currentPosition = 'b';				// Set the current position variable
+			liftEncoderTarget = liftTargetBase;	// Set the encoder target
 
-				writeDebugStreamLine("Encoder target set to LOW");
-			}
-			break;
+			writeDebugStreamLine("Encoder target set to BASE");
+		}
+		break;
 
-		// Target currently at the "low" position
-		case 'l' :
-			// If moving the target up one level
-			if(upOrDown == 'u')
-			{
-				*currentPosition = 'm';		// Set the current position variable
+	// Target currently at the "low" (starting) position
+	case 'b' :
+		// If moving the target up one level
+		if(upOrDown == 'u')
+		{
+			*currentPosition = 'l';				// Set the current position variable
+			liftEncoderTarget = liftTargetLow;	// Set the encoder target
 
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetMed :
-					((encoderTarget == &horizEncoderTarget)?horizTargetMed : tipTargetMed);
+			writeDebugStreamLine("Encoder target set to LOW");
+		}
 
-				writeDebugStreamLine("Encoder target set to MED");
-			}
-
-			// If moving the target down one level
-			else if(upOrDown == 'd')
-			{
-				*currentPosition = 'b';		// Set the current position variable
-
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetBase :
-					((encoderTarget == &horizEncoderTarget)?horizTargetBase : tipTargetBase);
-
-				writeDebugStreamLine("Encoder target set to BASE");
-			}
-			break;
-
-		// Target currently at the "low" (starting) position
-		case 'b' :
-			// If moving the target up one level
-			if(upOrDown == 'u')
-			{
-				*currentPosition = 'l';		// Set the current position variable
-
-				// Determine which target we are switching, and change the appropriate variable
-				*encoderTarget = (encoderTarget == &liftEncoderTarget)? liftTargetLow :
-					((encoderTarget == &horizEncoderTarget)?horizTargetClose : tipTargetLow);
-
-				writeDebugStreamLine("Encoder target set to LOW");
-			}
-
-			// If moving the target down one level
-			// This is the base or starting position. None of the manipulators can go any lower than this.
-			else if(upOrDown == 'd')
-			{
-				writeDebugStreamLine("Encoder target cannot be set any lower");
-			}
-			break;
+		// If moving the target down one level
+		// This is the base or starting position. None of the manipulators can go any lower than this.
+		else if(upOrDown == 'd')
+		{
+			writeDebugStreamLine("Encoder target cannot be set any lower");
+		}
+		break;
 
 		// If the variable passed is not one of the possible choices, do nothing.
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -318,8 +274,6 @@ void switchEncoderTarget(unsigned long* encoderTarget, char* currentPosition, ch
 // Store the desired positions for the horizontal and vertical lifts
 // Initialize them to their starting positions
 char liftPosition 	= 'b';
-char horizPosition 	= 'b';
-char tipPosition 	= 'b';
 bool checkingButtons = true;
 task checkButtons()
 {
@@ -328,10 +282,6 @@ task checkButtons()
 	// Store whether each button has been recently pushed
 	bool buttonLiftUpRecentlyPushed 	= false;
 	bool buttonLiftDownRecentlyPushed 	= false;
-	bool buttonLiftOutRecentlyPushed 	= false;
-	bool buttonLiftInRecentlyPushed 	= false;
-	bool buttonTipUpRecentlyPushed 		= false;
-	bool buttonTipDownRecentlyPushed 	= false;
 
 	writeDebugStreamLine("-- BUTTON CHECKER ACTIVATED --");
 
@@ -343,79 +293,30 @@ task checkButtons()
 		/*
 		*	VERTICAL LIFT
 		*/
+
+		// UP
 		// If the up button is pressed, and has not been recently pressed
 		if(buttonLiftUp&&!buttonLiftUpRecentlyPushed)
 		{
 			buttonLiftUpRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target up");
-			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'u');
+			switchEncoderTarget(&liftPosition, 'u');
 		}
 		// If the up button is let go, it has not been recently pressed
 		if(!buttonLiftUp)
 			buttonLiftUpRecentlyPushed = false;
 
+		// DOWN
 		// If the down button is pressed, has not been recently pressed, and the up button is not pressed
 		if(buttonLiftDown&&!buttonLiftDownRecentlyPushed&&!buttonLiftUp)
 		{
 			buttonLiftDownRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target down");
-			switchEncoderTarget(&liftEncoderTarget, &liftPosition, 'd');
+			switchEncoderTarget(&liftPosition, 'd');
 		}
 		// If the down button is not pressed, it has not been recently pressed
 		if(!buttonLiftDown)
 			buttonLiftDownRecentlyPushed = false;
-
-
-		/*
-		*	HORIZONTAL LIFT
-		*/
-		// If the out button is pressed and has not been recently pressed
-		if(buttonLiftOut&&!buttonLiftOutRecentlyPushed)
-		{
-			buttonLiftOutRecentlyPushed = true;
-			writeDebugStreamLine("Switching horizontal lift encoder target out");
-			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'u');
-		}
-		// If the out button is let go, it has not been recently pressed
-		if(!buttonLiftOut)
-			buttonLiftOutRecentlyPushed = false;
-
-		// If the in button is pressed, has not been recently pressed, and the out button is not pressed
-		if(buttonLiftIn&&!buttonLiftInRecentlyPushed&&!buttonLiftOut)
-		{
-			buttonLiftInRecentlyPushed = true;
-			writeDebugStreamLine("Switching horizontal lift encoder target in");
-			switchEncoderTarget(&horizEncoderTarget, &horizPosition, 'd');
-		}
-		// If the in button is not pressed, it has not been recently pressed
-		if(!buttonLiftIn)
-			buttonLiftInRecentlyPushed = false;
-
-
-		/*
-		*	TIPPER
-		*/
-		// If the up button is pressed and has not been recently pressed
-		if(buttonTipUp&&!buttonTipUpRecentlyPushed)
-		{
-			buttonTipUpRecentlyPushed = true;
-			writeDebugStreamLine("Switching tip encoder target up");
-			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'u');
-		}
-		// If the up button is pressed, it has not been recently pressed
-		if(!buttonTipUp)
-			buttonTipUpRecentlyPushed = false;
-
-		// If the down button is pressed, has not been recently pressed, and the up button is not pressed
-		if(buttonTipDown&&!buttonTipDownRecentlyPushed&&!buttonTipUp)
-		{
-			buttonTipDownRecentlyPushed = true;
-			writeDebugStreamLine("Switching tip encoder target down");
-			switchEncoderTarget(&tipEncoderTarget, &tipPosition, 'd');
-		}
-		// If the down button is not pressed, it has not been recently pressed
-		if(!buttonTipDown)
-			buttonTipDownRecentlyPushed = false;
 	}
 
 	writeDebugStreamLine("-- BUTTON CHECKER DEACTIVATED --");
@@ -439,8 +340,6 @@ void haltOperation()
 		motor[mDriveLeft] 	= 0;
 		motor[mDriveRight] 	= 0;
 		motor[mLift] 		= 0;
-		motor[mHoriz] 		= 0;
-		motor[mTip] 		= 0;
 		motor[mBrush] 		= 0;
 
 		// Make an obnoxious beeping sound

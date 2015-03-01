@@ -37,13 +37,14 @@
 *
 */
 
-// Utility functions
+// Function prototypes
 void 	allMotorsTo(int i);
 void 	driveMotorsTo(int i);
 long 	inchesToTicks(float inches);
 float 	ticksToInches(long ticks);
 void	goTicks(long ticks, int speed);
 void 	turnDegrees(float degrees, int speed);
+void	wallAlign(bool forwardBackward);
 
 
 /*
@@ -120,8 +121,8 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	long targetLeft = nMotorEncoder[mDriveLeft] + ticks;
 
 	// Print what we are going to do to the debug stream
-	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks %s at %d speed",
-		ticks, ((ticks>0)?"forward":"backward"), speed);
+	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks (%3.2f inches) %s at %d speed",
+		ticks, ticksToInches(ticks), ((ticks>0)?"forward":"backward"), speed);
 
 	// If we are going forwards or backwards
 	// A positive number of ticks to travel indicates we are moving fowards.
@@ -131,22 +132,28 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Set the drive motors to the given speed
 		driveMotorsTo(speed);
 		// While this function runs, keep the robot on a constant heading
-		StartTask(stablizePath);
+		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
-		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight){}
+		while(nMotorEncoder[mDriveLeft] < targetLeft && nMotorEncoder[mDriveRight] < targetRight)
+		{
+			//writeDebugStreamLine("Curr: %d\tTarg: %d", nMotorEncoder[mDriveLeft], targetLeft);
+		}
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Stop the drive motors here
 		driveMotorsTo(0);
 	}
-	else
+	else if(ticks < 0)
 	{
 		// Set the drive motors to the speed (in reverse)
 		driveMotorsTo(-1 * speed);
 		// While this function runs, keep the robot on a constant heading
-		StartTask(stablizePath);
+		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
-		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight){}
+		while(nMotorEncoder[mDriveLeft] > targetLeft && nMotorEncoder[mDriveRight] > targetRight)
+		{
+			//writeDebugStreamLine("Curr: %d\tTarg: %d", nMotorEncoder[mDriveLeft], targetLeft);
+		}
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Turn off the drive motors here
@@ -154,7 +161,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	}
 
 	// Write to the debug stream that we are done
-	writeDebugStreamLine("\tMoving done");
+	writeDebugStreamLine("-- MOVING DONE --");
 }
 
 /*
@@ -214,4 +221,73 @@ void turnDegrees(float degrees, int speed)
 
 	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
+}
+
+
+#define ALIGN_FORWARD 	true
+#define ALIGN_BACKWARD 	false
+/*
+*	wallAlign
+*	Use a wall or other rigid surface to align the robot.
+*/
+void wallAlign(bool forwardBackward)
+{
+	writeDebugStreamLine("-- ALIGNING ROBOT --\n\tMoving %s", forwardBackward? "forward":"backward");
+
+	// If we are going to move forward into the wall
+	if(forwardBackward==ALIGN_FORWARD)
+	{
+		driveMotorsTo(50);
+	}
+	// If we are going to move backward into the wall
+	else
+	{
+		driveMotorsTo(-50);
+	}
+
+	// Store whether the left and right sides are finished aligning
+	bool rightDone = false;
+	bool leftDone = false;
+
+	// Store the previously read value of the left and right encoders, and initialize them to the current positions
+	long leftPrevValue = nMotorEncoder[mDriveLeft];
+	long rightPrevValue = nMotorEncoder[mDriveRight];
+
+	// This is our threshold. A change less than this will indicate that the motor has met resistance
+	const unsigned long stopThreshold = 300;
+
+	while(!rightDone&&!leftDone)
+	{
+		// Wait for 1 second to give the motors time to move, if they're going to
+		wait10Msec(100);
+
+		// If the left motor hasn't changed an acceptable amount in the last second, then it has met resistance
+		if(abs(leftPrevValue - nMotorEncoder[mDriveLeft]) < stopThreshold)
+		{
+			// Turn the motor off, and indicate that this side is aligned
+			motor[mDriveLeft] = 0;
+			leftDone = true;
+			writeDebugStreamLine("\tLeft side aligned. Diff: %d", abs(leftPrevValue - nMotorEncoder[mDriveLeft]));
+			PlaySound(soundBeepBeep);
+			if(!rightDone)
+				motor[mDriveRight] = 100;
+		}
+		// If the right motor hasn't changed an acceptable amount in the last second, then it has met resistance
+		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold)
+		{
+			// Turn the motor off, and indicate that this side is aligned
+			motor[mDriveRight] = 0;
+			rightDone = true;
+			writeDebugStreamLine("\tRight side aligned. Diff: %d", abs(rightPrevValue - nMotorEncoder[mDriveRight]));
+			PlaySound(soundBeepBeep);
+			if(!leftDone)
+				motor[mDriveLeft] = 100;
+		}
+
+		leftPrevValue = nMotorEncoder[mDriveLeft];
+		rightPrevValue = nMotorEncoder[mDriveRight];
+
+	}
+
+	writeDebugStreamLine("-- ALIGNMENT DONE --");
 }

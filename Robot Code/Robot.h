@@ -1,6 +1,7 @@
 /*
-*	Robot.h
+*	Robot_new.h
 *	General code and constants that are used by all programs, specific to our robot.
+*	SECOND ROBOT
 *	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
@@ -19,8 +20,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 30 2015
-*	Version 0.2
+*	February 23 2015
+*	Version 2.2
 */
 
 // Include guard. This file can only be included one time
@@ -49,17 +50,16 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 // Motor speeds
 #define liftMotorSpeed 	75			// Speed of the vertical lift motor
-#define horizMotorSpeed	50			// Speed of the horizontal slide motor
-#define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
 #define brushMotorSpeed	65			// Speed of the brush motor
+#define grabMotorSpeed	75			// Speed of the grab motor
 
 // Servo positions
-#define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	50	// Rolling goal grabber closed servo position
 #define flapLeftOpenPosition	0	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
 #define flapRightOpenPosition	0	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
+#define grabOpenPosition		15	// Grabber open position
+#define grabClosedPosition		180	// Grabber closed position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
 #define trapDoorIdlePosition	85	// Idling position for the grabber
@@ -75,19 +75,6 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define liftTargetMed 		10000
 #define liftTargetHigh 		17000
 #define liftTargetCent 		22700
-
-//		Horizontal lift motor
-#define horizTargetBase 	0
-#define horizTargetClose	1000
-#define horizTargetMed 		2000
-#define horizTargetFar 		3000
-
-//		Tip motor
-#define tipTargetBase 		0
-#define tipTargetLow 		-1000
-#define tipTargetMed 		-2000
-#define tipTargetHigh 		-3000
-#define tipTargetFloor		-5400
 
 /*
 *	printWelcomeMessage
@@ -186,14 +173,16 @@ void initializeRobot()
 	motor[mDriveLeft] 	= 0;
 	motor[mDriveRight] 	= 0;
 	motor[mLift]		= 0;
-	motor[mTip] 		= 0;
-	motor[mHoriz] 		= 0;
 	motor[mBrush] 		= 0;
 
-		// All encoder positions that we use start at zero
+	// All encoder positions that we use start at zero
 	nMotorEncoder[mLift] 	= 0;
-	nMotorEncoder[mTip] 	= 0;
-	nMotorEncoder[mHoriz] 	= 0;
+
+	// Move the grab motor up until it hits the crossbeam, then set its encoder position to 0
+	motor[mGrab] = 50;
+	wait10Msec(150);
+	motor[mGrab] = 0;
+	nMotorEncoder[mGrab] = 0;
 
 	/*
 	*	SERVO INITIALIZATION
@@ -202,7 +191,6 @@ void initializeRobot()
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
-	servo[rGrabber] 	= grabberClosedPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
 
 	// Set the servo speed of some servos. This makes the servo change positions slower.
