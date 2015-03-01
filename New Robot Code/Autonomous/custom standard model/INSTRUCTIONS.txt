@@ -1,0 +1,39 @@
+HOW TO USE THE STANDARD MODEL FILES
+------------------------------------------------------
+
+In RobotC, motor and sensor confiuration must be done at the top of every program.
+A standard model allows you to create one file that all your programs will draw 
+from. When using a standard model, if you wish to change your motor or sensor layout,
+you must only change one file; without a standard model, you would have to edit every
+single program that you have created.
+
+A standard model has three parts: a C source file with the definition of the con-
+figuration that you want for your robot; an RTF text document with a short description
+of the parts of your configuration; and finally, a JPG image to display as a thumbnail,
+which shows a small picture or drawing of your standard model configuration.
+
+Standard model files are kept in RobotC's program files on your PC. To be able to edit
+them easier, you can change the directory in which RobotC will look for the standard
+models. To do this, go to View->Preferences->Detailed Preferences->General. Under the
+"Directories" tab, change the standard model lookup directory to one of your choosing.
+Then, in the directory you chose, create another directory to store the standard model.
+We recommend naming it "TETRIX", just to keep in step with RobotC's own conventions.
+
+To create a standard model, follow these instructions.
+
+1.	Create the C source file with your motor and sensor configurations. This should 
+	look familiar to you; it has the same layout as the group of #pragma definitions 
+	at the top of every RobotC program.	To generate one, go to Robot->Motors and 
+	Sensors Setup, or right click an existing motor and sensor definition and click 
+	"Edit Motors and Sensors Definition". Either way, use the built-in utility to edit 
+	the motors and sensors setup to the configuration you want.
+2.	Create an RTF (Rich Text Format) document with a small description of your
+	configuration. You can create an RTF document in any word proccessing program.
+3. 	Create a JPEG image that visualizes your standard model. This could be a picture
+	of your robot, or you could do as we did and just use your team logo.
+4.	You must restart RobotC for the standard model to be recognized. Each time you make
+	a change, RobotC must be restarted.
+5.	Back in RobotC, in your main program, go back to the Motors and Sensors Setup window,
+	and go to the Standard Models tab, and select your standard model from the list. 
+	Click Apply, and you standard model will be applied.
+
