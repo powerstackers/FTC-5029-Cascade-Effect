@@ -47,10 +47,11 @@ task main()
 	printWelcomeMessage(programName, versionNumber);
 
 	// Put all motors and servos to their normal starting positions
-	initializeRobot();
+	//initializeRobot();
 
 	// Make sure that the NXT screen is empty
 	bDisplayDiagnostics = false;
+	wait10Msec(1);
 	eraseDisplay();
 
 	// Set the number of consecutive gray button clicks it takes to exit the program
@@ -83,7 +84,7 @@ task main()
 		nxtDisplayStringAt(6, 63, "Lift:  %d   ", motor[mLift]);
 		nxtDisplayStringAt(6, 55, "TrapD: %s", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open  ");
 		nxtDisplayStringAt(6, 47, "Grab:  %d   ", motor[mGrab]);
-		nxtDisplayStringAt(6, 31, "Brush: %d   ", motor[mBrush]);
+		nxtDisplayStringAt(6, 39, "Brush: %d   ", motor[mBrush]);
 
 		/*
 		*	NEXT BUTTON
@@ -154,6 +155,7 @@ task main()
 				// Grabber
 				case 2:
 					motor[mGrab] = (nNxtButtonPressed==UP_BUTTON)?10:-10;
+					break;
 				// Brush
 				case 3:
 					motor[mBrush] = (nNxtButtonPressed==UP_BUTTON)?brushMotorSpeed:-1*brushMotorSpeed;

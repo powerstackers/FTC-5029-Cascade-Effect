@@ -89,7 +89,7 @@ bool	buttonFlaps 			= false;// Flaps button
 
 // Long integers store the current target
 long liftEncoderTarget 	= 0;	// Vertical lift
-long grabEncoderTarget 	= 0;
+long grabEncoderTarget 	= grabOpenPosition;
 
 
 /*

@@ -1,5 +1,3 @@
-#pragma config(StandardModel, "PS CASCADE EFFECT")
-
 /*
 *	Sensors.h
 *	Code to handle all the sensors during the autonomous period.

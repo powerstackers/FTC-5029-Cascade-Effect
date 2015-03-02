@@ -51,16 +51,16 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 // Motor speeds
 #define liftMotorSpeed 	75			// Speed of the vertical lift motor
-#define brushMotorSpeed	65			// Speed of the brush motor
+#define brushMotorSpeed	100			// Speed of the brush motor
 #define grabMotorSpeed	75			// Speed of the grab motor
 
 // Servo positions
-#define flapLeftOpenPosition	0	// Left side flap open servo position
+#define flapLeftOpenPosition	1	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
-#define flapRightOpenPosition	0	// Right side flap open servo position
+#define flapRightOpenPosition	1	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
-#define grabOpenPosition		15	// Grabber open position
-#define grabClosedPosition		180	// Grabber closed position
+#define grabOpenPosition		-180	// Grabber open position
+#define grabClosedPosition		-15	// Grabber closed position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
 #define trapDoorIdlePosition	85	// Idling position for the grabber
@@ -183,10 +183,14 @@ void initializeRobot()
 	nMotorEncoder[mLift] 	= 0;
 
 	// Move the grab motor up until it hits the crossbeam, then set its encoder position to 0
+	// This zeroes the grabber encoder
 	motor[mGrab] = 50;
 	wait10Msec(150);
 	motor[mGrab] = 0;
 	nMotorEncoder[mGrab] = 0;
+
+	// Move the grabber motor to its open position
+	moveMotorTo(mGrab, grabOpenPosition, grabMotorSpeed);
 
 	/*
 	*	SERVO INITIALIZATION

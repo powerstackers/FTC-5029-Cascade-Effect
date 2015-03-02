@@ -243,7 +243,7 @@ task main()
 		// GRABBER
 
 		// Update the grabber motor speed so that it is always moving towards its target
-		if(abs(nMotorEncoder[mGrab] - grabEncoderTarget) > encoderTargetThreshold)
+		if(abs(nMotorEncoder[mGrab] - grabEncoderTarget) > 3)
 		{
 			motor[mGrab] = (nMotorEncoder[mGrab] < grabEncoderTarget)? grabMotorSpeed : -grabMotorSpeed;
 		}
@@ -257,6 +257,7 @@ task main()
 		{
 			buttonGrabJustPushed = true;
 			grabEncoderTarget = (grabEncoderTarget==grabClosedPosition)?grabOpenPosition:grabClosedPosition;
+			writeDebugStreamLine("Toggled grabber");
 		}
 		// If the button is released, it has not been recenlty pressed
 		if(!buttonGrabToggle)
