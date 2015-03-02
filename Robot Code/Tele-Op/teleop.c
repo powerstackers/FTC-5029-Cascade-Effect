@@ -22,8 +22,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	February 23 2015
-*	Version 2.1
+*	March 1 2015
+*	Version 2.2
 */
 
 // Include a file to handle messages from the joystick
@@ -33,7 +33,7 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 2.1
+#define programVersion 2.2
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
