@@ -33,7 +33,7 @@
 task main()
 {
 	initializeRobot();
-	waitForStart();
+	//waitForStart();
 //turnDegrees (-87,75);
 
 	//char goalFacing = findGoalOrientation();
@@ -58,4 +58,5 @@ task main()
 			//turnDegrees(60, 50);
 			//goTicks(inchesToTicks(-20), 100);
 			// END DEFENSE
+	irAlign();
 }
