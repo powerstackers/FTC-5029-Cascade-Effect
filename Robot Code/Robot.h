@@ -1,6 +1,7 @@
 /*
-*	Robot.h
+*	Robot_new.h
 *	General code and constants that are used by all programs, specific to our robot.
+*	SECOND ROBOT
 *	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
@@ -19,8 +20,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 30 2015
-*	Version 0.2
+*	March 2 2015
+*	Version 2.4
 */
 
 // Include guard. This file can only be included one time
@@ -28,6 +29,7 @@
 
 // Include files to run various devices
 #include "drivers/hitechnic-sensormux.h"
+#include "Autonomous/headers/Sensors.h"
 
 /*
 *	FUNCTION PROTOTYPES
@@ -36,6 +38,8 @@ void printWelcomeMessage(string programName, float versionNumber);
 void checkBatteryLevels();
 bool tetrixBatteryGoodState();
 bool nxtBatteryGoodState();
+bool muxBatteryGoodState();
+void initializeRobot();
 void moveMotorTo(short affectedMotor, long position, short speed);
 
 /*
@@ -49,17 +53,16 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 // Motor speeds
 #define liftMotorSpeed 	75			// Speed of the vertical lift motor
-#define horizMotorSpeed	50			// Speed of the horizontal slide motor
-#define tipMotorSpeed 	50			// Speed of the rolling goal tipping motor
-#define brushMotorSpeed	65			// Speed of the brush motor
+#define brushMotorSpeed	100			// Speed of the brush motor
+#define grabMotorSpeed	75			// Speed of the grab motor
 
 // Servo positions
-#define grabberOpenPosition		255	// Rolling goal grabber open servo position
-#define grabberClosedPosition	50	// Rolling goal grabber closed servo position
-#define flapLeftOpenPosition	0	// Left side flap open servo position
+#define flapLeftOpenPosition	1	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
-#define flapRightOpenPosition	0	// Right side flap open servo position
+#define flapRightOpenPosition	1	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
+#define grabOpenPosition		-180	// Grabber open position
+#define grabClosedPosition		-15	// Grabber closed position
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
 #define trapDoorIdlePosition	85	// Idling position for the grabber
@@ -76,18 +79,8 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define liftTargetHigh 		17000
 #define liftTargetCent 		22700
 
-//		Horizontal lift motor
-#define horizTargetBase 	0
-#define horizTargetClose	1000
-#define horizTargetMed 		2000
-#define horizTargetFar 		3000
-
-//		Tip motor
-#define tipTargetBase 		0
-#define tipTargetLow 		-1000
-#define tipTargetMed 		-2000
-#define tipTargetHigh 		-3000
-#define tipTargetFloor		-5400
+// Reading on the IR sensor before the center structure is put in its position
+int prematchIRreading;
 
 /*
 *	printWelcomeMessage
@@ -127,6 +120,15 @@ bool nxtBatteryGoodState()
 }
 
 /*
+*	muxBatteryGoodState
+*	Return whether or not the multiplexer battery is acceptably full
+*/
+bool muxBatteryGoodState()
+{
+	return HTSMUXreadPowerStatus(SMUX1);
+}
+
+/*
 *	checkBatteryLevels
 *	Check the NXT and TETRIX battery levels
 */
@@ -144,6 +146,10 @@ void checkBatteryLevels()
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
 	}
+	else
+	{	// If the main battery is low, say so
+		writeDebugStreamLine("\tMain battery good (%2.2f volts)", externalBatteryAvg / 1000.0);
+	}
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
 	if(!nxtBatteryGoodState())
@@ -152,13 +158,14 @@ void checkBatteryLevels()
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
 	}
+	else
+	{	// If the nxt battery is good, say so
+		writeDebugStreamLine("\tNXT battery good (%2.2f volts)", nAvgBatteryLevel / 1000.0);
+	}
 
-	// Print both battery states, good or bad, to the NXT LCD screen
-	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
-	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
 
 	// Check that the multiplexer battery is in a good state
-	if(HTSMUXreadPowerStatus(SMUX1))
+	if(muxBatteryGoodState())
 	{	// This code will execute if the battery level is not good
 		writeDebugStreamLine("--! MUX BATTERY LOW !--");
 		writeDebugStreamLine("\tCheck to see that SMUX battery is turned on");
@@ -167,6 +174,12 @@ void checkBatteryLevels()
 	{	// If the MUX battery is good, say so
 		writeDebugStreamLine("\tMUX battery good");
 	}
+
+
+	// Print both battery states, good or bad, to the NXT LCD screen
+	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(7, "MUX BATT %s", muxBatteryGoodState()?"GOOD":"BAD");
 }
 
 void initializeRobot()
@@ -175,27 +188,34 @@ void initializeRobot()
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
-	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
-	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
+	// Print out a message sayint that the initialization has started
+	writeDebugStreamLine("-- INITIALIZING --");
 
 	// Make sure that the batteries are at acceptable levels
 	checkBatteryLevels();
 
-	// Put all motors and servos into their starting positions
+	/*
+	*	MOTOR INITIALIZATION
+	*	This section ensures all motors are turned off, and that the grabber is initialized
+	*/
+	// DC motors should be set to OFF
 	motor[mDriveLeft] 	= 0;
 	motor[mDriveRight] 	= 0;
 	motor[mLift]		= 0;
-	motor[mTip] 		= 0;
-	motor[mHoriz] 		= 0;
 	motor[mBrush] 		= 0;
 
-		// All encoder positions that we use start at zero
-	nMotorEncoder[mLift] 		= 0;
-	nMotorEncoder[mTip] 		= 0;
-	nMotorEncoder[mHoriz] 		= 0;
-	nMotorEncoder[mDriveLeft] 	= 0;
-	nMotorEncoder[mDriveRight] 	= 0;
+	// All encoder positions that we use start at zero
+	nMotorEncoder[mLift] 	= 0;
+
+	// Move the grab motor down until it hits the cookie cutter, then set its encoder position to 0
+	// This zeroes the grabber encoder
+	motor[mGrab] = 50;
+	wait10Msec(150);
+	motor[mGrab] = 0;
+	nMotorEncoder[mGrab] = 0;
+
+	// Move the grabber motor to its open position
+	moveMotorTo(mGrab, grabOpenPosition, grabMotorSpeed);
 
 	/*
 	*	SERVO INITIALIZATION
@@ -204,7 +224,6 @@ void initializeRobot()
 	// Servos should be set to the closed position
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
-	servo[rGrabber] 	= grabberClosedPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
 
 	// Set the servo speed of some servos. This makes the servo change positions slower.
@@ -213,6 +232,9 @@ void initializeRobot()
 
 	// Make it so that servos maintain their positions after the program ends
 	bSystemLeaveServosEnabledOnProgramStop = true;
+
+	// Take an initial reading of the IR sensor
+	prematchIRreading = getIRStrength(infraRed);
 
 	// Initialization done, print to the debug stream
 	writeDebugStreamLine("-- ROBOT INITIALIZED --");

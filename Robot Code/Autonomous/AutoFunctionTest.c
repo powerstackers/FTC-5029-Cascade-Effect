@@ -33,30 +33,6 @@
 task main()
 {
 	initializeRobot();
-	//waitForStart();
-//turnDegrees (-87,75);
-
-	//char goalFacing = findGoalOrientation();
-	//goTicks(inchesToTicks(-4),75);
-	//wallAlign(ALIGN_BACKWARD);
-
-	  //goTicks(inchesToTicks(15), 100);	// Move 3 feet forwards at full power
-			// Turn towards the opponent rolling goals
-			//turnDegrees(60, 75);
-			// Drive forward to disrupt the opponent rolling goals
-			//goTicks(inchesToTicks(49), 75);
-			//goTicks(inchesToTicks(-12), 100);
-
-			// turn slightly to get the rest of the goals
-			//turnDegrees(40, 75);
-			//goTicks(inchesToTicks(28), 75);
-			//goTicks(inchesToTicks(-28), 100);
-
-			// Turn and go around the center goal towards our rolling goals
-			//turnDegrees(-45, 50);
-			//goTicks(inchesToTicks(-36), 100);
-			//turnDegrees(60, 50);
-			//goTicks(inchesToTicks(-20), 100);
-			// END DEFENSE
-	irAlign();
+	waitForStart();;
+	wallAlign(ALIGN_BACKWARD);
 }

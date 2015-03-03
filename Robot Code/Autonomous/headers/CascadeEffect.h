@@ -22,12 +22,15 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	January 30 2015
-*	Version 0.5
+*	March 1 2015
+*	Version 2.1
 */
+
+#pragma once
 
 #include "AutoFunctions.h"
 //#include "CollisionAvoidance.h"
+#include "Menu.h"
 #include "../../Robot.h"
 
 /*
@@ -82,6 +85,25 @@ char findGoalOrientation()
 	writeDebugStreamLine("\tdiffC:\t%d", diffC);
 	writeDebugStreamLine("\tThe thing is in position %c", facing);
 
+	// // Print out that this function is running
+	// writeDebugStreamLine("-- CALCULATING CENTER GOAL ORIENTATION --");
+	//
+	// // Calculate the percent difference between the current reading and the reading taken
+	// // before the match started
+	// float percentDiff = 1.0 - (float) (getIRStrength(infraRed)/prematchIRreading);
+	//
+	// // Print out the percent difference
+	// writeDebugStreamLine("\tPercent diff since initialization: %2.8f", percentDiff);
+	//
+	// char facing;
+	//
+	// // If the percent difference between the inital reading and current reading is very small,
+	// // assume that the center structure has not moved
+	// if(percentDiff < 0.1)
+	// {
+	// 	facing = centerStartPos;
+	// }
+
 	// Return the direction that the center goal is facing
 	return facing;
 }
@@ -109,14 +131,14 @@ void grabTube()
 {
 	// put the grabber down,
 	turnDegrees(18, 50);
-	moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
+	//moveMotorTo(mTip, nMotorEncoder[mTip]+tipTargetFloor, tipMotorSpeed);
 	// Open the grabber
-	servo[rGrabber] = grabberOpenPosition;
+	moveMotorTo(mGrab, grabOpenPosition, 100);
 	wait10Msec(50);
 	//then move forward a little,
 	goTicks(inchesToTicks(-15), 50);
 	//then t-rex hand have to go down.
-	servo[rGrabber]=grabberClosedPosition;
+	moveMotorTo(mGrab, grabClosedPosition, 100);
 	//goTicks(inchesToTicks(5), 50);
 }
 
@@ -129,7 +151,30 @@ void kickstand()
 
 }
 
+/*
+*	irAlign
+*	Use the secondary infrared sensor to align the robot with the center structure
+*/
 void irAlign()
 {
+	// Store the previously recorded IR value
+	int prevIRvalue;
 
+	// Set the drive motors to -50
+	driveMotorsTo(-50);
+
+	// For as long as the current IR reading is less than the previously recorded reading
+	// The idea is that we keep moving forward until the IR reading starts to decrease
+	do
+	{
+		prevIRvalue = getIRStrength(infraRedSide);
+		wait10Msec(10);
+	}
+	while(getIRStrength(infraRedSide) > prevIRvalue);
+
+	// Stop the drive motors
+	driveMotorsTo(0);
+
+	// Turn 90 degrees to face the center structure
+	turnDegrees(90, 50);
 }
