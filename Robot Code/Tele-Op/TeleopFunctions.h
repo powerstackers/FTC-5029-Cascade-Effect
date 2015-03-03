@@ -32,7 +32,7 @@
 */
 
 // Multiplier for the drive train motors. A value of 1 changes nothing, a value of 0.5 sets all motors to half power
-#define motorPowerMultiplier 		0.75
+#define motorPowerMultiplier 		0.65
 
 /*
 *	FUNCTION PROTOTYPES
