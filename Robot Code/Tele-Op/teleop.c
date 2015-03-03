@@ -22,8 +22,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	March 1 2015
-*	Version 2.2
+*	March 2 2015
+*	Version 2.3
 */
 
 // Include a file to handle messages from the joystick
@@ -33,11 +33,12 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 2.2
+#define programVersion 2.3
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
 #define encoderTargetThreshold 	50
+#define grabEncoderThreshold	3
 #define stickPushThreshold 		15
 #define liftEncoderStepValue 	15
 #define tipEncoderStepValue		15
@@ -243,7 +244,7 @@ task main()
 		// GRABBER
 
 		// Update the grabber motor speed so that it is always moving towards its target
-		if(abs(nMotorEncoder[mGrab] - grabEncoderTarget) > 3)
+		if(abs(nMotorEncoder[mGrab] - grabEncoderTarget) > grabEncoderThreshold)
 		{
 			motor[mGrab] = (nMotorEncoder[mGrab] < grabEncoderTarget)? grabMotorSpeed : -grabMotorSpeed;
 		}

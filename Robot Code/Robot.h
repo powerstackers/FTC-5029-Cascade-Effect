@@ -1,7 +1,6 @@
 /*
-*	Robot_new.h
+*	Robot.h
 *	General code and constants that are used by all programs, specific to our robot.
-*	SECOND ROBOT
 *	Copyright (C) 2015 Powerstackers
 *
 *	This program is free software: you can redistribute it and/or modify
