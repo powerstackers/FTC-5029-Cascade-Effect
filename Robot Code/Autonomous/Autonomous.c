@@ -167,11 +167,11 @@ task main()
 				case CENTGOAL_POSITION_B :           //middle
 				{
 				turnDegrees (50,75);
-				wait10Msec(100);
-				goTicks(inchesToTicks(-27),75);
-				wait10Msec(100);
-				turnDegrees (-87,75);
-				wait10Msec(100);
+				wait10Msec(1000);
+				goTicks(inchesToTicks(-28),75);
+				wait10Msec(1000);
+				turnDegrees (-85,75);
+				wait10Msec(1000);
 				goTicks(inchesToTicks(-4), 75);
 
 				break;
@@ -179,18 +179,18 @@ task main()
 
 				case CENTGOAL_POSITION_C :			//90 degrees
 				{
-				wait10Msec(100);
-				turnDegrees (87,65);
-				wait10Msec(1000);
-				goTicks(inchesToTicks(-31),65);
-				wait10Msec(1000);
-				turnDegrees (-73,65);
-				wait10Msec(1000);
-				goTicks(inchesToTicks(-37),65);
-				wait10Msec(1000);
-				turnDegrees(-77,65);
-				wait10Msec (1000);
-				goTicks(inchesToTicks(-3), 75);
+				wait10Msec(50);
+				turnDegrees (87,75);
+				wait10Msec(50);
+				goTicks(inchesToTicks(-31),75);
+				wait10Msec(50);
+				turnDegrees (-73,75);
+				wait10Msec(50);
+				goTicks(inchesToTicks(-37),75);
+				wait10Msec(50);
+				turnDegrees(-77,75);
+				wait10Msec(50);
+				goTicks(inchesToTicks(-3),75);
 
 				break;
 				}
@@ -219,13 +219,13 @@ task main()
 			// Drop down the lift
 			//moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
-			wait10Msec (1000);
+			wait10Msec (50);
 			turnDegrees (-82, 75);
-			wait10Msec (1000);
+			wait10Msec (50);
 			goTicks(inchesToTicks(-15), 75);
-			wait10Msec (1000);
+			wait10Msec (50);
 			turnDegrees (-71, 75);
-			wait10Msec (1000);
+			wait10Msec (50);
 			goTicks(inchesToTicks(30), 100);
 			// Go to the robot's ending position
 
