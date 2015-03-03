@@ -38,6 +38,8 @@ void printWelcomeMessage(string programName, float versionNumber);
 void checkBatteryLevels();
 bool tetrixBatteryGoodState();
 bool nxtBatteryGoodState();
+bool muxBatteryGoodState();
+void initializeRobot();
 void moveMotorTo(short affectedMotor, long position, short speed);
 
 /*
@@ -118,6 +120,15 @@ bool nxtBatteryGoodState()
 }
 
 /*
+*	muxBatteryGoodState
+*	Return whether or not the multiplexer battery is acceptably full
+*/
+bool muxBatteryGoodState()
+{
+	return HTSMUXreadPowerStatus(SMUX1);
+}
+
+/*
 *	checkBatteryLevels
 *	Check the NXT and TETRIX battery levels
 */
@@ -135,6 +146,10 @@ void checkBatteryLevels()
 		if(externalBatteryAvg/1000.0 < 0.0)
 			writeDebugStreamLine("\tCheck that main battery is connected.");
 	}
+	else
+	{	// If the main battery is low, say so
+		writeDebugStreamLine("\tMain battery good (%2.2f volts)", externalBatteryAvg / 1000.0);
+	}
 
 	// If the NXT battery level is low, print a message. A level below 7.5 volts is considered low.
 	if(!nxtBatteryGoodState())
@@ -143,13 +158,14 @@ void checkBatteryLevels()
 		writeDebugStreamLine("--!! NXT BATTERY LOW !!--\n\tAvg Batt Level: %2.2f",
 			nAvgBatteryLevel / 1000.0);
 	}
+	else
+	{	// If the nxt battery is good, say so
+		writeDebugStreamLine("\tNXT battery good (%2.2f volts)", nAvgBatteryLevel / 1000.0);
+	}
 
-	// Print both battery states, good or bad, to the NXT LCD screen
-	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
-	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
 
 	// Check that the multiplexer battery is in a good state
-	if(HTSMUXreadPowerStatus(SMUX1))
+	if(muxBatteryGoodState())
 	{	// This code will execute if the battery level is not good
 		writeDebugStreamLine("--! MUX BATTERY LOW !--");
 		writeDebugStreamLine("\tCheck to see that SMUX battery is turned on");
@@ -158,6 +174,12 @@ void checkBatteryLevels()
 	{	// If the MUX battery is good, say so
 		writeDebugStreamLine("\tMUX battery good");
 	}
+
+
+	// Print both battery states, good or bad, to the NXT LCD screen
+	nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
+	nxtDisplayTextLine(7, "MUX BATT %s", muxBatteryGoodState()?"GOOD":"BAD");
 }
 
 void initializeRobot()
@@ -166,14 +188,17 @@ void initializeRobot()
 	bDisplayDiagnostics = false;
 	eraseDisplay();
 
-	// Measure and print the battery levels
-	writeDebugStreamLine("--BATTERY LEVELS--\n\tTETRIX battery level: %2.2f volts", externalBatteryAvg / 1000.0);
-	writeDebugStreamLine("\tNXT Battery level: %2.2f volts", nAvgBatteryLevel / 1000.0);
+	// Print out a message sayint that the initialization has started
+	writeDebugStreamLine("-- INITIALIZING --");
 
 	// Make sure that the batteries are at acceptable levels
 	checkBatteryLevels();
 
-	// Put all motors and servos into their starting positions
+	/*
+	*	MOTOR INITIALIZATION
+	*	This section ensures all motors are turned off, and that the grabber is initialized
+	*/
+	// DC motors should be set to OFF
 	motor[mDriveLeft] 	= 0;
 	motor[mDriveRight] 	= 0;
 	motor[mLift]		= 0;
@@ -182,7 +207,7 @@ void initializeRobot()
 	// All encoder positions that we use start at zero
 	nMotorEncoder[mLift] 	= 0;
 
-	// Move the grab motor up until it hits the crossbeam, then set its encoder position to 0
+	// Move the grab motor down until it hits the cookie cutter, then set its encoder position to 0
 	// This zeroes the grabber encoder
 	motor[mGrab] = 50;
 	wait10Msec(150);
