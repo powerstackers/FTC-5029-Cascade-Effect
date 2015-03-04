@@ -54,6 +54,7 @@ void	wallAlign(bool forwardBackward);
 #define wheelDiameter 		4		// Diameter of your wheels in inches
 #define driveGearMultiplier 2.0		// Drive gear multiplier.
 									// EXAMPLE: If your drive train is geared 2:1 (1 motor rotation = 2 wheel rotations), set this to 2
+#define turnOvershootThreshold 0.1
 
 /*
 *	allMotorsTo
@@ -116,9 +117,14 @@ float ticksToInches(long ticks)
 */
 void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 {
+
+	long startLeft = nMotorEncoder[mDriveLeft];
+	long startRight = nMotorEncoder[mDriveRight];
+
 	// Target encoder values for the left and right motors
-	long targetRight = nMotorEncoder[mDriveRight] + ticks;
-	long targetLeft = nMotorEncoder[mDriveLeft] + ticks;
+	long targetRight = startRight + ticks;
+	long targetLeft = startLeft + ticks;
+
 
 	// Print what we are going to do to the debug stream
 	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks (%3.2f inches) %s at %d speed",
@@ -161,7 +167,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	}
 
 	// Write to the debug stream that we are done
-	writeDebugStreamLine("-- MOVING DONE --");
+	writeDebugStreamLine("-- MOVING DONE --\n\tTotal distance travelled: %2.2f inches", ticksToInches(nMotorEncoder[mDriveLeft] - startLeft));
 }
 
 /*
@@ -219,6 +225,13 @@ void turnDegrees(float degrees, int speed)
 	// Stop all drive motors
 	driveMotorsTo(0);
 
+	// If the turn overshot, turn back the other direction a small amount
+	if(false)//abs(-1*degreesSoFar - degrees) > turnOvershootThreshold)
+	{
+		writeDebugStreamLine("Turn overshot! Turning back...");
+		turnDegrees(-1*abs(-1*degreesSoFar - degrees), 50);
+	}
+
 	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
 }
@@ -262,26 +275,30 @@ void wallAlign(bool forwardBackward)
 		wait10Msec(100);
 
 		// If the left motor hasn't changed an acceptable amount in the last second, then it has met resistance
-		if(abs(leftPrevValue - nMotorEncoder[mDriveLeft]) < stopThreshold)
+		if(abs(leftPrevValue - nMotorEncoder[mDriveLeft]) < stopThreshold && !leftDone)
 		{
 			// Turn the motor off, and indicate that this side is aligned
 			motor[mDriveLeft] = 0;
 			leftDone = true;
 			writeDebugStreamLine("\tLeft side aligned. Diff: %d", abs(leftPrevValue - nMotorEncoder[mDriveLeft]));
 			PlaySound(soundBeepBeep);
+
+			// Set the opposite drive motor to full power to finish aligning the robot
 			if(!rightDone)
-				motor[mDriveRight] = 100;
+				motor[mDriveRight] = ALIGN_FORWARD?100:-100;
 		}
 		// If the right motor hasn't changed an acceptable amount in the last second, then it has met resistance
-		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold)
+		if(abs(rightPrevValue - nMotorEncoder[mDriveRight]) < stopThreshold && !rightDone)
 		{
 			// Turn the motor off, and indicate that this side is aligned
 			motor[mDriveRight] = 0;
 			rightDone = true;
 			writeDebugStreamLine("\tRight side aligned. Diff: %d", abs(rightPrevValue - nMotorEncoder[mDriveRight]));
 			PlaySound(soundBeepBeep);
+
+			// Set the opposite drive motor to full poewr to finish aligning the robot
 			if(!leftDone)
-				motor[mDriveLeft] = 100;
+				motor[mDriveLeft] = ALIGN_FORWARD?100:-100;
 		}
 
 		leftPrevValue = nMotorEncoder[mDriveLeft];

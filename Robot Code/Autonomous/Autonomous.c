@@ -86,9 +86,6 @@ task main()
 		waitForStart();
 	}
 
-	// Detect and store the center goal position
-	char goalFacing = findGoalOrientation();
-
 	// Notify the users that the program is running
 	nxtDisplayCenteredBigTextLine(3, "RUNNING");
 	PlaySound(soundUpwardTones);
@@ -147,11 +144,15 @@ task main()
 		*	center tower from this position.
 		*/
 
+		// Detect and store the center goal position
+		goTicks(inchesToTicks(-20), 50);
+		char goalFacing = findGoalOrientation();
+
 		// OFFENSIVE MODE
 		if(offenseOrDefense==OFFENSIVE_MODE)
 		{
 			// Move slightly forwards to get into a better detecting position
-			goTicks(inchesToTicks(-20), 50);
+			//goTicks(inchesToTicks(-20), 50);
 
 			// Make a movement based on the position of the center goal
 			switch (goalFacing)
@@ -231,24 +232,40 @@ task main()
 		// DEFENSIVE MODE
 		else if(offenseOrDefense==DEFENSIVE_MODE)
 		{
-			// Move from the starting position to block the opponent's rolling goals
-			goTicks(inchesToTicks(15), 100);	// Move 3 feet forwards at full power
+			/*
+			*	Move from the starting position to block the opponent's rolling goals
+			*/
+			// Move 2 feet backwards at full power, to get out of the parking zone
+			//goTicks(inchesToTicks(-24), 100);
+
 			// Turn towards the opponent rolling goals
-			turnDegrees(60, 75);
-			// Drive forward to disrupt the opponent rolling goals
-			goTicks(inchesToTicks(34), 75);
+			turnDegrees(-90, 75);
+
+			// Drive forward to disrupt the opponent 30cm goal
+			goTicks(inchesToTicks(72), 100);
+
+			// Retreat a small distance
 			goTicks(inchesToTicks(-12), 100);
 
 			// turn slightly to get the rest of the goals
 			turnDegrees(40, 50);
+
+			// Move forward and backwards to disrupt the 90cm goal
 			goTicks(inchesToTicks(28), 75);
 			goTicks(inchesToTicks(-28), 100);
 
-			// Turn and go around the center goal towards our rolling goals
-			turnDegrees(-45, 50);
-			goTicks(inchesToTicks(-36), 100);
-			turnDegrees(60, 50);
-			goTicks(inchesToTicks(-20), 100);
+			// Turn to face the wall that we started at
+			turnDegrees(45, 75);
+
+			// Align ourselves with this wall
+			wallAlign(ALIGN_FORWARD);
+
+			// Go way over to the opponent center goal
+			goTicks(inchesToTicks(-85), 100);
+
+			// Turn to face the opponent center goal, and drive towards it
+			//turnDegrees(90, 75);
+			//goTicks(inchesToTicks(-36), 100);
 		}	// END DEFENSE
 
 	}	// END FLOOR START
