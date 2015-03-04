@@ -260,12 +260,48 @@ task main()
 			// Align ourselves with this wall
 			wallAlign(ALIGN_FORWARD);
 
-			// Go way over to the opponent center goal
-			goTicks(inchesToTicks(-85), 100);
+			/*
+			*	BLOCK CETNER GOAL
+			*	Move the robot in front of the opponent's center goal
+			*/
 
-			// Turn to face the opponent center goal, and drive towards it
-			//turnDegrees(90, 75);
-			//goTicks(inchesToTicks(-36), 100);
+			// Move into position for use to block the center goal
+			goTicks(inchesToTicks(-20), 100);	// Move away from the wall
+			turnDegrees(90, 75);				// Turn to face OUR ramp
+			goTicks(inchesToTicks(36, 100);		// Move foward, past the center goal
+			turnDegrees(90, 75);				// Turn parallel to the cetner structure
+
+			// Move to block the center goal, in one of three positions
+			switch(goalFacing)
+			{
+				// Farthest position
+				case CENTGOAL_POSITION_A:
+				{
+					goTicks(inchesToTicks(80), 100);	// Move alongside the goal
+					turnDegrees(90, 75);				// Turn tangent to the center structure
+					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
+					break;
+				}
+				// Middle position
+				case CENTGOAL_POSITION_B:
+				{
+					goTicks(inchesToTicks(40), 100);	// Move alongside the goal
+					turnDegrees(45, 75);				// Turn tangent to the center structure
+					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
+					break;
+				}
+				// Closest position
+				case CENTGOAL_POSITION_C:
+				{
+					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+
 		}	// END DEFENSE
 
 	}	// END FLOOR START
