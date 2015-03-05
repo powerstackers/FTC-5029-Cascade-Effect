@@ -268,7 +268,7 @@ task main()
 			// Move into position for use to block the center goal
 			goTicks(inchesToTicks(-20), 100);	// Move away from the wall
 			turnDegrees(90, 75);				// Turn to face OUR ramp
-			goTicks(inchesToTicks(36, 100);		// Move foward, past the center goal
+			goTicks(inchesToTicks(36), 100);		// Move foward, past the center goal
 			turnDegrees(90, 75);				// Turn parallel to the cetner structure
 
 			// Move to block the center goal, in one of three positions

@@ -37,10 +37,12 @@
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
 #define infraRed	msensor_S2_1		// IR sensor, NXT 2 MUX 1
-#define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
-#define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
+#define sGyro		msensor_S2_2		// Gyroscope sensor, NXT 2 MUX 2
 #define infraRedSide	msensor_S2_4		// IR sensor, NXT 2 MUX 2
 
+// DEPRECATED
+#define ultraBack	msensor_S2_3		// Ultrasonic, NXT 2 MUX 3
+#define ultraFront	msensor_S2_2		// Ultrasonic, NXT 2 MUX 4
 
 // Touch sensors, used in teleop and initialization
 #define touchLiftStop	1

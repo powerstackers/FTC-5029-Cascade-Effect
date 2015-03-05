@@ -226,7 +226,7 @@ void turnDegrees(float degrees, int speed)
 	driveMotorsTo(0);
 
 	// If the turn overshot, turn back the other direction a small amount
-	if(false)//abs(-1*degreesSoFar - degrees) > turnOvershootThreshold)
+	if(abs(-1*degreesSoFar - degrees) > turnOvershootThreshold)
 	{
 		writeDebugStreamLine("Turn overshot! Turning back...");
 		turnDegrees(-1*abs(-1*degreesSoFar - degrees), 50);
