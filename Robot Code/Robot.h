@@ -58,10 +58,13 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 // Servo positions
 #define flapLeftOpenPosition	1	// Left side flap open servo position
 #define flapLeftClosedPosition	1	// Left side flap closed servo position
+
 #define flapRightOpenPosition	1	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
+
 #define grabOpenPosition		-180	// Grabber open position
 #define grabClosedPosition		-15	// Grabber closed position
+
 #define trapDoorOpenPosition	20	// Trap door open servo position
 #define trapDoorClosedPosition	128	// Trap door closed servo position
 #define trapDoorIdlePosition	85	// Idling position for the grabber
@@ -69,6 +72,8 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 #define trapDoorChangeRate		30 	// Trap door servo change rate
 									// Given in positions per update (20 ms, 50 updates per second)
+#define ballDoorOpenPosition	10	// Ball door open servo position
+#define ballDoorClosedPosition	20	// Ball door closed servo position
 
 // Motor encoder targets
 //		Lift motor
@@ -224,6 +229,7 @@ void initializeRobot()
 	servo[rFlapLeft] 	= flapLeftClosedPosition;
 	servo[rFlapRight] 	= flapRightClosedPosition;
 	servo[rTrapDoor] 	= trapDoorClosedPosition;
+	servo[rBallDoor]	= ballDoorClosedPosition;
 
 	// Set the servo speed of some servos. This makes the servo change positions slower.
 	// The number of the setting indicates the number of positions the servo moves every 20 milliseconds

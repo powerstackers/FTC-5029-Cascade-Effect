@@ -168,7 +168,11 @@ task main()
 		// If button 6 (right shoulder) on joystick 1 is pressed, set the brush motor to full power.
 		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
-		motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
+
+		//motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
+
+		// Brush redo: On while the lift is down, reverse when the lift is up
+		motor[mBrush] = touchActive(touchLiftStop)? brushMotorSpeed : -brushMotorSpeed;
 
 
 		/*
@@ -228,9 +232,21 @@ task main()
 			liftEncoderTarget = nMotorEncoder[mLift];
 		}
 
+
 		// If the lift encoder reset button is pressed, reset the encoder value to 0
 		if(buttonLiftEncoderReset)
 			nMotorEncoder[mLift] = 0;
+
+		// BALL DOOR
+		// The ball door will only be closed if the robot is moving backwards, or the lift is up
+		if(!touchActive(touchLiftStop) || motor[mDriveLeft] < 0 || motor[mDriveRight] < 0)
+		{
+			servo[rBallDoor] = ballDoorClosedPosition;
+		}
+		else
+		{
+			servo[rBallDoor] = ballDoorOpenPosition;
+		}
 
 		/*
 		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable
