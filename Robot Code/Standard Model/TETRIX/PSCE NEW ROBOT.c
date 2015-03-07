@@ -1,6 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  none)
 #pragma config(Sensor, S2,     SMUX1,          sensorI2CCustom)
-#pragma config(Sensor, S3,     TMUX1,          sensorHiTechnicTouchMux)
+#pragma config(Sensor, S3,     touchLiftStop,  sensorTouch)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,          mGrab,         tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,          mBrush,        tmotorNXT, openLoop)

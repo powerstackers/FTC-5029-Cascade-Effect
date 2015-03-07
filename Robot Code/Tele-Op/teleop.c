@@ -169,10 +169,10 @@ task main()
 		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
 
-		//motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
+		motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
 
 		// Brush redo: On while the lift is down, reverse when the lift is up
-		motor[mBrush] = touchActive(touchLiftStop)? brushMotorSpeed : -brushMotorSpeed;
+		//motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
 
 
 		/*
@@ -207,7 +207,7 @@ task main()
 			// If the touch sensor IS activated, stop the motor completely, and only allow it to move up
 			if(stickLiftTarget<0)
 			{
-				if(touchActive(touchLiftStop))
+				if(touchActive())
 				{
 					nMotorEncoder[mLift] = 0;
 					liftEncoderTarget = 0;
@@ -239,7 +239,7 @@ task main()
 
 		// BALL DOOR
 		// The ball door will only be closed if the robot is moving backwards, or the lift is up
-		if(!touchActive(touchLiftStop) || motor[mDriveLeft] < 0 || motor[mDriveRight] < 0)
+		if(!touchActive() || motor[mDriveLeft] < 0 || motor[mDriveRight] < 0)
 		{
 			servo[rBallDoor] = ballDoorClosedPosition;
 		}
@@ -295,27 +295,8 @@ task main()
 		// TRAPDOOR
 		if(buttonTrapDoor && !buttonTrapDoorJustPushed)
 		{
-			// If the trapdoor is in the open or starting positions, move it to the idle position
-			if(servo[rTrapDoor]==trapDoorOpenPosition||servo[rTrapDoor]==trapDoorClosedPosition)
-			{
-				servo[rTrapDoor] = trapDoorIdlePosition;
-			}
-
-			// If the trapdoor is in the align position (second lowest), move it to the open position (lowest)
-			else if(servo[rTrapDoor]==trapDoorAlignPosition)
-			{
-				servo[rTrapDoor] = trapDoorOpenPosition;
-			}
-
-			// If the trapdoor is in the idle position (second highest), move it to the align position (second lowest)
-			else if(servo[rTrapDoor]==trapDoorIdlePosition)
-			{
-				servo[rTrapDoor] = trapDoorAlignPosition;
-			}
-
-
+			switchTrapdoor();
 			buttonTrapDoorJustPushed = true;
-			writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");
 		}
 		if(!buttonTrapDoor)
 			buttonTrapDoorJustPushed = false;

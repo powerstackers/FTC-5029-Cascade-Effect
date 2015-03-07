@@ -42,9 +42,11 @@
 
 task main()
 {
-	servo[servo1] = 10;
-	servo[servo2] = 32;
-	writeDebugStreamLine("%d", servo1);
-	writeDebugStreamLine("%d", servo2);
-	wait10Msec(200);
+	while(true)
+	{
+	/*	servo[servo1] = 0;
+		wait10Msec(200);
+		servo[servo1] = 180;
+		wait10Msec(200);*/
+	}
 }

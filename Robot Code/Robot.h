@@ -66,10 +66,10 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define grabOpenPosition		-180	// Grabber open position
 #define grabClosedPosition		-15	// Grabber closed position
 
-#define trapDoorOpenPosition	20	// Trap door open servo position
-#define trapDoorClosedPosition	128	// Trap door closed servo position
+#define trapDoorOpenPosition	196	// Trap door open servo position
+#define trapDoorClosedPosition	82	// Trap door closed servo position
 #define trapDoorIdlePosition	85	// Idling position for the grabber
-#define trapDoorAlignPosition	50	// Trap door precision alignment position
+#define trapDoorAlignPosition	143	// Trap door precision alignment position
 
 #define trapDoorChangeRate		30 	// Trap door servo change rate
 									// Given in positions per update (20 ms, 50 updates per second)
@@ -79,10 +79,10 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 // Motor encoder targets
 //		Lift motor
 #define liftTargetBase 		0
-#define liftTargetLow 		5000
-#define liftTargetMed 		10000
-#define liftTargetHigh 		17000
-#define liftTargetCent 		22700
+#define liftTargetLow 		1400
+#define liftTargetMed 		2330
+#define liftTargetHigh 		3320
+#define liftTargetCent 		4440
 
 // Reading on the IR sensor before the center structure is put in its position
 int prematchIRreading;
@@ -279,4 +279,29 @@ void moveMotorTo(short affectedMotor, long position, short speed)
 	}
 
 	writeDebugStreamLine("-- MOTOR MOVED --");
+}
+
+void switchTrapdoor()
+{
+	// If the trapdoor is in the open position, move it to the closed position
+	if(servo[rTrapDoor]==trapDoorOpenPosition)
+	{
+		servo[rTrapDoor] = trapDoorClosedPosition;
+	}
+
+	// If the trapdoor is in the align position (second lowest), move it to the open position (lowest)
+	else if(servo[rTrapDoor]==trapDoorAlignPosition)
+	{
+		servo[rTrapDoor] = trapDoorOpenPosition;
+	}
+
+	// If the trapdoor is in the closed position, move it to the align position
+	else if(servo[rTrapDoor]==trapDoorClosedPosition)
+	{
+		servo[rTrapDoor] = trapDoorAlignPosition;
+	}
+
+
+	writeDebugStreamLine("Toggled trapdoor to %s position", (servo[rTrapDoor]==trapDoorOpenPosition)?"open":"closed");
+
 }

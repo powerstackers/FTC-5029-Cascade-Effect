@@ -28,11 +28,12 @@
 
 // Include files to handle the multiplexer and all the different sensors
 #include "../../drivers/hitechnic-sensormux.h"
-#include "../../drivers/hitechnic-touchmux.h"
+//#include "../../drivers/hitechnic-touchmux.h"
 #include "../../drivers/hitechnic-irseeker-v2.h"
 #include "../../drivers/hitechnic-accelerometer.h"
 #include "../../drivers/hitechnic-gyro.h"
 #include "../../drivers/lego-ultrasound.h"
+#include "../../drivers/lego-touch.h"
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
@@ -46,7 +47,7 @@
 
 // Touch sensors, used in teleop and initialization
 #define touchLiftStop	1
-#define touchTipStop	2
+//#define touchTipStop	2
 
 //#define sGyro		S3					// Gyroscope, NXT 3
 
@@ -59,7 +60,7 @@ int 	getIRDirection();
 int 	getIRStrength();
 float 	currentGryoReading();
 float 	getUltraStrength(tMUXSensor sensor);
-bool 	touchActive(int sensor);
+bool 	touchActive();
 
 
 /*
@@ -130,9 +131,9 @@ int getUltraStrength(tMUXSensor sensor)
 *	touchActive
 *	Returns the state of a given touch sensor
 */
-bool touchActive(int sensor)
+bool touchActive()
 {
-	return HTTMUXisActive(TMUX1, sensor);
+	return SensorValue[touchLiftStop] == 1;
 }
 
 /*
