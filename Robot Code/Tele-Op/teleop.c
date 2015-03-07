@@ -169,10 +169,10 @@ task main()
 		// If button 8 (right trigger) on joystick 1 is pressed, set the brush motor to full reverse power.
 		// If it is not pressed, set the brush motor to 0.
 
-		motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
+		//motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
 
 		// Brush redo: On while the lift is down, reverse when the lift is up
-		//motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
+		motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
 
 
 		/*
@@ -215,7 +215,7 @@ task main()
 				}
 				else
 				{
-					writeDebugStreamLine("touchActive: %s", touchActive()? "YES":"NO");
+					//writeDebugStreamLine("touchActive: %s", touchActive()? "YES":"NO");
 					liftEncoderTarget -= liftEncoderStepValue;
 				}
 			}
