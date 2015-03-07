@@ -63,7 +63,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define flapRightOpenPosition	1	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 
-#define grabOpenPosition		-180	// Grabber open position
+#define grabOpenPosition		-180// Grabber open position
 #define grabClosedPosition		-15	// Grabber closed position
 
 #define trapDoorOpenPosition	196	// Trap door open servo position

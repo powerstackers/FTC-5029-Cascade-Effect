@@ -109,8 +109,8 @@ task main()
 		getCustomJoystickSettings ();
 
 		// Print both battery states, good or bad, to the NXT LCD screen
-		nxtDisplayTextLine(5, "MAIN BATT %s", tetrixBatteryGoodState()?"GOOD":"BAD");
-		nxtDisplayTextLine(6, "NXT BATT %s", nxtBatteryGoodState()?"GOOD":"BAD");
+		nxtDisplayTextLine(5, "MAIN BATT:%2.2fv", externalBatteryAvg / 1000.0);
+		nxtDisplayTextLine(6, "NXT BATT:%1.2fv", nAvgBatteryLevel / 1000.0);
 
 
 		// Check that we are still recieving messages from the FCS. If not, halt operation
@@ -172,8 +172,18 @@ task main()
 		//motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
 
 		// Brush redo: On while the lift is down, reverse when the lift is up
-		motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
+		//motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
 
+		// If the lift is up, the brush will spin outwards to prevent unwanted ball entry
+		if(!touchActive())
+		{
+			motor[mBrush] = -brushMotorSpeed;
+		}
+		// If the lift is down, the user will control the brush
+		else
+		{
+			motor[mBrush] = buttonBrush? brushMotorSpeed : (buttonBrushReverse? -1*brushMotorSpeed:0);
+		}
 
 		/*
 		*	VERTICAL LIFT
