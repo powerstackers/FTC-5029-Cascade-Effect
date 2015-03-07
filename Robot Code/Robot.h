@@ -73,8 +73,8 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 #define trapDoorChangeRate		30 	// Trap door servo change rate
 									// Given in positions per update (20 ms, 50 updates per second)
-#define ballDoorOpenPosition	10	// Ball door open servo position
-#define ballDoorClosedPosition	20	// Ball door closed servo position
+#define ballDoorOpenPosition	85	// Ball door open servo position
+#define ballDoorClosedPosition	160	// Ball door closed servo position
 
 // Motor encoder targets
 //		Lift motor
@@ -82,7 +82,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define liftTargetLow 		1400
 #define liftTargetMed 		2330
 #define liftTargetHigh 		3320
-#define liftTargetCent 		4440
+#define liftTargetCent 		4400
 
 // Reading on the IR sensor before the center structure is put in its position
 int prematchIRreading;
