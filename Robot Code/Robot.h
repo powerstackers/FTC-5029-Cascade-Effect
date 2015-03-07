@@ -19,8 +19,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	March 2 2015
-*	Version 2.4
+*	March 6 2015
+*	Version 2.5
 */
 
 // Include guard. This file can only be included one time
@@ -51,7 +51,8 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define tetrixBatteryMinimumLevel	13000
 
 // Motor speeds
-#define liftMotorSpeed 	75			// Speed of the vertical lift motor
+#define liftMotorSpeed 	90			// Speed of the vertical lift motor
+#define liftMotorSpeedDown	-50		// Speed of the vertical lift motor when moving down
 #define brushMotorSpeed	100			// Speed of the brush motor
 #define grabMotorSpeed	75			// Speed of the grab motor
 

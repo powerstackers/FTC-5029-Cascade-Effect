@@ -296,7 +296,7 @@ task checkButtons()
 
 		// UP
 		// If the up button is pressed, and has not been recently pressed
-		if(buttonLiftUp&&!buttonLiftUpRecentlyPushed)
+		if(buttonLiftUp && !buttonLiftUpRecentlyPushed)
 		{
 			buttonLiftUpRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target up");
@@ -308,7 +308,7 @@ task checkButtons()
 
 		// DOWN
 		// If the down button is pressed, has not been recently pressed, and the up button is not pressed
-		if(buttonLiftDown&&!buttonLiftDownRecentlyPushed&&!buttonLiftUp)
+		if(buttonLiftDown && !buttonLiftDownRecentlyPushed && !buttonLiftUp)
 		{
 			buttonLiftDownRecentlyPushed = true;
 			writeDebugStreamLine("Switching vertical lift encoder target down");

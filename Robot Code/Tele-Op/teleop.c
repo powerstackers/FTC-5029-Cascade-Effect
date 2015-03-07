@@ -22,8 +22,8 @@
 *	FTC Team #5029, The Powerstackers
 *	powerstackersftc.com
 *	github.com/powerstackers
-*	March 2 2015
-*	Version 2.3
+*	March 6 2015
+*	Version 2.4
 */
 
 // Include a file to handle messages from the joystick
@@ -33,7 +33,7 @@
 #include "../Robot.h"
 
 // Version number
-#define programVersion 2.3
+#define programVersion 2.4
 
 // Threshold for motor encoder targeting. The program will seek to move the motors to within this distance
 // of their targets. This keeps the motor from "wobbling"
@@ -188,7 +188,7 @@ task main()
 		// If the motor encoder value further from its target than a certain threshold, move towards the target
 		if(abs(nMotorEncoder[mLift] - liftEncoderTarget)>encoderTargetThreshold)
 		{
-			motor[mLift] = 	(nMotorEncoder[mLift]<liftEncoderTarget)?liftMotorSpeed:(-1*liftMotorSpeed);
+			motor[mLift] = 	nMotorEncoder[mLift]<liftEncoderTarget? liftMotorSpeed:liftMotorSpeedDown;
 		}
 		// If the encoder is within a certain threshold distance of its target, stop
 		else

@@ -30,7 +30,7 @@
 #include "AutoFunctions.h"
 
 // The total number of motors available to the robot (based on number of controllers attached)
-#define numMotors 8
+#define numMotors 4
 
 /*
 *	watchMotors
@@ -59,7 +59,7 @@ task watchMotors ()
 		{
 			// If the motor speed is set to anything but 0, and the motor encoder value has changed by less than
 			// the acceptable threshold since the last loop, stop and reverse the motor
-			if(motor[(tMotor)i]!=0&& ((long)abs(prevEncoderValue[(tMotor)i]-nMotorEncoder[(tMotor)i]))>encoderThreshold)
+			if(motor[(tMotor)i]!=0 && ((long) abs(prevEncoderValue[(tMotor)i]-nMotorEncoder[(tMotor)i])) > encoderThreshold)
 			{
 
 				writeDebugStreamLine("-- HALTED MOTOR DETECTED --\nStopping motor, and reversing");

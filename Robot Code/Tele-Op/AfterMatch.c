@@ -23,7 +23,7 @@
 *	powerstackersftc.com
 *	github.com/powerstackers
 *	March 1 2015
-*	Version 2.0
+*	Version 2.1
 */
 
 // Include a file that has some basic functions
@@ -38,12 +38,12 @@
 
 #define maxLineIndex 3
 
-float versionNumber = 0.2;
-string programName 	= "Aftermatch";
+#define versionNumber 2.1
 
 task main()
 {
 	// Print a welcome message to the debug stream
+	string programName 	= "Aftermatch";
 	printWelcomeMessage(programName, versionNumber);
 
 	// Put all motors and servos to their normal starting positions
@@ -82,7 +82,7 @@ task main()
 		*	Print all the motor and servo names and their values to the NXT LCD screen
 		*/
 		nxtDisplayStringAt(6, 63, "Lift:  %d   ", motor[mLift]);
-		nxtDisplayStringAt(6, 55, "TrapD: %s", (servo[rTrapDoor]==trapDoorClosedPosition)?"closed":"open  ");
+		nxtDisplayStringAt(6, 55, "TrapD: %s", servo[rTrapDoor]==trapDoorClosedPosition? "closed":"open  ");
 		nxtDisplayStringAt(6, 47, "Grab:  %d   ", motor[mGrab]);
 		nxtDisplayStringAt(6, 39, "Brush: %d   ", motor[mBrush]);
 
@@ -92,7 +92,7 @@ task main()
 		*	and the current line to the next line. If the new current line is past the bottom, bring it up to the top.
 		*	Play a short sound to notify the drivers.
 		*/
-		if(nNxtButtonPressed==NEXT_BUTTON&&!nextRecentlyPressed)
+		if(nNxtButtonPressed==NEXT_BUTTON && !nextRecentlyPressed)
 		{
 			writeDebugStreamLine("Move up the list");
 			nextRecentlyPressed = true;
@@ -111,7 +111,7 @@ task main()
 		*	PREVIOUS BUTTON
 		*	Same deal as the NEXT button, but move the selector up rather than down.
 		*/
-		if(nNxtButtonPressed==PREV_BUTTON&&!prevRecentlyPressed)
+		if(nNxtButtonPressed==PREV_BUTTON && !prevRecentlyPressed)
 		{
 			writeDebugStreamLine("Move down the list");
 			prevRecentlyPressed = true;
@@ -136,7 +136,7 @@ task main()
 		*	UP AND DOWN BUTTONS
 		*	If either the up or down button is pressed, change the value of the currently selected motor or servo.
 		*/
-		if(nNxtButtonPressed==UP_BUTTON||nNxtButtonPressed==DOWN_BUTTON)
+		if(nNxtButtonPressed==UP_BUTTON || nNxtButtonPressed==DOWN_BUTTON)
 		{
 			/*
 			*	For motors, if the UP button is pressed, run the motor forwards. If the DOWN button is pressed,
@@ -146,20 +146,28 @@ task main()
 			{
 				// Vertical lift
 				case 0:
-					motor[mLift] = (nNxtButtonPressed==UP_BUTTON)?liftMotorSpeed:-1*liftMotorSpeed;
+				{
+					motor[mLift] = nNxtButtonPressed==UP_BUTTON? liftMotorSpeed:liftMotorSpeedDown;
 					break;
+				}
 				// Trapdoor
 				case 1:
-					servo[rTrapDoor] = (nNxtButtonPressed==UP_BUTTON)?trapDoorOpenPosition:trapDoorClosedPosition;
+				{
+					servo[rTrapDoor] = nNxtButtonPressed==UP_BUTTON? trapDoorOpenPosition:trapDoorClosedPosition;
 					break;
+				}
 				// Grabber
 				case 2:
-					motor[mGrab] = (nNxtButtonPressed==UP_BUTTON)?10:-10;
+				{
+					motor[mGrab] = nNxtButtonPressed==UP_BUTTON? grabMotorSpeed:-grabMotorSpeed;
 					break;
+				}
 				// Brush
 				case 3:
+				{
 					motor[mBrush] = (nNxtButtonPressed==UP_BUTTON)?brushMotorSpeed:-1*brushMotorSpeed;
 					break;
+				}
 			}
 		}
 
@@ -175,7 +183,7 @@ task main()
 
 		// Check to see if the orange button is being held
 		ClearTimer(T1);
-		while(nNxtButtonPressed==NEXT_BUTTON&&time100[T1]<25)
+		while(nNxtButtonPressed==NEXT_BUTTON && time100[T1]<25)
 		{
 			// If this loop goes on for more than 2 seconds, exit the program
 			if(time100[T1]>20)

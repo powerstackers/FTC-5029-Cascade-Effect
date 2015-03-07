@@ -1,6 +1,4 @@
 #pragma config(StandardModel, "PS CASCADE EFFECT")
-#pragma once
-
 /*
 *	AutoFunctions.h
 *	Functions and subroutines for use during the autonomous period.
@@ -25,6 +23,9 @@
 *	December 31 2014
 *	Version 0.1
 */
+
+// Include guard. Ensures that this file is only opened once
+#pragma once
 
 #include "Sensors.h"
 #include "../../drivers/JoystickDriver.c"
@@ -269,7 +270,7 @@ void wallAlign(bool forwardBackward)
 	// This is our threshold. A change less than this will indicate that the motor has met resistance
 	const unsigned long stopThreshold = 300;
 
-	while(!rightDone&&!leftDone)
+	while(!rightDone && !leftDone)
 	{
 		// Wait for 1 second to give the motors time to move, if they're going to
 		wait10Msec(100);

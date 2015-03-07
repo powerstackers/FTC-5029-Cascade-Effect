@@ -135,6 +135,10 @@ bool touchActive(int sensor)
 	return HTTMUXisActive(TMUX1, sensor);
 }
 
+/*
+*	initializeMultiplexers
+*	Initialize all the multiplexers and get them ready to run
+*/
 void initializeMultiplexers()
 {
 

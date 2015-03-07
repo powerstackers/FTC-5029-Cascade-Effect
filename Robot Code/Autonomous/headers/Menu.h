@@ -28,6 +28,7 @@
 *	Version 2.1
 */
 
+// Include guard. Ensures that this file is only opened once
 #pragma once
 
 // Include file to handle messages from the joysticks
@@ -147,7 +148,7 @@ void runMenu()
 
 		// If the right or left arrow button is pressed on the NXT, perform the appropriate action for the data
 		// type of the selected variable. Switching the ready variable will end the program
-		if((nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON)&&!arrowRecentlyPressed)
+		if((nNxtButtonPressed == NEXT_BUTTON || nNxtButtonPressed == PREV_BUTTON) && !arrowRecentlyPressed)
 		{
 			// The arrow button is being pressed, so it has been recently pressed
 			arrowRecentlyPressed = true;
@@ -192,11 +193,11 @@ void runMenu()
 		}
 
 		// If the arrow buttons are not being pressed, then they have not been recently pressed
-		if(nNxtButtonPressed!=NEXT_BUTTON&&nNxtButtonPressed!=PREV_BUTTON)
+		if(nNxtButtonPressed!=NEXT_BUTTON && nNxtButtonPressed!=PREV_BUTTON)
 			arrowRecentlyPressed = false;
 
 		// If the down button is pressed on the NXT, switch the active variable to the previous variable in the list
-		if(nNxtButtonPressed==DOWN_BUTTON&&!downRecentlyPressed)
+		if(nNxtButtonPressed==DOWN_BUTTON && !downRecentlyPressed)
 		{
 			// If the down button is being pressed, then it has been recently pressed
 			downRecentlyPressed = true;
@@ -220,7 +221,7 @@ void runMenu()
 			downRecentlyPressed = false;
 
 		// If the up button is pressed on the NXT, switch the active variable to the next variable in the list
-		if(nNxtButtonPressed==UP_BUTTON&&!upRecentlyPressed)
+		if(nNxtButtonPressed==UP_BUTTON && !upRecentlyPressed)
 		{
 			// If the up button is being pressed, then it has been recently pressed
 			upRecentlyPressed = true;
