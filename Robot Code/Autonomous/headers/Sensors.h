@@ -33,7 +33,7 @@
 #include "../../drivers/hitechnic-accelerometer.h"
 #include "../../drivers/hitechnic-gyro.h"
 #include "../../drivers/lego-ultrasound.h"
-#include "../../drivers/lego-touch.h"
+//#include "../../drivers/lego-touch.h"
 
 // Macros to store the sensor addresses
 // Sensor addresses may change throughout the season
@@ -133,7 +133,7 @@ int getUltraStrength(tMUXSensor sensor)
 */
 bool touchActive()
 {
-	return SensorValue[touchLiftStop] == 1;
+	return SensorValue[S3] == 1;
 }
 
 /*

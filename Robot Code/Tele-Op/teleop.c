@@ -215,6 +215,7 @@ task main()
 				}
 				else
 				{
+					writeDebugStreamLine("touchActive: %s", touchActive()? "YES":"NO");
 					liftEncoderTarget -= liftEncoderStepValue;
 				}
 			}
@@ -293,7 +294,14 @@ task main()
 
 
 		// TRAPDOOR
-		if(buttonTrapDoor && !buttonTrapDoorJustPushed)
+		// If the lift target is set to the lowest position, automatically close the trapdoor
+		if(liftEncoderTarget == liftTargetBase)
+		{
+			servo[rTrapDoor] = trapDoorClosedPosition;
+		}
+
+		// If the trapdoor button is pressed and has not been recently pressed, move it to the next position in the cycle
+		else if(buttonTrapDoor && !buttonTrapDoorJustPushed)
 		{
 			switchTrapdoor();
 			buttonTrapDoorJustPushed = true;
