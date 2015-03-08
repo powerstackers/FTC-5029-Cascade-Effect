@@ -1,5 +1,3 @@
-#pragma config(StandardModel, "PS CASCADE EFFECT")
-
 /*
 *	GyroPath.h
 *	Tasks to keep the robot moving in a straight line. Uses the gyroscope sensor to correct the robot's heading.

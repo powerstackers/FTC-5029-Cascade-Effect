@@ -32,10 +32,5 @@
 #include "../drivers/joystickDriver.c"
 task main()
 {
-	turnDegrees(90, 75);
-
-	/*while(true)
-	{
-		nxtDisplayTextLine(4, "Gyr: %f", currentGryoReading());
-	}*/
+	goTicks(inchesToTicks(-36), 50);
 }

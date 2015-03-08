@@ -1,4 +1,3 @@
-#pragma config(StandardModel, "PS CASCADE EFFECT")
 /*
 *	AutoFunctions.h
 *	Functions and subroutines for use during the autonomous period.
@@ -126,6 +125,9 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	long targetRight = startRight + ticks;
 	long targetLeft = startLeft + ticks;
 
+	float leftCorrect	= 1.0;
+	float rightCorrect	= 0.9;
+
 
 	// Print what we are going to do to the debug stream
 	writeDebugStreamLine("-- GOING TICKS --\n\tMoving %d ticks (%3.2f inches) %s at %d speed",
@@ -137,7 +139,10 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	if(ticks > 0)
 	{
 		// Set the drive motors to the given speed
-		driveMotorsTo(speed);
+		//driveMotorsTo(speed);
+		motor[mDriveLeft] 	= (short) speed * leftCorrect;
+		motor[mDriveRight] 	= (short) speed * rightCorrect;
+
 		// While this function runs, keep the robot on a constant heading
 		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
@@ -153,7 +158,10 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 	else if(ticks < 0)
 	{
 		// Set the drive motors to the speed (in reverse)
-		driveMotorsTo(-1 * speed);
+		//driveMotorsTo(-1 * speed);
+		motor[mDriveLeft] 	= (short) -speed * leftCorrect;
+		motor[mDriveRight] 	= (short) -speed * rightCorrect;
+
 		// While this function runs, keep the robot on a constant heading
 		//StartTask(stablizePath);
 		// Wait until both motors have reached the target
@@ -179,9 +187,10 @@ void turnDegrees(float degrees, int speed)
 {
 	// Notify the drivers of what we are about to do
 	string dummy;
-	StringFormat(dummy, "-- TURNING --\n\tTurning %d degrees at %d speed",
+	StringFormat(dummy, "-- TURNING --\n\tTurning %f degrees at %d speed",
 		degrees, speed);
-	writeDebugStreamLine(dummy);
+	//writeDebugStreamLine(dummy);
+	writeDebugStreamLine("-- TURNING --\n\tTurning %f degrees", degrees);
 
 
 	// Store the number of degrees turned so far, i.e., the difference of
@@ -193,7 +202,7 @@ void turnDegrees(float degrees, int speed)
 
 	// Decide whether to turn clockwise or counterclockwise.
 	// A positive degree target inmplies turning counterclockwise. A negative target implies clockwise.
-	if(degrees > 0)
+	if(degrees < 0)
 	{
 		motor[mDriveLeft] = -1 * speed;
 		motor[mDriveRight] = speed;
@@ -208,9 +217,11 @@ void turnDegrees(float degrees, int speed)
 	writeDebugStreamLine("\tSet right motor to %d", motor[mDriveRight]);
 
 	// For as long as the current degree measure doesn't equal the target. This will work in the clockwise and
-	// counterclockwise directions, since we are comparing the absolute values.
+	// counterclockwise directions, since we are comparing the absolute values
 	while(abs(degreesSoFar) < abs(degrees))
 	{
+		//writeDebugStreamLine("%d", time1[T1];
+		//ClearTimer(T1);
 		// 10 millisecond interval
 		wait10Msec(1);
 
@@ -219,22 +230,29 @@ void turnDegrees(float degrees, int speed)
 		float reading = currentGryoReading() - initialTurnReading;
 
 		// Gyro sensor returns an angular speed. To calculate the distance, we multiply the rate by the time interval (.01 seconds).
-		degreesSoFar += reading * 0.01;
+		degreesSoFar += reading * 0.02;
+
+	//	writeDebugStreamLine("dgr: %f\t\tred: %f", degreesSoFar, reading);
+	//	nxtDisplayTextLine(7, "%3.2f", degreesSoFar);
 
 	}
 
 	// Stop all drive motors
 	driveMotorsTo(0);
 
-	// If the turn overshot, turn back the other direction a small amount
-	if(abs(-1*degreesSoFar - degrees) > turnOvershootThreshold)
-	{
-		writeDebugStreamLine("Turn overshot! Turning back...");
-		turnDegrees(-1*abs(-1*degreesSoFar - degrees), 50);
-	}
-
 	// Notify the drivers that we are done.
 	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
+
+	writeDebugStreamLine("Degreees turned: %f", degreesSoFar);
+	writeDebugStreamLine("Degrees wanted: %f", degrees);
+
+	// If the turn overshot, turn back the other direction a small amount
+	if(abs(degreesSoFar - degrees) > turnOvershootThreshold)
+	{
+		writeDebugStreamLine("Turn overshot by %f degrees! Turning back...", degreesSoFar - degrees);
+		turnDegrees(-1*(degreesSoFar - degrees), 50);
+	}
+
 }
 
 

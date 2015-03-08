@@ -115,13 +115,13 @@ task main()
 			//this will make the robot drop the balls into the rolling goal
 			grabTube();
 			//this will make the robot turn to move twards the parking zone
-			turnDegrees (-8,75);
+			turnDegrees (-8,preferredTurnSpeed);
 			goTicks(inchesToTicks(12), 75);
-			turnDegrees(-20, 75);
+			turnDegrees(-20, preferredTurnSpeed);
 			//this will make the robot move twards the parking zone
 			goTicks (inchesToTicks(78), 75);
 			//this will make the robot turn so it can be in place so it will move in the parking zone
-			turnDegrees (-80,75);
+			turnDegrees (-80,preferredTurnSpeed);
 			goTicks(inchesToTicks(10), 50);
 			dropBall(liftTargetMed);
 
@@ -167,13 +167,13 @@ task main()
 				case CENTGOAL_POSITION_B :
 				{
 					// Turn 45 degrees, tangent to the center structure
-					turnDegrees (45,75);
+					turnDegrees (45,preferredTurnSpeed);
 
 					// Move into position in front of the goal
 					goTicks(inchesToTicks(-30),75);
 
 					// Turn to face the goal
-					turnDegrees (-87,75); writeDebugStreamLine("Done");
+					turnDegrees (-87,preferredTurnSpeed); writeDebugStreamLine("Done");
 					break;
 				}
 
@@ -220,9 +220,9 @@ task main()
 			// Drop down the lift
 			moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
-			turnDegrees (-87, 75);
+			turnDegrees (-87, preferredTurnSpeed);
 			goTicks(inchesToTicks(-15), 75);
-			turnDegrees (-73, 75);
+			turnDegrees (-73, preferredTurnSpeed);
 			goTicks(inchesToTicks(35), 100);
 			// Go to the robot's ending position
 
@@ -239,24 +239,29 @@ task main()
 			//goTicks(inchesToTicks(-24), 100);
 
 			// Turn towards the opponent rolling goals
-			turnDegrees(-90, 75);
+			turnDegrees(90, preferredTurnSpeed);
 
 			// Drive forward to disrupt the opponent 30cm goal
-			goTicks(inchesToTicks(72), 100);
-
+			goTicks(inchesToTicks(48), 100);
+return;
 			// Retreat a small distance
 			goTicks(inchesToTicks(-12), 100);
-
+return;
 			// turn slightly to get the rest of the goals
-			turnDegrees(40, 50);
-
+			turnDegrees(-45, preferredTurnSpeed);
+return;
 			// Move forward and backwards to disrupt the 90cm goal
-			goTicks(inchesToTicks(28), 75);
-			goTicks(inchesToTicks(-28), 100);
-
+			goTicks(inchesToTicks(24), 75);
+return;
+			goTicks(inchesToTicks(-24), 100);
+return;
 			// Turn to face the wall that we started at
-			turnDegrees(45, 75);
-
+			turnDegrees(-45, preferredTurnSpeed);
+return;
+			goTicks(inchesToTicks(24), 75);
+return;
+			goTicks(inchesToTicks(-4), 100);
+return;
 			// Align ourselves with this wall
 			wallAlign(ALIGN_FORWARD);
 
@@ -267,9 +272,9 @@ task main()
 
 			// Move into position for use to block the center goal
 			goTicks(inchesToTicks(-20), 100);	// Move away from the wall
-			turnDegrees(90, 75);				// Turn to face OUR ramp
+			turnDegrees(90, preferredTurnSpeed);				// Turn to face OUR ramp
 			goTicks(inchesToTicks(36), 100);		// Move foward, past the center goal
-			turnDegrees(90, 75);				// Turn parallel to the cetner structure
+			turnDegrees(90, preferredTurnSpeed);				// Turn parallel to the cetner structure
 
 			// Move to block the center goal, in one of three positions
 			switch(goalFacing)
@@ -278,7 +283,7 @@ task main()
 				case CENTGOAL_POSITION_A:
 				{
 					goTicks(inchesToTicks(80), 100);	// Move alongside the goal
-					turnDegrees(90, 75);				// Turn tangent to the center structure
+					turnDegrees(90, preferredTurnSpeed);				// Turn tangent to the center structure
 					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
 					break;
 				}
@@ -286,7 +291,7 @@ task main()
 				case CENTGOAL_POSITION_B:
 				{
 					goTicks(inchesToTicks(40), 100);	// Move alongside the goal
-					turnDegrees(45, 75);				// Turn tangent to the center structure
+					turnDegrees(45, preferredTurnSpeed);				// Turn tangent to the center structure
 					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
 					break;
 				}

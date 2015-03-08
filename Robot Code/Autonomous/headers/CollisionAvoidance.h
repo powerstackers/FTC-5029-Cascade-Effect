@@ -1,5 +1,3 @@
-#pragma config(StandardModel, "PS CASCADE EFFECT")
-
 /*
 *	CollisionAvoidance.h
 *	Functions and tasks to avoid on-field collisions.

@@ -51,10 +51,11 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define tetrixBatteryMinimumLevel	13000
 
 // Motor speeds
-#define liftMotorSpeed 	90			// Speed of the vertical lift motor
+#define liftMotorSpeed 	100			// Speed of the vertical lift motor
 #define liftMotorSpeedDown	-50		// Speed of the vertical lift motor when moving down
 #define brushMotorSpeed	100			// Speed of the brush motor
 #define grabMotorSpeed	75			// Speed of the grab motor
+#define preferredTurnSpeed	75		// Most desirable turning speed
 
 // Servo positions
 #define flapLeftOpenPosition	1	// Left side flap open servo position
@@ -198,6 +199,11 @@ void initializeRobot()
 
 	// Make sure that the batteries are at acceptable levels
 	checkBatteryLevels();
+
+	// Print what we're doing to the nxt screen
+	nxtDisplayTextLine(0, "2015 Powerstackers");
+	nxtDisplayCenteredBigTextLine(1, "INIT");
+	nxtDisplayCenteredBigTextLine(3, "ROBOT");
 
 	/*
 	*	MOTOR INITIALIZATION
