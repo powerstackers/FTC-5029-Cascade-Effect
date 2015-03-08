@@ -145,7 +145,7 @@ task main()
 		*/
 
 		// Detect and store the center goal position
-		goTicks(inchesToTicks(-20), 50);
+		goTicks(inchesToTicks(-30), 100);
 		char goalFacing = findGoalOrientation();
 
 		// OFFENSIVE MODE
@@ -241,27 +241,29 @@ task main()
 			// Turn towards the opponent rolling goals
 			turnDegrees(90, preferredTurnSpeed);
 
-			// Drive forward to disrupt the opponent 30cm goal
-			goTicks(inchesToTicks(48), 100);
-return;
-			// Retreat a small distance
+			// Drive forward and backward to disrupt the opponent 60cm goal
+			goTicks(inchesToTicks(60), 100);
 			goTicks(inchesToTicks(-12), 100);
-return;
-			// turn slightly to get the rest of the goals
+
+			// turn slightly to get the 90cm goals
 			turnDegrees(-45, preferredTurnSpeed);
-return;
+
 			// Move forward and backwards to disrupt the 90cm goal
 			goTicks(inchesToTicks(24), 75);
-return;
 			goTicks(inchesToTicks(-24), 100);
-return;
-			// Turn to face the wall that we started at
+
+			// Turn slightly to face the 30cm goal
 			turnDegrees(-45, preferredTurnSpeed);
-return;
+
+			// Move foward and backward to disrupt the 30cm goal
 			goTicks(inchesToTicks(24), 75);
-return;
 			goTicks(inchesToTicks(-4), 100);
-return;
+
+			// Move into position to align on the wall of the ramp
+			turnDegrees(-90, preferredTurnSpeed);
+			//goTicks(inchesToTicks(12), 100);
+			//turnDegrees(90, preferredTurnSpeed);
+
 			// Align ourselves with this wall
 			wallAlign(ALIGN_FORWARD);
 
@@ -271,10 +273,10 @@ return;
 			*/
 
 			// Move into position for use to block the center goal
-			goTicks(inchesToTicks(-20), 100);	// Move away from the wall
+			goTicks(inchesToTicks(-6), 100);	// Move away from the wall
 			turnDegrees(90, preferredTurnSpeed);				// Turn to face OUR ramp
-			goTicks(inchesToTicks(36), 100);		// Move foward, past the center goal
-			turnDegrees(90, preferredTurnSpeed);				// Turn parallel to the cetner structure
+			goTicks(inchesToTicks(-36), 100);		// Move foward, past the center goal
+			//turnDegrees(90, preferredTurnSpeed);				// Turn parallel to the cetner structure
 
 			// Move to block the center goal, in one of three positions
 			switch(goalFacing)
@@ -282,7 +284,8 @@ return;
 				// Farthest position
 				case CENTGOAL_POSITION_A:
 				{
-					goTicks(inchesToTicks(80), 100);	// Move alongside the goal
+					writeDebugStreamLine("-- BLOCKING GOAL POSITION A --");
+					goTicks(inchesToTicks(-80), 100);	// Move alongside the goal
 					turnDegrees(90, preferredTurnSpeed);				// Turn tangent to the center structure
 					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
 					break;
@@ -290,7 +293,8 @@ return;
 				// Middle position
 				case CENTGOAL_POSITION_B:
 				{
-					goTicks(inchesToTicks(40), 100);	// Move alongside the goal
+					writeDebugStreamLine("-- BLOCKING GOAL POSITION B --");
+					goTicks(inchesToTicks(-40), 100);	// Move alongside the goal
 					turnDegrees(45, preferredTurnSpeed);				// Turn tangent to the center structure
 					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
 					break;
@@ -298,7 +302,8 @@ return;
 				// Closest position
 				case CENTGOAL_POSITION_C:
 				{
-					goTicks(inchesToTicks(20), 100);	// Move in front of the goal
+					writeDebugStreamLine("-- BLOCKING GOAL POSITION C --");
+					goTicks(inchesToTicks(-20), 100);	// Move in front of the goal
 					break;
 				}
 				default:

@@ -153,7 +153,7 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Stop the drive motors here
-		driveMotorsTo(0);
+		//driveMotorsTo(0);
 	}
 	else if(ticks < 0)
 	{
@@ -172,7 +172,13 @@ void goTicks(long ticks, int speed/*, bool collisionAvoidance*/)
 		// Now that we've reached our destination, turn off the stablization
 		StopTask(stablizePath);
 		// Turn off the drive motors here
-		driveMotorsTo(0);
+		//driveMotorsTo(0);
+	}
+
+	while(motor[mDriveLeft] != 0 || motor[mDriveRight] != 0)
+	{
+		motor[mDriveLeft] += (motor[mDriveLeft]==0)? 0 :(motor[mDriveLeft]>0?-1:1);
+		motor[mDriveRight] += (motor[mDriveRight]==0)? 0 :(motor[mDriveRight]>0?-1:1);
 	}
 
 	// Write to the debug stream that we are done
@@ -213,8 +219,8 @@ void turnDegrees(float degrees, int speed)
 		motor[mDriveRight] = -1 * speed;
 	}
 
-	writeDebugStreamLine("\tSet left motor to %d", motor[mDriveLeft]);
-	writeDebugStreamLine("\tSet right motor to %d", motor[mDriveRight]);
+	//writeDebugStreamLine("\tSet left motor to %d", motor[mDriveLeft]);
+	//writeDebugStreamLine("\tSet right motor to %d", motor[mDriveRight]);
 
 	// For as long as the current degree measure doesn't equal the target. This will work in the clockwise and
 	// counterclockwise directions, since we are comparing the absolute values
@@ -241,10 +247,10 @@ void turnDegrees(float degrees, int speed)
 	driveMotorsTo(0);
 
 	// Notify the drivers that we are done.
-	writeDebugStreamLine("\tTurning done\n\tTotal degrees turned: %f", degreesSoFar);
+	writeDebugStreamLine("\tTotal degrees turned: %f", degreesSoFar);
 
-	writeDebugStreamLine("Degreees turned: %f", degreesSoFar);
-	writeDebugStreamLine("Degrees wanted: %f", degrees);
+	//writeDebugStreamLine("Degreees turned: %f", degreesSoFar);
+	//writeDebugStreamLine("Degrees wanted: %f", degrees);
 
 	// If the turn overshot, turn back the other direction a small amount
 	if(abs(degreesSoFar - degrees) > turnOvershootThreshold)
@@ -266,15 +272,17 @@ void wallAlign(bool forwardBackward)
 {
 	writeDebugStreamLine("-- ALIGNING ROBOT --\n\tMoving %s", forwardBackward? "forward":"backward");
 
+	short alignSpeed = 40;
+
 	// If we are going to move forward into the wall
 	if(forwardBackward==ALIGN_FORWARD)
 	{
-		driveMotorsTo(50);
+		driveMotorsTo(alignSpeed);
 	}
 	// If we are going to move backward into the wall
 	else
 	{
-		driveMotorsTo(-50);
+		driveMotorsTo(-alignSpeed);
 	}
 
 	// Store whether the left and right sides are finished aligning
