@@ -180,19 +180,19 @@ task main()
 				case CENTGOAL_POSITION_C :
 				{
 					// Turn 90 degrees, parallel to the center structure
-					turnDegrees (87,65);
+					turnDegrees (-90,preferredTurnSpeed);
 
 					// Move along the center structure until we're past the end
-					goTicks(inchesToTicks(-31),65);
+					goTicks(inchesToTicks(-38),50);
 
 					// Turn 90 degrees, tangent to the center structure
-					turnDegrees (-76,65);
+					turnDegrees (90,preferredTurnSpeed);
 
 					// Move into position in front of the center structure
-					goTicks(inchesToTicks(-43),65);
+					goTicks(inchesToTicks(-62),65);
 
 					//  Turn to face the goal
-					turnDegrees(-79,65);
+					turnDegrees(90,preferredTurnSpeed);
 					break;
 				}
 
@@ -216,7 +216,7 @@ task main()
 			servo[rTrapDoor]=trapDoorOpenPosition;
 			wait10Msec (500);
 			servo[rTrapDoor]=trapDoorClosedPosition;
-
+return;
 			// Drop down the lift
 			moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
