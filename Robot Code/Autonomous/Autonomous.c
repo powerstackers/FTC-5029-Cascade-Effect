@@ -157,13 +157,14 @@ task main()
 			// Make a movement based on the position of the center goal
 			switch (goalFacing)
 			{
+				// GOOD
 				case CENTGOAL_POSITION_A :
 				{
 					// In this position, simply go in a straight line
 					goTicks(inchesToTicks(-10),50);
 					break;
 				}
-
+				// BAD
 				case CENTGOAL_POSITION_B :
 				{
 					// Turn 45 degrees, tangent to the center structure
@@ -173,10 +174,10 @@ task main()
 					goTicks(inchesToTicks(-30),75);
 
 					// Turn to face the goal
-					turnDegrees (-87,preferredTurnSpeed); writeDebugStreamLine("Done");
+					turnDegrees (-90,preferredTurnSpeed); writeDebugStreamLine("Done");
 					break;
 				}
-
+				// GOOD
 				case CENTGOAL_POSITION_C :
 				{
 					// Turn 90 degrees, parallel to the center structure
@@ -216,13 +217,13 @@ task main()
 			servo[rTrapDoor]=trapDoorOpenPosition;
 			wait10Msec (500);
 			servo[rTrapDoor]=trapDoorClosedPosition;
-return;
+
 			// Drop down the lift
 			moveMotorTo(mLift, liftTargetBase, 75);
 			// Position the robot correctly to kick the kickstand
-			turnDegrees (-87, preferredTurnSpeed);
+			turnDegrees (90, preferredTurnSpeed);
 			goTicks(inchesToTicks(-15), 75);
-			turnDegrees (-73, preferredTurnSpeed);
+			turnDegrees (90, preferredTurnSpeed);
 			goTicks(inchesToTicks(35), 100);
 			// Go to the robot's ending position
 
