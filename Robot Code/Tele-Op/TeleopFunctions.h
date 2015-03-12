@@ -77,6 +77,7 @@ bool	buttonLiftEncoderReset	= false;// Reset the lift encoder value to 0
 bool 	buttonGrabToggle 		= false;// Rolling goal grabber toggle button
 
 bool	buttonFlaps 			= false;// Flaps button
+bool	buttonBallDoor			= false;// Ball door control
 
 /*
 *	ENCODER TARGETS
@@ -113,6 +114,7 @@ void getCustomJoystickSettings ()
 	buttonBackwardsDrive 	= (joy1Btn(5) == 1);			// Driver 1 left shoulder
 	buttonBrush 			= (joy1Btn(6) == 1);			// Driver 1 right shoulder
 	buttonBrushReverse		= (joy1Btn(8) == 1);			// Driver 1 right trigger
+	//buttonBallDoor			= false;
 
 	// Player 2
 	//		Joysticks

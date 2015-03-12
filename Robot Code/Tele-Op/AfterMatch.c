@@ -36,7 +36,7 @@
 #define NEXT_BUTTON	kEnterButton
 #define PREV_BUTTON kExitButton
 
-#define maxLineIndex 3
+#define maxLineIndex 4
 
 #define versionNumber 2.1
 
@@ -59,7 +59,7 @@ task main()
 	nNxtExitClicks = 50;
 
 	int selectedLine = 0;			// Store the currently selected line
-	int previousLine = 5;			// Store the previously selected line
+	int previousLine = maxLineIndex;// Store the previously selected line
 
 	// Start the selection indicator off at the top line
 	nxtDisplayStringAt(0, 63, ">");
@@ -85,6 +85,7 @@ task main()
 		nxtDisplayStringAt(6, 55, "TrapD: %s", servo[rTrapDoor]==trapDoorClosedPosition? "closed":"open  ");
 		nxtDisplayStringAt(6, 47, "Grab:  %d   ", motor[mGrab]);
 		nxtDisplayStringAt(6, 39, "Brush: %d   ", motor[mBrush]);
+		nxtDisplayStringAt(6, 31, "Flaps: %s", servo[rFlapLeft]==flapLeftClosedPosition? "closed":"open ");
 
 		/*
 		*	NEXT BUTTON
@@ -166,6 +167,13 @@ task main()
 				case 3:
 				{
 					motor[mBrush] = (nNxtButtonPressed==UP_BUTTON)?brushMotorSpeed:-1*brushMotorSpeed;
+					break;
+				}
+				// Flaps
+				case 4:
+				{
+					servo[rFlapLeft] = nNxtButtonPressed==UP_BUTTON? flapLeftOpenPosition:flapLeftClosedPosition;
+					servo[rFlapRight] = nNxtButtonPressed==UP_BUTTON? flapRightOpenPosition:flapRightClosedPosition;
 					break;
 				}
 			}

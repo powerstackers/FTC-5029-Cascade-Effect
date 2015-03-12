@@ -52,16 +52,16 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 
 // Motor speeds
 #define liftMotorSpeed 	100			// Speed of the vertical lift motor
-#define liftMotorSpeedDown	-50		// Speed of the vertical lift motor when moving down
-#define brushMotorSpeed	100			// Speed of the brush motor
+#define liftMotorSpeedDown	-5		// Speed of the vertical lift motor when moving down
+#define brushMotorSpeed	-100			// Speed of the brush motor
 #define grabMotorSpeed	75			// Speed of the grab motor
 #define preferredTurnSpeed	50		// Most desirable turning speed
 
 // Servo positions
 #define flapLeftOpenPosition	1	// Left side flap open servo position
-#define flapLeftClosedPosition	1	// Left side flap closed servo position
+#define flapLeftClosedPosition	256	// Left side flap closed servo position
 
-#define flapRightOpenPosition	1	// Right side flap open servo position
+#define flapRightOpenPosition	230	// Right side flap open servo position
 #define flapRightClosedPosition	1	// Right side flap closed servo position
 
 #define grabOpenPosition		-180// Grabber open position

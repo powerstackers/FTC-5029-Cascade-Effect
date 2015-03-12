@@ -249,15 +249,8 @@ task main()
 			nMotorEncoder[mLift] = 0;
 
 		// BALL DOOR
-		// The ball door will only be closed if the robot is moving backwards, or the lift is up
-		if(!touchActive() || motor[mDriveLeft] < 0 || motor[mDriveRight] < 0)
-		{
-			servo[rBallDoor] = ballDoorClosedPosition;
-		}
-		else
-		{
-			servo[rBallDoor] = ballDoorOpenPosition;
-		}
+		// The ball door will only be open when the lift is down and the brush is on. It will be closed all other times.
+		servo[rBallDoor] = buttonBrush&&touchActive()? ballDoorOpenPosition:ballDoorClosedPosition;
 
 		/*
 		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable
@@ -297,7 +290,8 @@ task main()
 			servo[rFlapLeft] 	= (servo[rFlapLeft]==flapLeftOpenPosition)	?flapLeftClosedPosition:flapLeftOpenPosition;
 			servo[rFlapRight] 	= (servo[rFlapRight]==flapRightOpenPosition)?flapRightClosedPosition:flapRightOpenPosition;
 			buttonFlapJustPushed = true;
-			writeDebugStreamLine("Toggled flaps to %s position", (servo[rFlapLeft]==flapLeftOpenPosition)?"open":"closed");
+			writeDebugStreamLine("Right flap to %d", servo[rFlapLeft]);
+			writeDebugStreamLine("Left flap to %d", servo[rFlapLeft]);
 		}
 		if(!buttonFlaps)
 			buttonFlapJustPushed = false;

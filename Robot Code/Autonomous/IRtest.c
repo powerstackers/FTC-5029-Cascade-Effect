@@ -34,9 +34,13 @@ task main()
 {
 	//turnDegrees(90, 75);
 	//wallAlign(ALIGN_FORWARD);
-goTicks(inchesToTicks(-30), 100);
-	/*while(true)
+	//goTicks(inchesToTicks(-30), 100);
+	initializeRobot();
+	waitForStart();
+
+
+	while(true)
 	{
 		nxtDisplayTextLine(4, "Gyr: %f", currentGryoReading());
-	}*/
+	}
 }
