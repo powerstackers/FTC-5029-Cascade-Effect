@@ -175,7 +175,7 @@ task main()
 		//motor[mBrush] = touchActive()? brushMotorSpeed : -brushMotorSpeed;
 
 		// If the lift is up, the brush will spin outwards to prevent unwanted ball entry
-		if(!touchActive())
+		if(false)//!touchActive())
 		{
 			motor[mBrush] = -brushMotorSpeed;
 		}

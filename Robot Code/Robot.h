@@ -54,7 +54,7 @@ void moveMotorTo(short affectedMotor, long position, short speed);
 #define liftMotorSpeed 	100			// Speed of the vertical lift motor
 #define liftMotorSpeedDown	-5		// Speed of the vertical lift motor when moving down
 #define brushMotorSpeed	-100			// Speed of the brush motor
-#define grabMotorSpeed	75			// Speed of the grab motor
+#define grabMotorSpeed	100			// Speed of the grab motor
 #define preferredTurnSpeed	50		// Most desirable turning speed
 
 // Servo positions
@@ -221,7 +221,7 @@ void initializeRobot()
 	// Move the grab motor down until it hits the cookie cutter, then set its encoder position to 0
 	// This zeroes the grabber encoder
 	motor[mGrab] = 50;
-	wait10Msec(150);
+	wait10Msec(100);
 	motor[mGrab] = 0;
 	nMotorEncoder[mGrab] = 0;
 

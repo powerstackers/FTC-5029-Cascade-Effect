@@ -77,7 +77,7 @@ bool	buttonLiftEncoderReset	= false;// Reset the lift encoder value to 0
 bool 	buttonGrabToggle 		= false;// Rolling goal grabber toggle button
 
 bool	buttonFlaps 			= false;// Flaps button
-bool	buttonBallDoor			= false;// Ball door control
+//bool	buttonBallDoor			= false;// Ball door control
 
 /*
 *	ENCODER TARGETS
