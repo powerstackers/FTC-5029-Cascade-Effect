@@ -250,7 +250,7 @@ task main()
 
 		// BALL DOOR
 		// The ball door will only be open when the lift is down and the brush is on. It will be closed all other times.
-		servo[rBallDoor] = buttonBrush&&touchActive()? ballDoorOpenPosition:ballDoorClosedPosition;
+		servo[rBallDoor] = buttonBrush? ballDoorOpenPosition:ballDoorClosedPosition;
 
 		/*
 		*	For the grabber, flaps, and trapdoor, we have a toggling system. Each manipulator has a variable

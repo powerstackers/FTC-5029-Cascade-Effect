@@ -250,23 +250,23 @@ task main()
 			turnDegrees(-45, preferredTurnSpeed);
 
 			// Move forward and backwards to disrupt the 90cm goal
-			goTicks(inchesToTicks(24), 75);
-			goTicks(inchesToTicks(-24), 100);
-
+			goTicks(inchesToTicks(36), 75);
+			goTicks(inchesToTicks(-36), 100);
+return;
 			// Turn slightly to face the 30cm goal
 			turnDegrees(-45, preferredTurnSpeed);
 
 			// Move foward and backward to disrupt the 30cm goal
-			goTicks(inchesToTicks(24), 75);
+			goTicks(inchesToTicks(36), 75);
 			goTicks(inchesToTicks(-4), 100);
 
 			// Move into position to align on the wall of the ramp
 			turnDegrees(-90, preferredTurnSpeed);
 			//goTicks(inchesToTicks(12), 100);
 			//turnDegrees(90, preferredTurnSpeed);
-
+return;
 			// Align ourselves with this wall
-			wallAlign(ALIGN_FORWARD);
+			//wallAlign(ALIGN_FORWARD);
 
 			/*
 			*	BLOCK CETNER GOAL
